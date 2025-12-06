@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<strings>
+<!--	<string
+		id="str_date_format"
+		text="{=uEiFfbOq}{SEASON} {DAY}, {YEAR}" /> !-->
+	<string
+		id="str_season_Spring"
+		text="turn 1, " />
+	<string
+		id="str_season_Summer"
+		text="turn 2, " />
+	<string
+		id="str_season_Autumn"
+		text="turn 3, " />
+	<string
+		id="str_season_Winter"
+		text="turn 4, " />
+	<string
+		id="str_season_4"
+		text="turn 5, " />
+	<string
+		id="str_season_5"
+		text="turn 6, " />
+	<string
+		id="str_season_6"
+		text="turn 7, " />
+	<string
+		id="str_season_7"
+		text="turn 8, " />
+	<string
+		id="str_season_8"
+		text="turn 9, " />
+	<string
+		id="str_season_9"
+		text="turn 10, " />
+	<string
+		id="str_season_10"
+		text="turn 11, " />
+	<string
+		id="str_season_11"
+		text="turn 12, " />
+</strings>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodAndBittersteel", "BloodAndBittersteel\BloodAndBittersteel.csproj", "{E60A5F9B-2323-43C7-8FEC-B3D29B53B488}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E60A5F9B-2323-43C7-8FEC-B3D29B53B488}.Debug|x64.ActiveCfg = Debug|x64
+		{E60A5F9B-2323-43C7-8FEC-B3D29B53B488}.Debug|x64.Build.0 = Debug|x64
+		{E60A5F9B-2323-43C7-8FEC-B3D29B53B488}.Release|x64.ActiveCfg = Release|x64
+		{E60A5F9B-2323-43C7-8FEC-B3D29B53B488}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7D2CA44-AEFA-442C-9CAD-14DD7D1FF490}
+	EndGlobalSection
+EndGlobal
