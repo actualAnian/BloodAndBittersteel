@@ -1,10 +1,15 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using System.Collections.Generic;
+using TaleWorlds.CampaignSystem;
+using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BlackfyreRebellion
 {
     public class BlackfyreRebellionData
     {
+        [SaveableProperty(1)]
         public bool IsRebellionActive { get; set; } = false;
+        [SaveableProperty(2)]
+        public List<string> LoyalistVassals { get; set; } = new();
     }
     public class RebellionCampaignBehavior : CampaignBehaviorBase
     {
@@ -12,7 +17,10 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         private BlackfyreRebellionData _rebellionData;
         public RebellionCampaignBehavior()
         {
-            _rebellionData = new();
+            _rebellionData = new()
+            {
+                LoyalistVassals = new(RebellionConfig.LoyalistVassalsAtGameStart)
+            };
         }
 
 

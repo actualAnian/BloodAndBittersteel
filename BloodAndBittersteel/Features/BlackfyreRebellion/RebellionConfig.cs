@@ -40,7 +40,14 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
             "empire_w",
             "empire_s"
         };
-        public static readonly Banner RebellionBanner = Clan.FindFirst(c => c.StringId == RebellionLeader).Banner;
+        public static readonly List<string> LoyalistVassalsAtGameStart = new()
+        {
+            "sturgia",
+            "battania",
+            "vlandia",
+            "aserai",
+        };
+        public static readonly Banner RebellionBanner = new();
         public const string RebellionFactionStringId = "bab_blackfyre_rebels";
         public const string RebellionFactionName = "{=bab_bf_rebellion_name}Blackfyre Rebellion";
         public const string RebellionFactionInformalName = "{=bab_bf_rebellion_informal_name}Blackfyre Rebellion";

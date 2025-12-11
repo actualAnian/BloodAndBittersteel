@@ -23,7 +23,6 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             if (chance < 0 || chance > 1)
                 throw new Exception("BaBIncident chance shpuld be between 0 and 1");
             Chance = chance;
-            AllBaBIncidents.Add(id, this);
         }
         public BaBIncident(string id, BaBIncidentTypes trigger, float chance, string customImageName) : base(id)
         {
@@ -33,8 +32,6 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             Chance = chance;
             UsesCustomImage = true;
             CustomImageName = customImageName;
-            AllBaBIncidents.Add(id, this);
         }
-        public static Dictionary<string, BaBIncident> AllBaBIncidents = new();
     }
 }

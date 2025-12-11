@@ -12,7 +12,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
 {
     public class BaBBlackfyreRebellionIncidents : IIncidentProvider
     {
-        public IEnumerable<Incident> InitializeEvents()
+        public IEnumerable<BaBIncident> InitializeEvents()
         {
             yield return CreateStartRebellionIncident();
         }

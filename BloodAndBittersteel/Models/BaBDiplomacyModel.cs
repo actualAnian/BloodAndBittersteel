@@ -10,10 +10,10 @@ using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Models
 {
-    internal class BnBDiplomacyModel : DiplomacyModel
+    internal class BaBDiplomacyModel : DiplomacyModel
     {
         DiplomacyModel _baseModel;
-        public BnBDiplomacyModel(DiplomacyModel baseModel)
+        public BaBDiplomacyModel(DiplomacyModel baseModel)
         {
             _baseModel = baseModel;
         }
@@ -228,9 +228,7 @@ namespace BloodAndBittersteel.Models
 
         public override float GetScoreOfDeclaringWar(IFaction factionDeclaresWar, IFaction factionDeclaredWar, Clan evaluatingClan, out TextObject reason, bool includeReason = false)
         {
-            reason = TextObject.GetEmpty();
-            return 0f;
-            //return _baseModel.GetScoreOfDeclaringWar(factionDeclaresWar, factionDeclaredWar, evaluatingClan, out reason, includeReason);?
+            return _baseModel.GetScoreOfDeclaringWar(factionDeclaresWar, factionDeclaredWar, evaluatingClan, out reason, includeReason);
         }
 
         public override float GetScoreOfKingdomToGetClan(Kingdom kingdom, Clan clan)

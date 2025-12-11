@@ -1,9 +1,9 @@
-﻿using BloodAndBittersteel.Features.BaBIncidents;
+﻿using BloodAndBittersteel.Features;
+using BloodAndBittersteel.Features.BaBIncidents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
+using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
-using SandBox.ViewModelCollection.Map.Incidents;
-using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.Core;
@@ -21,15 +21,27 @@ namespace BloodAndBittersteel
                 // behaviors
                 campaignGameStarter.AddBehavior(new BaBIncidentsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
+                campaignGameStarter.AddBehavior(new BaBDailyTribute());
                 
                 // models
-                campaignGameStarter.AddModel(new BnBCampaignTimeModel());
-                campaignGameStarter.AddModel(new BnBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
+                campaignGameStarter.AddModel(new BaBCampaignTimeModel());
+                campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
+                campaignGameStarter.AddModel(new BaBKingdomDecisionPermissionModel(gameStarterObject.GetExistingModel<KingdomDecisionPermissionModel>()));
             }
         }
+        //public override void OnCampaignStart(Game game, object starterObject)
+        //{
+        //    var a = Kingdom.All;
+        //    foreach (var k1 in Kingdom.All)
+        //    {
+        //        foreach (var k2 in Kingdom.All)
+        //        {
+        //            var link = k1.GetStanceWith(k2);
+        //        }
+        //    }
+        //}
         protected override void OnSubModuleLoad()
         {
-            var ctor = AccessTools.GetDeclaredConstructors(typeof(MapIncidentVM));
             harmony.PatchAll();
         }
 

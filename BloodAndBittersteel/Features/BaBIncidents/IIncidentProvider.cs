@@ -5,6 +5,6 @@ namespace BloodAndBittersteel.Features.BaBIncidents
 {
     public interface IIncidentProvider
     {
-        public IEnumerable<Incident> InitializeEvents();
+        public IEnumerable<BaBIncident> InitializeEvents();
     }
 }

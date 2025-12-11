@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaleWorlds.CampaignSystem;
+﻿using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 
 namespace BloodAndBittersteel.Models
 {
-    internal class BnBMapWeatherModel : MapWeatherModel
+    internal class BaBMapWeatherModel : MapWeatherModel
     {
         private readonly MapWeatherModel _baseModel;
 
-        public BnBMapWeatherModel(MapWeatherModel baseModel)
+        public BaBMapWeatherModel(MapWeatherModel baseModel)
         {
             _baseModel = baseModel;
         }
