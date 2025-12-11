@@ -3,7 +3,7 @@ using BloodAndBittersteel.Features.ModifiableValues;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 
-namespace BloodAndBittersteel.Features
+namespace BloodAndBittersteel.Features.Tribute
 {
     internal class BaBDailyTribute : CampaignBehaviorBase
     {
