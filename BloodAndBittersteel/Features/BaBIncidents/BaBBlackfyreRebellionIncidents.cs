@@ -56,8 +56,8 @@ namespace BloodAndBittersteel.Features.BaBIncidents
                                 "",
                                 IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
                                 IncidentsCampaignBehaviour.IncidentType.Siege,
-                                CampaignTime.Never,
-                                (TextObject description) => { return true; });
+                                CampaignTime.Never, 
+                                (TextObject description) => { return CampaignTime.Now > RebellionConfig.RebellionStartTime; });
             List<IncidentEffect> joinRebellion = new()
             {
                 StartTheRebellionEffect(),

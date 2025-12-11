@@ -4,6 +4,7 @@ using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BlackfyreRebellion
 {
+    // UNUSED FOR NOW, I AM ASSUMING IT WILL BE USEFUL IN THE FUTURE
     public class BlackfyreRebellionData
     {
         [SaveableProperty(1)]

@@ -56,6 +56,6 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         public const string RebellionFactionEncyclopediaRulerTitle = "{=bab_bf_ruler_name}Pretender King Daemon Blackfyre";
         public const int RelationGainOnJoinKingdom = 50;
         public const int RebellionStartYear = 196;
-        public static readonly CampaignTime RebellionStartTime = CampaignTime.Years(RebellionStartYear);
+        public static CampaignTime RebellionStartTime => CampaignTime.Years(RebellionStartYear);
     }
 }

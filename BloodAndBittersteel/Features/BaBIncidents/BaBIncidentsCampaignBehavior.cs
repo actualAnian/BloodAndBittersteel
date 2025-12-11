@@ -57,7 +57,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
                 if (result.IsPast) _incidentsOnCooldown.Remove(incident.StringId);
                 else return false;
             }
-            System.Reflection.FieldInfo? field = AccessTools.Field(typeof(Func<TextObject, bool>), "_condition");
+            var field = AccessTools.Field(typeof(Incident), "_condition");
             if (field == null) return true;
             var func = (Func<TextObject, bool>)field.GetValue(incident);
 
@@ -72,7 +72,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             {
                 foreach (var inc in incidentList)
                 {
-                    if (CanIncidentBeInvoked(inc) && inc.Chance > _random.NextFloat()) 
+                    if (CanIncidentBeInvoked(inc) && inc.Chance > _random.NextFloat())
                         possibleIndicents.Add(inc);
                 }
             }
