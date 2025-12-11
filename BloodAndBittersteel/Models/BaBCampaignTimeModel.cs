@@ -3,7 +3,7 @@ using TaleWorlds.CampaignSystem.ComponentInterfaces;
 
 namespace BloodAndBittersteel.Models
 {
-    public class BnBCampaignTimeModel : CampaignTimeModel
+    public class BaBCampaignTimeModel : CampaignTimeModel
     {
         public override CampaignTime CampaignStartTime
         {
