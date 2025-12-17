@@ -9,7 +9,7 @@ namespace BloodAndBittersteel.Models
         {
             get
             {
-                return CampaignTime.Years(195f) + CampaignTime.Hours(9f);
+                return CampaignTime.Years(196f) + CampaignTime.Hours(9f);
             }
         }
         public override int SunRise => 2;
