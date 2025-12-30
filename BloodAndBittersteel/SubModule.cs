@@ -1,6 +1,7 @@
 ﻿using BloodAndBittersteel.Features;
 using BloodAndBittersteel.Features.BaBIncidents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
+using BloodAndBittersteel.Features.CampaignStart;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
@@ -27,6 +28,11 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
                 campaignGameStarter.AddModel(new BaBKingdomDecisionPermissionModel(gameStarterObject.GetExistingModel<KingdomDecisionPermissionModel>()));
+                campaignGameStarter.AddModel(new BaBSettlementAccessModel(gameStarterObject.GetExistingModel<SettlementAccessModel>()));
+                campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
+
+                // temporary, before it implements proper characterCreation interface
+                campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
         }
         //public override void OnCampaignStart(Game game, object starterObject)
