@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
+	</PropertyGroup>
+
+	<ItemGroup>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+	<PackageReference Include="MSTest" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	<ProjectReference Include="..\BloodAndBittersteel\BloodAndBittersteel.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\Newtonsoft.Json.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\Native\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\SandBox\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\SandBoxCore\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\StoryMode\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\CustomBattle\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="$(GameFolder)\Modules\BirthAndDeath\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+
+	<!-- Copy game and module assemblies into test output so the test runner can load TaleWorlds assemblies at runtime. -->
+	<ItemGroup>
+		<GameAssemblies Include="$(GameFolder)\bin\Win64_Shipping_Client\*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll" />
+		<ModuleAssemblies Include="$(GameFolder)\Modules\**\bin\Win64_Shipping_Client\*.dll" />
+	</ItemGroup>
+
+	<Target Name="CopyTaleWorldsAssemblies" AfterTargets="Build" Condition=" '$(GameFolder)' != '' ">
+		<Message Text="Copying TaleWorlds assemblies from $(GameFolder) to $(TargetDir)" Importance="high" />
+		<Copy SourceFiles="@(GameAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(ModuleAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+	</Target>
+
+	<ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+</Project>

@@ -1,7 +1,8 @@
-﻿using BloodAndBittersteel.Features;
-using BloodAndBittersteel.Features.BaBIncidents;
+﻿using BloodAndBittersteel.Features.BaBIncidents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
+using BloodAndBittersteel.Features.LanceSystem;
+using BloodAndBittersteel.Features.LanceSystem.Deserialization;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
@@ -23,7 +24,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBIncidentsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
-                
+                campaignGameStarter.AddBehavior(new LancesCampaignBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
@@ -35,20 +36,10 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
         }
-        //public override void OnCampaignStart(Game game, object starterObject)
-        //{
-        //    var a = Kingdom.All;
-        //    foreach (var k1 in Kingdom.All)
-        //    {
-        //        foreach (var k2 in Kingdom.All)
-        //        {
-        //            var link = k1.GetStanceWith(k2);
-        //        }
-        //    }
-        //}
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
+            LanceTemplateManager.Instance.LoadFromFile();
         }
 
         protected override void OnSubModuleUnloaded()
