@@ -1,58 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("BaBUnitTests")]
 
 namespace BloodAndBittersteel.Features.LanceSystem.Deserialization
 {
-    using System.Xml.Linq;
-
     public static class LanceDataDeserializer
     {
-        public static LanceTemplates LoadFromFile(string xmlFilePath)
+        public static Dictionary<string, Lance> LoadFromFile(string xmlFilePath)
         {
             var xdoc = XDocument.Load(xmlFilePath);
-
-            var templates = new LanceTemplates();
+            var templates = new Dictionary<string, Lance>();
 
             foreach (var lanceElem in xdoc.Root?.Elements("Lance") ?? Enumerable.Empty<XElement>())
             {
-                var lance = new Lance
-                {
-                    CultureId = CleanString(lanceElem.Element("CultureId")?.Value),
-                    SettlementType = ParseSettlementType(lanceElem.Element("SettlementType")?.Value)
-                };
-
                 var troopsElem = lanceElem.Element("Troops");
-                if (troopsElem != null)
-                {
-                    lance.Troops = new Troops
-                    {
-                        MeleeTroop = ParseTroop(troopsElem.Element("MeleeTroop")),
-                        RangedTroop = ParseTroop(troopsElem.Element("RangedTroop")),
-                        CavalryTroop = ParseTroop(troopsElem.Element("CavalryTroop")),
-                        HorseArcherTroop = ParseTroop(troopsElem.Element("HorseArcherTroop")),
-                    };
-                }
+                var melee = ParseTroop(troopsElem.Element("MeleeTroop"));
+                var ranged = ParseTroop(troopsElem.Element("RangedTroop"));
+                var cavalry = ParseTroop(troopsElem.Element("CavalryTroop"));
+                var horseArcher = ParseTroop(troopsElem.Element("HorseArcherTroop"));
 
-                templates.Lances.Add(lance);
+                var parsed = new[] { melee, ranged, cavalry, horseArcher };
+                var normalized = NormalizeTroopLikelihoods(parsed);
+
+                var troops = new LanceTroopsTemplate(normalized[0], normalized[1], normalized[2], normalized[3]);
+
+                var lance = new Lance(CleanString(lanceElem.Element("StringId").Value), CleanString(lanceElem.Element("CultureId").Value), ParseSettlementType(lanceElem.Element("SettlementType").Value), troops);
+
+                templates.Add(lance.StringId, lance);
             }
-
             return templates;
         }
-
-        private static TroopData ParseTroop(XElement? troopElem)
+        private static TroopData ParseTroop(XElement troopElem)
         {
-            if (troopElem == null) return new TroopData();
-
-            return new TroopData
-            {
-                Likelihood = double.TryParse(troopElem.Element("Likelihood")?.Value, out var l) ? l : 0.0,
-                BasicTroopId = CleanString(troopElem.Element("BasicTroopId")?.Value)
-            };
+            return new TroopData(double.TryParse(troopElem.Element("Likelihood")?.Value, out var l) ? l : 0.0, CleanString(troopElem.Element("BasicTroopId")?.Value));
         }
-        private static LanceTemplateSettlementType ParseSettlementType(string? value)
+        internal static TroopData[] NormalizeTroopLikelihoods(TroopData[] troops)
+        {
+            var nonNeg = troops.Select(t => new TroopData(t.Likelihood < 0.0 ? 0.0 : t.Likelihood, t.BasicTroopId)).ToArray();
+            var sum = nonNeg.Sum(t => t.Likelihood);
+            if (sum > 0.0)
+            {
+                return nonNeg.Select(t => new TroopData(t.Likelihood / sum, t.BasicTroopId)).ToArray();
+            }
+            var validCount = nonNeg.Count(t => !string.IsNullOrEmpty(t.BasicTroopId));
+            if (validCount > 0)
+            {
+                var equal = 1.0 / validCount;
+                return nonNeg.Select(t => !string.IsNullOrEmpty(t.BasicTroopId) ? new TroopData(equal, t.BasicTroopId) : new TroopData(0.0, t.BasicTroopId)).ToArray();
+            }
+            return nonNeg;
+        }
+
+        private static LanceTemplateSettlementType ParseSettlementType(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return LanceTemplateSettlementType.All;
@@ -62,10 +64,10 @@ namespace BloodAndBittersteel.Features.LanceSystem.Deserialization
             return value switch
             {
                 "town" => LanceTemplateSettlementType.Town,
-                "settlement" => LanceTemplateSettlementType.Settlement,
+                "settlement" => LanceTemplateSettlementType.Village,
                 "castle" => LanceTemplateSettlementType.Castle,
                 "all" => LanceTemplateSettlementType.All,
-                _ => LanceTemplateSettlementType.All // fallback if unknown
+                _ => LanceTemplateSettlementType.All
             };
         }
         private static string CleanString(string? value)
@@ -74,5 +76,4 @@ namespace BloodAndBittersteel.Features.LanceSystem.Deserialization
             return value!.Trim().Trim('"');
         }
     }
-
 }

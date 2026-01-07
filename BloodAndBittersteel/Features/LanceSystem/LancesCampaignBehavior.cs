@@ -9,20 +9,48 @@ using TaleWorlds.Library;
 using TaleWorlds.CampaignSystem.Conversation;
 using TaleWorlds.Core;
 using TaleWorlds.CampaignSystem.MapEvents;
+using BloodAndBittersteel.Features.LanceSystem.Deserialization;
+using TaleWorlds.CampaignSystem.Settlements.Buildings;
 
 namespace BloodAndBittersteel.Features.LanceSystem
 {
     public class NotableLanceData
     {
         public string NotableId { get; private set; }
-        public TroopRoster CurrentNotableLanceRoster { get; private set; }
+        public TroopRoster CurrentNotableLanceTroopRoster { get; private set; }
         public bool IsTaken { get; set; }
         public string? PartyLanceBelongsTo { get; set; }
-        public NotableLanceData(string notableId, TroopRoster lanceRoster, bool isTaken)
+        private string _lanceTemplateId;
+        public ExplainedNumber CachedMaxLanceTroops { get; set; }
+        public List<float> CachedMaxTroopPerTier;
+        public LanceTroopsTemplate CurrentTroopTemplate 
         {
-            NotableId = notableId;
-            CurrentNotableLanceRoster = lanceRoster;
+            get
+            {
+                return LanceTemplateManager.Instance.GetLanceFromId(_lanceTemplateId).Troops;
+            }
+        }
+        public void SetLanceTemplate(string templateId) { _lanceTemplateId = templateId; }
+        private static LanceTemplateSettlementType GetLanceSettlementType(Settlement settlement)
+        {
+            if (settlement.IsTown) return LanceTemplateSettlementType.Town;
+            if (settlement.IsCastle) return LanceTemplateSettlementType.Castle;
+            if (settlement.IsVillage) return LanceTemplateSettlementType.Village;
+            InformationManager.DisplayMessage(new($"error getting the settlement type from {settlement.Name}"));
+            return LanceTemplateSettlementType.All;
+        }
+
+        public NotableLanceData(Hero notable, TroopRoster lanceRoster, bool isTaken, string? lanceTemplateId = null)
+        {
+            NotableId = notable.StringId;
+            CurrentNotableLanceTroopRoster = lanceRoster;
             IsTaken = isTaken;
+            CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
+            if (lanceTemplateId == null)
+                _lanceTemplateId = LanceTemplateManager.Instance.GetLances(notable.StringId, GetLanceSettlementType(notable.CurrentSettlement)).GetRandomElementInefficiently().StringId;
+            else
+                _lanceTemplateId = lanceTemplateId;
+            CachedMaxTroopPerTier = new(Campaign.Current.Models.LanceModel().DefaultTroopQuality);
         }
     }
     public class LanceData
@@ -55,7 +83,19 @@ namespace BloodAndBittersteel.Features.LanceSystem
             {
                 UpdateLanceTroops(PartyBase.MainParty);
             });
+            CampaignEvents.OnBuildingLevelChangedEvent.AddNonSerializedListener(this, UpdateMaxNotableTroops);
         }
+
+        private void UpdateMaxNotableTroops(Town town, Building building, int arg3)
+        {
+            foreach(var notable in town.Settlement.Notables)
+            {
+                _notablesLance.TryGetValue(notable.StringId, out var lanceData);
+                if (lanceData == null) return;
+                lanceData.CachedMaxTroopPerTier = Campaign.Current.Models.LanceModel().GetLanceTroopQuality(notable);
+            }
+        }
+
         public void UpdateLanceTroops(PartyBase party)
         {
             var lances = GetOrCreateLances(party);
@@ -116,7 +156,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
         {
             foreach(var notabable in Hero.AllAliveHeroes.Where(h => h.IsNotable))
             {
-                _notablesLance[notabable.StringId] = new(notabable.StringId, TroopRoster.CreateDummyTroopRoster(), false);
+                _notablesLance[notabable.StringId] = new(notabable, TroopRoster.CreateDummyTroopRoster(), false);
             }
         }
 
@@ -134,7 +174,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
         {
             //text = "I currently have no troops available for a lance. Please check back later.";
             var notable = CharacterObject.OneToOneConversationCharacter.HeroObject;
-            var troops = _notablesLance[notable.StringId].CurrentNotableLanceRoster;
+            var troops = _notablesLance[notable.StringId].CurrentNotableLanceTroopRoster;
             string text = "I can offer you the following troops for your lance:\n";
             foreach (var element in troops.GetTroopRoster())
                 text += $"- {element.Number} x {element.Character.Name}\n";
@@ -147,7 +187,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
             var lanceData = _notablesLance[notable.StringId];
             lanceData.IsTaken = true;
             lanceData.PartyLanceBelongsTo = party.Id;
-            var notableTroops = lanceData.CurrentNotableLanceRoster;
+            var notableTroops = lanceData.CurrentNotableLanceTroopRoster;
             var partyLanceTroops = TroopRoster.CreateDummyTroopRoster();
             party.MemberRoster.Add(notableTroops);
             partyLanceTroops.Add(notableTroops);
