@@ -10,7 +10,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
         static LancesCampaignBehavior? lanceBehavior;
         public static List<LanceData> Lances(this PartyBase party)
         {
-            lanceBehavior ??= Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
+            lanceBehavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
             return lanceBehavior.GetOrCreateLances(party);
         }
     }

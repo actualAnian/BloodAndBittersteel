@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanceTemplates>
 	<Lance>
-		<TemplateStringId>"aserai_1"</TemplateStringId>
+		<StringId>"aserai_1"</StringId>
 		<CultureId>"aserai"</CultureId>
 		<SettlementType>"castle"</SettlementType> <!-- possible values town, settlement, castle, all-->
 		<Troops>

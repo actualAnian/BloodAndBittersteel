@@ -232,7 +232,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
             foreach (var el in elements)
             {
                 total += el.Number;
-                int tier = el.Character?.Tier ?? 0;
+                int tier = el.Character.Tier;
                 if (!countsPerTier.ContainsKey(tier)) countsPerTier[tier] = 0;
                 countsPerTier[tier] += el.Number;
             }

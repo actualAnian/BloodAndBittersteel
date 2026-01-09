@@ -5,7 +5,9 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
+using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.ObjectSystem;
 
 namespace BloodAndBittersteel.Features.LanceSystem
 {
@@ -43,30 +45,30 @@ namespace BloodAndBittersteel.Features.LanceSystem
         public void GetTroopsInLanceFromProsperity(Hero notable, ExplainedNumber value)
         {
             var text = new TextObject("{=bab_lance_size_from_prosperity}From prosperity");
-            if (notable.CurrentSettlement.IsTown)
+            if (notable.BornSettlement.IsTown)
             {
-                int num = (int)((notable.CurrentSettlement.Town.Prosperity - 2000f)/ 100);
+                int num = (int)((notable.BornSettlement.Town.Prosperity - 2000f)/ 100);
                 num = Math.Min(num, 20);
                 value.Add(num, text);
             }
-            else if (notable.CurrentSettlement.IsCastle)
+            else if (notable.BornSettlement.IsCastle)
             {
-                int num = (int)((notable.CurrentSettlement.Town.Prosperity) / 100);
+                int num = (int)((notable.BornSettlement.Town.Prosperity) / 100);
                 num = Math.Min(num, 10);
                 value.Add(num, text);
             }
             else
             {
-                int num = (int)((notable.CurrentSettlement.Village.Hearth) / 100);
+                int num = (int)((notable.BornSettlement.Village.Hearth) / 100);
                 num = Math.Min(num, 10);
                 value.Add(num, text);
             }
         }
         public void GetTroopsInLanceFromProjects(Hero notable, ExplainedNumber value)
         {
-            if (notable.CurrentSettlement.Town != null)
+            if (notable.BornSettlement.Town != null)
             {
-                foreach(var building in notable.CurrentSettlement.Town.Buildings)
+                foreach(var building in notable.BornSettlement.Town.Buildings)
                 {
                     var buildingType = building.BuildingType.StringId;
                     var level = building.CurrentLevel;
@@ -78,9 +80,9 @@ namespace BloodAndBittersteel.Features.LanceSystem
                     value.Add(gain, explanationText);
                 }
             }
-            if (notable.CurrentSettlement.IsVillage)
+            if (notable.BornSettlement.IsVillage)
             {
-                foreach(var building in notable.CurrentSettlement.Village.Bound.Town.Buildings)
+                foreach(var building in notable.BornSettlement.Village.Bound.Town.Buildings)
                 {
                     var buildingType = building.BuildingType.StringId;
                     var level = building.CurrentLevel;
@@ -101,9 +103,36 @@ namespace BloodAndBittersteel.Features.LanceSystem
         private void RecruitNewNotableTroops(Hero notable, NotableLanceData lanceData)
         {
             var availableLanceTroops = lanceData.CurrentNotableLanceTroopRoster;
-            if (availableLanceTroops.Count < lanceData.CachedMaxLanceTroops.RoundedResultNumber)
+            int troopsToGet = DailyTroopsGet(notable);
+            while (availableLanceTroops.Count < lanceData.CachedMaxLanceTroops.RoundedResultNumber
+                && troopsToGet > 0)
             {
-                availableLanceTroops.AddToCounts(notable.Culture.EliteBasicTroop, 1);
+                troopsToGet--;
+                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentTroopTemplate);
+                string troopStringId = "";
+                switch (troopType)
+                {
+                    case LanceTroopType.Infantry:
+                        troopStringId = lanceData.CurrentTroopTemplate.MeleeTroop.BasicTroopId;
+                        break;
+                    case LanceTroopType.Ranged:
+                        troopStringId = lanceData.CurrentTroopTemplate.RangedTroop.BasicTroopId;
+                        break;
+                    case LanceTroopType.Cavalry:
+                        troopStringId = lanceData.CurrentTroopTemplate.CavalryTroop.BasicTroopId;
+                        break;
+                    case LanceTroopType.HorseArcher:
+                        troopStringId = lanceData.CurrentTroopTemplate.HorseArcherTroop.BasicTroopId;
+                        break;
+                }
+                    var character = MBObjectManager.Instance.GetObject<CharacterObject>(troopStringId);
+                    if (character == null)
+                    {
+                        InformationManager.DisplayMessage(new($"No troop with id {troopStringId}"));
+                        break;
+
+                    }
+                availableLanceTroops.AddToCounts(character, 1);
             }
         }
         private void IncreaseNotableTroopsTier(Hero notable, NotableLanceData lanceData)
@@ -116,10 +145,10 @@ namespace BloodAndBittersteel.Features.LanceSystem
                 if (troopToUpgrade == null)
                     break;
                 var possibleUpgrades = troopToUpgrade.UpgradeTargets.Where(t => LanceModelUtils.ClassFormationToLanceTroopType(t) == troopType);
-                lanceData.CurrentNotableLanceTroopRoster.AddToCounts(possibleUpgrades.GetRandomElementInefficiently(), 1);
+                var goodUpgrades = possibleUpgrades.Where(c => LanceModelUtils.ClassFormationToLanceTroopType(c) == troopType);
+                lanceData.CurrentNotableLanceTroopRoster.AddToCounts(goodUpgrades.GetRandomElementInefficiently(), 1);
                 lanceData.CurrentNotableLanceTroopRoster.RemoveTroop(troopToUpgrade, 1);
             }
-
         }
         internal Dictionary<LanceTroopType, int> GetTroopTypeDistribution(TroopRoster roster)
         {
@@ -145,10 +174,10 @@ namespace BloodAndBittersteel.Features.LanceSystem
         private void GetTroopQualityFromNotableInfluence(Hero notable, List<float> quality)
         {
             var bonus = notable.Power / 100;
-            while (quality.Count < 3)
+            while (quality.Count < 4)
                 quality.Add(0f);
-            quality[2] += bonus * 0.6f;
-            quality[3] += bonus * 0.4f;
+            quality[2] += bonus * 0.1f;
+            quality[3] += bonus * 0.05f;
         }
         private void GetTroopQualityFromProjects(Hero notable, List<float> quality)
         {
@@ -172,8 +201,15 @@ namespace BloodAndBittersteel.Features.LanceSystem
 
         public override int DailyTroopsToUpgrade(Hero notable)
         {
-            int number = 2;
-            number += (int)notable.Power % 50;
+            int number = 0;
+            number += (int)notable.Power / 100;
+            return number;
+        }
+
+        public override int DailyTroopsGet(Hero notable)
+        {
+            int number = 1;
+            number += (int)notable.Power / 100;
             return number;
         }
     }

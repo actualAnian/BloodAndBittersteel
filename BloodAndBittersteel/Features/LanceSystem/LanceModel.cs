@@ -16,6 +16,7 @@ namespace BloodAndBittersteel.Features.LanceSystem
         public abstract ExplainedNumber GetMaxTroopsInLance(Hero notable);
         public abstract List<float> GetLanceTroopQuality(Hero notable);
         public abstract int DailyTroopsToUpgrade(Hero notable);
+        public abstract int DailyTroopsGet(Hero notable);
         public abstract List<float> DefaultTroopQuality { get; }
     }
 }

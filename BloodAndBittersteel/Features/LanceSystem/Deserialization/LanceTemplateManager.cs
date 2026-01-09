@@ -18,6 +18,7 @@ namespace BloodAndBittersteel.Features.LanceSystem.Deserialization
         public void LoadFromFile()
         {
             Lances = LanceDataDeserializer.LoadFromFile(_path);
+            Lances.Add("fallback", FallBackLance);
         }
         public IEnumerable<Lance> GetLances(string cultureId, LanceTemplateSettlementType settlementType)
         {

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,13 @@ using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Party;
 
 namespace BloodAndBittersteel.UI
 {
-    [HarmonyPatch(typeof(PartyScreenWidget), nameof(PartyScreenWidget.MainPrisonerList), MethodType.Setter)]
-    public static class PartyScreenWidgetPatches
+    [HarmonyPatch(typeof(PartyScreenWidget), nameof(PartyScreenWidget.MainMemberList), MethodType.Getter)]
+    public static class PartyScreenWidgetPatches2
     {
-        static void Postfix(PartyScreenWidget __instance, ListPanel value)
+        static void Prefix(PartyScreenWidget __instance)
         {
-            __instance.MainMemberList = (PartyListPanel)value.FindParentPanel().Children[1].Children[0].Children[0].Children[1].Children[0];    
+            __instance.MainMemberList = (PartyListPanel)__instance.MainPrisonerList.FindParentPanel().Children[1].Children[0].Children[0].Children[0].Children[1].Children[0];
+            //__instance.MainMemberList = (PartyListPanel)value.FindParentPanel().Children[1].Children[0].Children[0].Children[1].Children[0];
         }
     }
 }
