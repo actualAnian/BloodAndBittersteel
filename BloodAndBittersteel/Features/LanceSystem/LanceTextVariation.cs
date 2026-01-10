@@ -149,21 +149,21 @@ namespace BloodAndBittersteel.Features.LanceSystem
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                     return true;
                 }
-                if (Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 5
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 5
                     && Hero.MainHero.GetTraitLevel(DefaultTraits.Valor) > 1)
                 {
                     refusalText = "{=bab_lance_refusal_female_relation_valor}Your courage is spoken of, my lady, yet oaths are not sworn on courage alone. Stand with us longer, and this may change.";
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                     return true;
                 }
-                if (Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 15
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 15
                     && Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 1)
                 {
                     refusalText = "{=bab_lance_refusal_female_relation_mercy}Your rule is a kind one, my lady. For that reason, I would not risk souring it by forcing men into service before their hearts are ready.";
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                     return true;
                 }
-                if (Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 20)
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale && notable.GetRelationWithPlayer() < 20)
                 {
                     refusalText = "{=bab_lance_refusal_female_relation}Men will not ride at my word for a woman they scarcely know. If you wish obedience, you must first command loyalty.";
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
@@ -185,6 +185,12 @@ namespace BloodAndBittersteel.Features.LanceSystem
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                     return true;
                 }
+                if (PartyBase.MainParty.Lances().Count > Campaign.Current.Models.LanceModel().MaxLancesForParty(PartyBase.MainParty).RoundedResultNumber)
+                {
+                    refusalText = "{=bab_lance_refusal_too_many_lances}Your warband can not take any more lances, my {?PLAYER.GENDER}lady{?}lord{\\?}.";
+                    GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
+                    return true;
+                }
                 return false;
             }
             if (FactionManager.IsAtWarAgainstFaction(Clan.PlayerClan, ownerClan))
@@ -195,21 +201,21 @@ namespace BloodAndBittersteel.Features.LanceSystem
             }
             if (Clan.PlayerClan.Tier == 0)
             {
-                if (Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier0}A woman without land, speaking of banners and men? You shame yourself. Begone, before you are laughed from the gate.";
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier0}A woman without land, speaking of banners and men? You shame yourself. Begone, before you are laughed from the gate.";
                 else refusalText = "{=bab_lance_refusal_clantier0}Begone, whelp. Earn a name for yourself before you dare speak of banners and oaths.";
                 GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                 return true;
             }
             if (Clan.PlayerClan.Tier == 1)
             {
-                if (Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier1}I have heard some talk of you, woman, but this is another man’s land. Take such speech of banners and men elsewhere.";
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier1}I have heard some talk of you, woman, but this is another man’s land. Take such speech of banners and men elsewhere.";
                 else refusalText = "{=bab_lance_refusal_clantier1}You show spirit, but you are yet unproven. I must remain sworn to my rightful lord.";
                 GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                 return true;
             }
             if (Clan.PlayerClan.Tier == 2)
             {
-                if (Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier2}I know who you are, yet you stand on another’s land and ask for men as though it were your own — liberties rarely granted, and less so to a woman.";
+                if (BaBSettings.Instance.FemalePrejudice && Hero.MainHero.IsFemale) refusalText = "{=bab_lance_refusal_female_clantier2}I know who you are, yet you stand on another’s land and ask for men as though it were your own — liberties rarely granted, and less so to a woman.";
                 else refusalText = "{=bab_lance_refusal_clantier2}Your name is known to me, my {?PLAYER.GENDER}lady{?}lord{\\?}, yet my oath binds me elsewhere. I cannot raise my banner for you.";
                 GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                 return true;
@@ -224,6 +230,5 @@ namespace BloodAndBittersteel.Features.LanceSystem
             GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
             return true;
         }
-
     }
 }

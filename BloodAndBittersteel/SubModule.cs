@@ -25,6 +25,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
                 campaignGameStarter.AddBehavior(new LancesCampaignBehavior());
+                campaignGameStarter.AddBehavior(new AskForVolunteersCampaignBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
@@ -41,7 +42,10 @@ namespace BloodAndBittersteel
             harmony.PatchAll();
             LanceTemplateManager.Instance.LoadFromFile();
         }
-
+        public override void OnGameInitializationFinished(Game game)
+        {
+            ManualPatchesHandler.TryRunManualPatches(harmony);
+        }
         protected override void OnSubModuleUnloaded()
         {
             base.OnSubModuleUnloaded();

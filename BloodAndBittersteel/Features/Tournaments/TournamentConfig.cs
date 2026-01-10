@@ -7,7 +7,7 @@ namespace BloodAndBittersteel.Features.Tournaments
     {
         public static bool CanParticipate(CharacterObject characterObject)
         {
-            return !characterObject.IsFemale || characterObject.GetTraitLevel(DefaultTraits.Valor) >= 1;
+            return !characterObject.IsFemale || !BaBSettings.Instance.FemalePrejudice || characterObject.GetTraitLevel(DefaultTraits.Valor) >= 1;
         }
     }
 }
