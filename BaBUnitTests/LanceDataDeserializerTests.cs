@@ -1,6 +1,4 @@
-using System;
-using BloodAndBittersteel.Features.LanceSystem.Deserialization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LanceSystem.Deserialization;
 
 namespace BaBUnitTests
 {
@@ -10,10 +8,10 @@ namespace BaBUnitTests
         [TestMethod]
         public void Normalize_AllZeroExceptLast_BecomesOneForLast()
         {
-            var t0 = new TroopData(0.0, string.Empty);
-            var t1 = new TroopData(0.0, string.Empty);
-            var t2 = new TroopData(0.0, string.Empty);
-            var t3 = new TroopData(1000.0, string.Empty);
+            var t0 = new TroopData(LanceTroopCategory.Infantry, 0.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, 0.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, 0.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, 1000.0, string.Empty);
 
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
 
@@ -26,10 +24,10 @@ namespace BaBUnitTests
         [TestMethod]
         public void Normalize_NegativesTreatedAsZero_BecomesOneForLast()
         {
-            var t0 = new TroopData(-1.0, string.Empty);
-            var t1 = new TroopData(-5.0, string.Empty);
-            var t2 = new TroopData(0.0, string.Empty);
-            var t3 = new TroopData(1.0, string.Empty);
+            var t0 = new TroopData(LanceTroopCategory.Infantry, -1.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, -5.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, 0.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, 1.0, string.Empty);
 
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
 
@@ -42,11 +40,10 @@ namespace BaBUnitTests
         [TestMethod]
         public void Normalize_PositiveValues_ProportionalDistribution()
         {
-            var t0 = new TroopData(5.0, "m");
-            var t1 = new TroopData(10.0, "r");
-            var t2 = new TroopData(5.0, "c");
-            var t3 = new TroopData(30.0, "h");
-
+            var t0 = new TroopData(LanceTroopCategory.Infantry, 5.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, 10.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, 5.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, 30.0, string.Empty);
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
 
             Assert.AreEqual(0.1, res[0].Likelihood, 1e-9);
@@ -58,49 +55,48 @@ namespace BaBUnitTests
         [TestMethod]
         public void Normalize_ZeroSum_WithValidIds_DistributesEquallyAmongValid()
         {
-            var t0 = new TroopData(0.0, "a");
-            var t1 = new TroopData(0.0, string.Empty);
-            var t2 = new TroopData(0.0, "b");
-            var t3 = new TroopData(0.0, string.Empty);
+            var t0 = new TroopData(LanceTroopCategory.Infantry, 0.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, 0.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, 0.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, 0.0, string.Empty);
 
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
 
-            Assert.AreEqual(0.5, res[0].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[1].Likelihood, 1e-9);
-            Assert.AreEqual(0.5, res[2].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[3].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[0].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[1].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[2].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[3].Likelihood, 1e-9);
         }
 
         [TestMethod]
-        public void Normalize_AllZero_NoValidIds_ReturnsAllZeros()
+        public void Normalize_PositiveSum_WithNegativeNumbers()
         {
-            var t0 = new TroopData(0.0, string.Empty);
-            var t1 = new TroopData(0.0, string.Empty);
-            var t2 = new TroopData(0.0, string.Empty);
-            var t3 = new TroopData(0.0, string.Empty);
+            var t0 = new TroopData(LanceTroopCategory.Infantry, 5.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, -1.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, -1.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, -1.0, string.Empty);
 
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
 
-            Assert.AreEqual(0.0, res[0].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[1].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[2].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[3].Likelihood, 1e-9);
+            Assert.AreEqual(1, res[0].Likelihood, 1e-9);
+            Assert.AreEqual(0, res[1].Likelihood, 1e-9);
+            Assert.AreEqual(0, res[2].Likelihood, 1e-9);
+            Assert.AreEqual(0, res[3].Likelihood, 1e-9);
         }
 
         [TestMethod]
-        public void Normalize_NegativesAndZeros_WithValidIds_DistributesEqually()
+        public void Normalize_PositiveSum_WithNegativesAndZeros()
         {
-            var t0 = new TroopData(-1.0, "a");
-            var t1 = new TroopData(-2.0, "b");
-            var t2 = new TroopData(0.0, string.Empty);
-            var t3 = new TroopData(0.0, string.Empty);
+            var t0 = new TroopData(LanceTroopCategory.Infantry, -1.0, string.Empty);
+            var t1 = new TroopData(LanceTroopCategory.Ranged, -2.0, string.Empty);
+            var t2 = new TroopData(LanceTroopCategory.Cavalry, 0.0, string.Empty);
+            var t3 = new TroopData(LanceTroopCategory.HorseArcher, 0.0, string.Empty);
 
             var res = LanceDataDeserializer.NormalizeTroopLikelihoods(new[] { t0, t1, t2, t3 });
-
-            Assert.AreEqual(0.5, res[0].Likelihood, 1e-9);
-            Assert.AreEqual(0.5, res[1].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[2].Likelihood, 1e-9);
-            Assert.AreEqual(0.0, res[3].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[0].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[1].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[2].Likelihood, 1e-9);
+            Assert.AreEqual(0.25, res[3].Likelihood, 1e-9);
         }
     }
 }

@@ -1,29 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
+		<Version>0.0.1</Version>
 		<TargetFramework>net472</TargetFramework>
-		<LangVersion>latest</LangVersion>
+		<Platforms>x64</Platforms>
+		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ModuleId>$(MSBuildProjectName)</ModuleId>
+		<ModuleName>$(MSBuildProjectName)</ModuleName>
 		<GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;aaa</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-	<PackageReference Include="MSTest" Version="4.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	<ProjectReference Include="..\BloodAndBittersteel\BloodAndBittersteel.csproj" />
-	<ProjectReference Include="..\LanceSystem\LanceSystem.csproj" />
+	  <ProjectReference Include="..\BloodAndBittersteel\BloodAndBittersteel.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\Newtonsoft.Json.dll">
 			<HintPath>%(Identity)</HintPath>
 			<Private>False</Private>
+		</Reference>
+		<Reference Include="MCMv5">
+			<HintPath>_Module\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>
 		</Reference>
 		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
 			<HintPath>%(Identity)</HintPath>
@@ -55,20 +54,9 @@
 		</Reference>
 	</ItemGroup>
 
-	<!-- Copy game and module assemblies into test output so the test runner can load TaleWorlds assemblies at runtime. -->
-	<ItemGroup>
-		<GameAssemblies Include="$(GameFolder)\bin\Win64_Shipping_Client\*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll" />
-		<ModuleAssemblies Include="$(GameFolder)\Modules\**\bin\Win64_Shipping_Client\*.dll" />
-	</ItemGroup>
-
-	<Target Name="CopyTaleWorldsAssemblies" AfterTargets="Build" Condition=" '$(GameFolder)' != '' ">
-		<Message Text="Copying TaleWorlds assemblies from $(GameFolder) to $(TargetDir)" Importance="high" />
-		<Copy SourceFiles="@(GameAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(ModuleAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="xcopy /y /d &quot;$(ProjectDir)\\bin\x64\Debug\net472\\LanceSystem.*&quot; &quot;$(BANNERLORD_GAME_DIR)\Modules\BloodAndBittersteel\bin\Win64_Shipping_Client&quot;&#xD;&#xA;xcopy /y /d &quot;$(ProjectDir)\\_Module\*&quot; &quot;$(BANNERLORD_GAME_DIR)\Modules\BloodAndBittersteel&quot;&#xD;&#xA;" />
 	</Target>
 
-	<ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
-  </ItemGroup>
 
 </Project>

@@ -33,6 +33,13 @@
       <SubModuleClassType value="$modulename$.SubModule" />
       <Tags />
     </SubModule>
+	  <SubModule>
+		  <Name value="LanceSystem" />
+		  <DLLName value="LanceSystem.dll" />
+		  <SubModuleClassType value="LanceSystem.SubModule" />
+		  <Tags />
+	  </SubModule>
+	  
   </SubModules>
   <Xmls>
 	  <!-- Strings -->

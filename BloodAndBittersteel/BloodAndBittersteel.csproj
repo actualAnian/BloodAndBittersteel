@@ -62,4 +62,8 @@
     <PackageReference Include="BUTR.Harmony.Analyzer" Version="1.0.1.44" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="_Module\ModuleData\Configs\" />
+  </ItemGroup>
+
 </Project>

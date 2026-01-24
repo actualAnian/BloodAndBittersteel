@@ -1,9 +1,6 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BloodAndBittersteel.Features.LanceSystem;
-using BloodAndBittersteel.Features.LanceSystem.Deserialization;
-using System.Collections.Generic;
-using System.Linq;
+
+using LanceSystem;
+using LanceSystem.Deserialization;
 
 namespace BaBUnitTests
 {
@@ -15,83 +12,86 @@ namespace BaBUnitTests
         [TestMethod]
         public void GetTroopTypeDistribution_AggregatesCountsByType()
         {
-            var pairs = new List<(LanceTroopType type, int number)>
+            var pairs = new List<(LanceTroopCategory type, int number)>
             {
-                (LanceTroopType.Infantry, 3),
-                (LanceTroopType.Ranged, 2),
-                (LanceTroopType.Cavalry, 5),
-                (LanceTroopType.Infantry, 4),
-                (LanceTroopType.HorseArcher, 1)
+                (LanceTroopCategory.Infantry, 3),
+                (LanceTroopCategory.Ranged, 2),
+                (LanceTroopCategory.Cavalry, 5),
+                (LanceTroopCategory.Infantry, 4),
+                (LanceTroopCategory.HorseArcher, 1)
             };
 
             var res = LanceModelUtils.GetTroopTypeDistributionFromPairs(pairs);
 
-            Assert.AreEqual(7, res[LanceTroopType.Infantry]);
-            Assert.AreEqual(2, res[LanceTroopType.Ranged]);
-            Assert.AreEqual(5, res[LanceTroopType.Cavalry]);
-            Assert.AreEqual(1, res[LanceTroopType.HorseArcher]);
+            Assert.AreEqual(7, res[LanceTroopCategory.Infantry]);
+            Assert.AreEqual(2, res[LanceTroopCategory.Ranged]);
+            Assert.AreEqual(5, res[LanceTroopCategory.Cavalry]);
+            Assert.AreEqual(1, res[LanceTroopCategory.HorseArcher]);
         }
 
         [TestMethod]
         public void ChooseTroopTypeToGet_PrefersUnderrepresented_WhenWithinLikelihood()
         {
-            var current = new Dictionary<LanceTroopType, int>
+            var current = new Dictionary<LanceTroopCategory, int>
             {
-                { LanceTroopType.Infantry, 9 },
-                { LanceTroopType.Ranged, 0 },
-                { LanceTroopType.Cavalry, 1 },
-                { LanceTroopType.HorseArcher, 0 }
+                { LanceTroopCategory.Infantry, 9 },
+                { LanceTroopCategory.Ranged, 0 },
+                { LanceTroopCategory.Cavalry, 1 },
+                { LanceTroopCategory.HorseArcher, 0 }
             };
 
-            var template = new LanceTroopsTemplate(
-                new TroopData(0.5, ""), // melee
-                new TroopData(0.25, ""),
-                new TroopData(0.2, ""),
-                new TroopData(0.05, "")
-            );
+            var template = new LanceTroopsTemplate(new()
+            {
+                new TroopData(LanceTroopCategory.Infantry, 0.5, ""),
+                new TroopData(LanceTroopCategory.Ranged, 0.25, ""),
+                new TroopData(LanceTroopCategory.Cavalry, 0.2, ""),
+                new TroopData(LanceTroopCategory.HorseArcher, 0.05, "")
+            });
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
             // Adding one ranged (0 -> 1) to total 10 => share 0.1 <= 0.25 -> acceptable; should pick the most underrepresented among acceptable
-            Assert.AreEqual(LanceTroopType.Ranged, chosen);
+            Assert.AreEqual(LanceTroopCategory.Ranged, chosen);
         }
 
         [TestMethod]
         public void ChooseTroopTypeToGet_IfAllIncreaseAboveLikelihood_PicksHighestLikelihood()
         {
-            var current = new Dictionary<LanceTroopType, int>
+            var current = new Dictionary<LanceTroopCategory, int>
             {
-                { LanceTroopType.Infantry, 50 },
-                { LanceTroopType.Ranged, 49 },
-                { LanceTroopType.Cavalry, 49 },
-                { LanceTroopType.HorseArcher, 49 }
+                { LanceTroopCategory.Infantry, 50 },
+                { LanceTroopCategory.Ranged, 49 },
+                { LanceTroopCategory.Cavalry, 49 },
+                { LanceTroopCategory.HorseArcher, 49 }
             };
 
-            var template = new LanceTroopsTemplate(
-                new TroopData(0.01, "m"),
-                new TroopData(0.01, "r"),
-                new TroopData(0.01, "c"),
-                new TroopData(0.97, "h")
-            );
+            var template = new LanceTroopsTemplate(new()
+            {
+                new TroopData(LanceTroopCategory.Infantry, 0.01, "m"),
+                new TroopData(LanceTroopCategory.Ranged, 0.01, "r"),
+                new TroopData(LanceTroopCategory.Cavalry, 0.01, "c"),
+                new TroopData(LanceTroopCategory.HorseArcher, 0.97, "h")
+            });
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
-            Assert.AreEqual(LanceTroopType.HorseArcher, chosen);
+            Assert.AreEqual(LanceTroopCategory.HorseArcher, chosen);
         }
 
         [TestMethod]
         public void ChooseTroopTypeToGet_HandlesEmptyCurrentCounts()
         {
-            var current = new Dictionary<LanceTroopType, int>();
+            var current = new Dictionary<LanceTroopCategory, int>();
 
-            var template = new LanceTroopsTemplate(
-                new TroopData(0.4, "m"),
-                new TroopData(0.3, "r"),
-                new TroopData(0.2, "c"),
-                new TroopData(0.1, "h")
-            );
+            var template = new LanceTroopsTemplate(new()
+            {
+                new TroopData(LanceTroopCategory.Infantry, 0.4, "m"),
+                new TroopData(LanceTroopCategory.Ranged, 0.3, "r"),
+                new TroopData(LanceTroopCategory.Cavalry, 0.2, "c"),
+                new TroopData(LanceTroopCategory.HorseArcher, 0.1, "h")
+            });
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
             // With empty current, total = 0; adding one yields share 1.0 for whichever chosen; none will be <= likelihood, so pick highest likelihood
-            Assert.AreEqual(LanceTroopType.Infantry, chosen);
+            Assert.AreEqual(LanceTroopCategory.Infantry, chosen);
         }
         [TestMethod]
         public void ClampTroopQuality_NoChangeWhenSumBelowOne()
