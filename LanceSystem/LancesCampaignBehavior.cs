@@ -50,7 +50,7 @@ namespace LanceSystem
                 return;
             var lanceData = _notablesLance[pc.NotableLanceBelongsTo];
             var maxAmount = lanceData.CachedMaxLanceTroops;
-            LanceUtils.TransferTroopsBetweenTroopRosters(party.MemberRoster, lanceData.CurrentNotableLanceTroopRoster, party.MemberRoster.TotalManCount, maxAmount);
+            LanceUtils.TransferTroopsBetweenTroopRosters(party.MemberRoster, lanceData.CurrentNotableLanceTroopRoster, party.MemberRoster.TotalManCount, maxAmount.RoundedResultNumber);
             DestroyPartyAction.Apply(null, party);
         }
 
