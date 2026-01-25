@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Party;
-using TaleWorlds.Core;
 
 namespace LanceSystem.UI
 {

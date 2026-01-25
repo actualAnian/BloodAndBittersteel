@@ -63,7 +63,7 @@ namespace LanceSystem.Models
             {
                 var behavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
                 var notableLanceData = behavior.GetNotableData(lance.NotableId);
-                number.Add(lance.LanceRoster.TotalManCount, notableLanceData.Name);
+                number.Add(lance.LanceRoster.TotalManCount, new("lance troops"));
             }
             return number;
         }

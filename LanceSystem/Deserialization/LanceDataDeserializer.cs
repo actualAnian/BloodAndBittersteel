@@ -35,7 +35,7 @@ namespace LanceSystem.Deserialization
                 var lance = new Lance(CleanString(lanceElem.Element("StringId").Value),
                                       CleanString(lanceElem.Element("Name").Value),
                                       CleanString(lanceElem.Element("CultureId").Value),
-                                      ParseSettlementType(lanceElem.Element("SettlementType").Value),
+                                      ParseLanceOrigin(lanceElem.Element("LanceOriginType").Value),
                                       troops, 
                                       weight
                                       );
@@ -73,7 +73,7 @@ namespace LanceSystem.Deserialization
                 .ToList();
         }
 
-        private static LanceTemplateOriginType ParseSettlementType(string value)
+        private static LanceTemplateOriginType ParseLanceOrigin(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return LanceTemplateOriginType.All;
@@ -85,6 +85,7 @@ namespace LanceSystem.Deserialization
                 "town" => LanceTemplateOriginType.Town,
                 "settlement" => LanceTemplateOriginType.Village,
                 "castle" => LanceTemplateOriginType.Castle,
+                "mercenary" => LanceTemplateOriginType.Mercenary,
                 "all" => LanceTemplateOriginType.All,
                 _ => LanceTemplateOriginType.All
             };

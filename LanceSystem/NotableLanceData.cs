@@ -5,7 +5,6 @@ using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 
@@ -25,25 +24,17 @@ namespace LanceSystem
         private string _lanceTemplateId;
         public ExplainedNumber CachedMaxLanceTroops { get; set; }
         public List<float> CachedMaxTroopPerTier;
-        private LanceTroopsTemplate? _cachedTemplate;
-        public TextObject Name
+        private Lance? _cachedLance;
+        public Lance CurrentLance 
         {
             get
             {
-                var character = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId);
-                return LanceConfig.GetLanceName(character.HeroObject, character.HeroObject.HomeSettlement);
+                if (_cachedLance == null)
+                    _cachedLance = LanceTemplateManager.Instance.GetLanceFromId(_lanceTemplateId);
+                return _cachedLance;
             }
         }
-        public LanceTroopsTemplate CurrentTroopTemplate 
-        {
-            get
-            {
-                if (_cachedTemplate == null)
-                    _cachedTemplate = LanceTemplateManager.Instance.GetLanceFromId(_lanceTemplateId).Troops;
-                return _cachedTemplate;
-            }
-        }
-        public void SetLanceTemplate(Lance template) { _lanceTemplateId = template.StringId; _cachedTemplate = template.Troops; }
+        public void SetLanceTemplate(Lance template) { _lanceTemplateId = template.StringId; _cachedLance = template; }
         public IEnumerable<Lance> GetPossibleTemplates()
         {
             var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject.HomeSettlement;

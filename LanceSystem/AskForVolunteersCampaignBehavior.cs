@@ -1,5 +1,4 @@
-﻿using BloodAndBittersteel;
-using LanceSystem.Dialogues;
+﻿using LanceSystem.Dialogues;
 using System;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;

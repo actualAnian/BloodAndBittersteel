@@ -1,7 +1,4 @@
-﻿using HarmonyLib;
-using System.Reflection;
-using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.CampaignSystem.GameMenus;
+﻿using TaleWorlds.CampaignSystem.GameMenus;
 
 namespace LanceSystem.Patches
 {

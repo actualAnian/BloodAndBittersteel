@@ -15,8 +15,8 @@ namespace LanceSystem.UI
         readonly int _maxTroops; 
         public int LanceNumber { get; private set; }
         MBBindingList<PartyCharacterVM> _lanceTroops;
-        BasicTooltipViewModel _disbandLanceHint;
-        LancePartyVM _partyVM;
+        readonly BasicTooltipViewModel _disbandLanceHint;
+        readonly LancePartyVM _partyVM;
         public LanceVM(LancePartyVM partyVM, int lanceNumber, string name, MBBindingList<PartyCharacterVM> mainPartyTroops, string text, int maxTroops)
         {
             _partyVM = partyVM;

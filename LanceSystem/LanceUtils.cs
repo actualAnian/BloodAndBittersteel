@@ -1,16 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
-using static LanceSystem.LancesCampaignBehavior;
 
 namespace LanceSystem
 {
     public static class LanceUtils
     {
+        public static void TransferTroopsBetweenTroopRosters(TroopRoster fromRoster, TroopRoster toRoster, int amount, int maxAmountInToRoster)
+        {
+            if (amount <= 0) return;
+
+            // Compute current total in toRoster
+            var toElements = toRoster.GetTroopRoster();
+            int currentToTotal = toElements.Sum(e => e.Number);
+
+            int remainingCapacity = maxAmountInToRoster - currentToTotal;
+            if (remainingCapacity <= 0) return;
+
+            int remainingToMove = Math.Min(amount, remainingCapacity);
+            if (remainingToMove <= 0) return;
+
+            // Build entries from fromRoster
+            var fromElements = fromRoster.GetTroopRoster();
+            var entries = new List<(CharacterObject Character, int Count, int Tier)>();
+            foreach (var el in fromElements)
+            {
+                if (el.Number <= 0) continue;
+                var ch = el.Character;
+                if (ch == null) continue;
+                entries.Add((ch, el.Number, ch.Tier));
+            }
+
+            if (entries.Count == 0) return;
+
+            var tiers = entries.Select(e => e.Tier).Distinct().OrderByDescending(t => t).ToList();
+            var rnd = new Random();
+
+            foreach (var tier in tiers)
+            {
+                var sameTier = entries.Where(e => e.Tier == tier && e.Count > 0).ToList();
+                for (int i = sameTier.Count - 1; i > 0; i--)
+                {
+                    int j = rnd.Next(i + 1);
+                    var tmp = sameTier[i];
+                    sameTier[i] = sameTier[j];
+                    sameTier[j] = tmp;
+                }
+
+                foreach (var item in sameTier)
+                {
+                    if (remainingToMove <= 0) break;
+                    int available = fromRoster.GetTroopCount(item.Character);
+                    if (available <= 0) continue;
+
+                    int move = Math.Min(available, remainingToMove);
+                    if (move <= 0) continue;
+
+                    fromRoster.AddToCounts(item.Character, -move);
+                    toRoster.AddToCounts(item.Character, move);
+
+                    remainingToMove -= move;
+                    for (int k = 0; k < entries.Count; k++)
+                    {
+                        if (ReferenceEquals(entries[k].Character, item.Character))
+                        {
+                            entries[k] = (entries[k].Character, Math.Max(0, entries[k].Count - move), entries[k].Tier);
+                            break;
+                        }
+                    }
+                }
+
+                if (remainingToMove <= 0) break;
+            }
+        }
         public static int CalculateNumberOfTroopsToRemove(TroopRosterElement troop, List<LanceData> lances)
         {
             var character = troop.Character;

@@ -10,7 +10,6 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
-using static TaleWorlds.CampaignSystem.CampaignBehaviors.LordConversationsCampaignBehavior;
 
 namespace LanceSystem.Models
 {
@@ -111,8 +110,8 @@ namespace LanceSystem.Models
                 && troopsToGet > 0)
             {
                 troopsToGet--;
-                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentTroopTemplate);
-                string troopStringId = LanceModelUtils.ChooseNextTroopToRecruit(lanceData.CurrentTroopTemplate, troopType);
+                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.Troops);
+                string troopStringId = LanceModelUtils.ChooseNextTroopToRecruit(lanceData.CurrentLance.Troops, troopType);
                 var character = MBObjectManager.Instance.GetObject<CharacterObject>(troopStringId);
                 if (character == null)
                 {
@@ -127,7 +126,7 @@ namespace LanceSystem.Models
             var troopsToUpgrade = random.Next(DailyTroopsToUpgrade(notable));
             while (troopsToUpgrade > 0)
             {
-                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentTroopTemplate);
+                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.Troops);
                 var troopToUpgrade = LanceModelUtils.GetNextTroopToUpgrade(lanceData.CachedMaxTroopPerTier, lanceData.CurrentNotableLanceTroopRoster, troopType);
                 if (troopToUpgrade == null)
                     break;

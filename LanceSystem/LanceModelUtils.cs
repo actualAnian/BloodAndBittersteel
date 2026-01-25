@@ -11,6 +11,7 @@ namespace LanceSystem
 
     internal static class LanceModelUtils
     {
+        static readonly Random random = new();
         public static LanceTroopCategory ChooseNextTroopTypeToGet(TroopRoster roster, LanceTroopsTemplate lanceTemplate)
         {
             var troops = GetTroopTypeDistribution(roster);
@@ -26,7 +27,6 @@ namespace LanceSystem
                 g => g.Sum(t => t.Likelihood)
             );
 
-            // Ensure currentTroops has all keys
             var counts = new Dictionary<LanceTroopCategory, int>
             {
                 { LanceTroopCategory.Infantry, 0 },
@@ -52,7 +52,7 @@ namespace LanceSystem
                 var cnt = kv.Value;
                 double newShare = (total + 1) > 0 ? (double)(cnt + 1) / (double)(total + 1) : 1.0;
                 double target = likelihoods[type];
-                if (newShare <= target + 1e-12) // allow tiny epsilon
+                if (newShare <= target + 1e-12)
                 {
                     acceptable.Add((type, target - newShare));
                 }
@@ -60,7 +60,6 @@ namespace LanceSystem
 
             if (acceptable.Count > 0)
             {
-                // Choose the type with the largest gap (most underrepresented)
                 acceptable.Sort((a, b) => b.gap.CompareTo(a.gap));
                 return acceptable[0].type;
             }
@@ -237,7 +236,6 @@ namespace LanceSystem
                 _ => LanceTroopCategory.Infantry,
             };
         }
-        static Random random = new();
         // @TODO add tests for this method
         internal static CharacterObject? GetNextTroopToUpgrade(List<float> cachedMaxTroopPerTier, TroopRoster currentNotableLanceTroopRoster, LanceTroopCategory troopType)
         {

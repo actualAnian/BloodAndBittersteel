@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaleWorlds.CampaignSystem.Settlements;
+﻿using System.Collections.Generic;
 
 namespace LanceSystem.Deserialization
 {
@@ -12,6 +7,7 @@ namespace LanceSystem.Deserialization
         Town,
         Village,
         Castle,
+        Mercenary,
         All
     }
 

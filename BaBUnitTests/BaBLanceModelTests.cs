@@ -40,13 +40,13 @@ namespace BaBUnitTests
                 { LanceTroopCategory.HorseArcher, 0 }
             };
 
-            var template = new LanceTroopsTemplate(new()
-            {
+            var template = new LanceTroopsTemplate(
+            [
                 new TroopData(LanceTroopCategory.Infantry, 0.5, ""),
                 new TroopData(LanceTroopCategory.Ranged, 0.25, ""),
                 new TroopData(LanceTroopCategory.Cavalry, 0.2, ""),
                 new TroopData(LanceTroopCategory.HorseArcher, 0.05, "")
-            });
+            ]);
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
             // Adding one ranged (0 -> 1) to total 10 => share 0.1 <= 0.25 -> acceptable; should pick the most underrepresented among acceptable
@@ -64,13 +64,13 @@ namespace BaBUnitTests
                 { LanceTroopCategory.HorseArcher, 49 }
             };
 
-            var template = new LanceTroopsTemplate(new()
-            {
+            var template = new LanceTroopsTemplate(
+            [
                 new TroopData(LanceTroopCategory.Infantry, 0.01, "m"),
                 new TroopData(LanceTroopCategory.Ranged, 0.01, "r"),
                 new TroopData(LanceTroopCategory.Cavalry, 0.01, "c"),
                 new TroopData(LanceTroopCategory.HorseArcher, 0.97, "h")
-            });
+            ]);
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
             Assert.AreEqual(LanceTroopCategory.HorseArcher, chosen);
@@ -81,13 +81,13 @@ namespace BaBUnitTests
         {
             var current = new Dictionary<LanceTroopCategory, int>();
 
-            var template = new LanceTroopsTemplate(new()
-            {
+            var template = new LanceTroopsTemplate(
+            [
                 new TroopData(LanceTroopCategory.Infantry, 0.4, "m"),
                 new TroopData(LanceTroopCategory.Ranged, 0.3, "r"),
                 new TroopData(LanceTroopCategory.Cavalry, 0.2, "c"),
                 new TroopData(LanceTroopCategory.HorseArcher, 0.1, "h")
-            });
+            ]);
 
             var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
             // With empty current, total = 0; adding one yields share 1.0 for whichever chosen; none will be <= likelihood, so pick highest likelihood

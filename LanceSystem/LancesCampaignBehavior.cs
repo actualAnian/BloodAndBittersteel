@@ -3,7 +3,6 @@ using LanceSystem.Dialogues;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.Conversation;
@@ -16,6 +15,7 @@ using TaleWorlds.CampaignSystem.Settlements.Buildings;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 
@@ -48,7 +48,10 @@ namespace LanceSystem
         {
             if (party == null || party.PartyComponent is not DisbandedLancePartyComponent pc)
                 return;
-            DisbandPartyAction.StartDisband(party);
+            var lanceData = _notablesLance[pc.NotableLanceBelongsTo];
+            var maxAmount = lanceData.CachedMaxLanceTroops;
+            LanceUtils.TransferTroopsBetweenTroopRosters(party.MemberRoster, lanceData.CurrentNotableLanceTroopRoster, party.MemberRoster.TotalManCount, maxAmount);
+            DestroyPartyAction.Apply(null, party);
         }
 
         public NotableLanceData GetNotableLanceData(LanceData data)
@@ -191,7 +194,7 @@ namespace LanceSystem
                     list.Add(new(template, template.StringId, new BannerImageIdentifier(Clan.PlayerClan.Banner)));
                 }
                 MultiSelectionInquiryData inquiry = new("Lance Menu", "Choose your lance template", list, true, 1, 1, "Confirm", "Cancel", 
-                    (List<InquiryElement> list) =>
+                    list =>
                     {
                         var lance = (Lance)list[0].Identifier;
                         notableLanceData.SetLanceTemplate(lance);
@@ -201,7 +204,7 @@ namespace LanceSystem
             starter.AddPlayerLine("change_lance_name", "lance_options", "lord_pretalk", "{=lance_name_change}I wish to change the name of the lance", null, () =>
             {
                 var lanceData = PartyBase.MainParty.Lances().First(l => l.NotableId == CharacterObject.OneToOneConversationCharacter.StringId);
-                var text = new TextInquiryData("Lance Name", "Previous Name: " + lanceData.Name, true, true, "Confirm", "Cancel", (string s) => { }, null);
+                var text = new TextInquiryData("Lance Name", "Previous Name: " + lanceData.Name, true, true, "Confirm", "Cancel", s => { }, null);
                 InformationManager.ShowTextInquiry(text, true);
             });
             starter.AddPlayerLine("lance_options_cancel", "lance_options", "lord_pretalk", "Nevermind", null, null, 100, null);
@@ -246,10 +249,21 @@ namespace LanceSystem
             party.MemberRoster.Add(notableTroops);
             partyLanceTroops.Add(notableTroops);
             var lancesList = GetOrCreateLances(party);
-            var lanceName = LanceConfig.GetLanceName(notable, notable.BornSettlement).ToString();
+            var lanceName = GetLanceName(notable, notable.BornSettlement, lanceData.CurrentLance).ToString();
             lancesList.Add(new LanceData(partyLanceTroops, notable.StringId, notable.BornSettlement.StringId, lanceName));
             notableTroops.Clear();
         }
+        public static TextObject GetLanceName(Hero notable, Settlement settlement, Lance lance)
+        {
+            var text = GameTexts.FindText("str_lance_name", notable.Culture.StringId);
+            if (text.Value.Contains("ERROR"))
+                text = GameTexts.FindText("str_lance_name", "base");
+            GameTexts.SetVariable("TEMPLATE_NAME", lance.Name);
+            GameTexts.SetVariable("SETTLEMENT_NAME", settlement.Name);
+            GameTexts.SetVariable("NOTABLE_NAME", notable.Name);
+            return text;
+        }
+
         public void DisbandLanceInParty(PartyBase party, int lanceNumber, bool removeTroops) // if disbanded through lance ui, the troops are already removed from the party
         {
             if (party.Lances() == null || party.Lances().Count <= lanceNumber)
@@ -261,18 +275,19 @@ namespace LanceSystem
             if (removeTroops)
                 foreach (var troop in lanceToDisband.LanceRoster.GetTroopRoster())
                     party.MemberRoster.RemoveTroop(troop.Character, troop.Number);
-            lanceToDisband.GetNotableLanceData().PartyLanceBelongsTo = null;
+            RemoveLance(party.Lances(), lanceToDisband);
             DisbandedLancePartyComponent.CreateDisbandedLanceParty(lanceToDisband, party);
         }
         public void ReAddLanceToPlayerParty(MobileParty lanceParty)
         {
             if (lanceParty.PartyComponent is not DisbandedLancePartyComponent pc)
                 return;
-            _notablesLance[pc.NotableLanceBelongsTo].PartyLanceBelongsTo = MobileParty.MainParty.StringId;
+            var lanceData = _notablesLance[pc.NotableLanceBelongsTo];
+            lanceData.PartyLanceBelongsTo = MobileParty.MainParty.StringId;
             MobileParty.MainParty.MemberRoster.Add(lanceParty.MemberRoster);
 
             var notable = MBObjectManager.Instance.GetObject<CharacterObject>(pc.NotableLanceBelongsTo).HeroObject;
-            var lanceName = LanceConfig.GetLanceName(notable, notable.BornSettlement).ToString();
+            var lanceName = GetLanceName(notable, notable.BornSettlement, lanceData.CurrentLance).ToString();
             LanceData newLance = new(lanceParty.MemberRoster, pc.NotableLanceBelongsTo, pc.HomeSettlement.StringId, lanceName);
             lanceParty.Party.Lances().Add(newLance);
 

@@ -1,6 +1,5 @@
 ﻿using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
-using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 
 namespace LanceSystem

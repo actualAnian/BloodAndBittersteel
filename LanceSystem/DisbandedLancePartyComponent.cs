@@ -39,7 +39,9 @@ namespace LanceSystem
         public static MobileParty CreateDisbandedLanceParty(LanceData lanceToDisband, PartyBase previousOwner)
         {
             var settlement = MBObjectManager.Instance.GetObject<Settlement>(lanceToDisband.SettlementStringId);
-            MobileParty disbandedParty = MobileParty.CreateParty("disbanded_lance", new DisbandedLancePartyComponent(settlement, new("name"), settlement.Owner, lanceToDisband.NotableId));
+            var notable = MBObjectManager.Instance.GetObject<CharacterObject>(lanceToDisband.NotableId).HeroObject;
+            var lanceName = LancesCampaignBehavior.GetLanceName(notable, settlement, lanceToDisband.GetNotableLanceData().CurrentLance);
+            MobileParty disbandedParty = MobileParty.CreateParty("disbanded_lance", new DisbandedLancePartyComponent(settlement, lanceName, settlement.Owner, lanceToDisband.NotableId));
             disbandedParty.ActualClan = settlement.OwnerClan;
             disbandedParty.InitializeMobilePartyAroundPosition(lanceToDisband.LanceRoster, TroopRoster.CreateDummyTroopRoster(), previousOwner.Position, 5);
             disbandedParty.Party.SetVisualAsDirty();

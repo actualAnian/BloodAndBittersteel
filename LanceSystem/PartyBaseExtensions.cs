@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
-using static LanceSystem.LancesCampaignBehavior;
 
 namespace LanceSystem
 {

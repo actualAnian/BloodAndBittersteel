@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using LanceSystem.Deserialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,26 +60,34 @@ namespace LanceSystem.UI
                 lancesTroopRoster.Add(otherTroops);
                 return lancesTroopRoster;
             }
+            lancesTroopRoster.Add(otherTroops);
+            List<LanceData> list = PartyBase.MainParty.Lances();
+            for (int i = 0; i < list.Count; i++)
+                lancesTroopRoster.Add(TroopRoster.CreateDummyTroopRoster());
 
             foreach (var troop in PartyBase.MainParty.MemberRoster.GetTroopRoster())
             {
                 var character = troop.Character;
                 int total = troop.Number;
                 int woundedRemaining = troop.WoundedNumber;
-                foreach (var lance in PartyBase.MainParty.Lances())
+                List<LanceData> savedLances = PartyBase.MainParty.Lances();
+                for (int i = 0; i < savedLances.Count; i++)
                 {
-                    var lanceTroops = lance.LanceRoster;
+                    LanceData? savedLance = savedLances[i];
+                    var lanceTroops = savedLance.LanceRoster;
                     if (total <= 0)
                         break;
-
                     int inLance = lanceTroops.GetTroopCount(character);
                     if (inLance <= 0)
                         continue;
 
+                    var rosterForLanceVM = lancesTroopRoster[i + 1];
+                    rosterForLanceVM.AddToCounts(character, inLance);
+                    rosterForLanceVM.AddXpToTroop(character, troop.Xp);
                     int woundedHere = Math.Min(inLance, woundedRemaining);
                     if (woundedHere > 0)
                     {
-                        lanceTroops.WoundTroop(character, woundedHere);
+                        rosterForLanceVM.WoundTroop(character, woundedHere);
                         woundedRemaining -= woundedHere;
                     }
                     total -= inLance;
@@ -89,24 +96,6 @@ namespace LanceSystem.UI
                 {
                     int woundedInOther = Math.Min(total, woundedRemaining);
                     otherTroops.AddToCounts(character, total, false, woundedInOther);
-                }
-            }
-            lancesTroopRoster.Add(otherTroops);
-            foreach (var lance in PartyBase.MainParty.Lances())
-            {
-                var newTroopRoster = TroopRoster.CreateDummyTroopRoster();
-                newTroopRoster.Add(lance.LanceRoster);
-                lancesTroopRoster.Add(newTroopRoster);
-            }
-            foreach (var troop in PartyBase.MainParty.MemberRoster.GetTroopRoster())
-            {
-                foreach (var troopRoster in lancesTroopRoster)
-                {
-                    if (troopRoster.Contains(troop.Character))
-                    {
-                        int index = troopRoster.FindIndexOfTroop(troop.Character);
-                        troopRoster.SetElementXp(index, troop.Xp);
-                    }
                 }
             }
             return lancesTroopRoster;
@@ -244,7 +233,7 @@ namespace LanceSystem.UI
                 }
                 else
                 {
-                    PartyCharacterVM partyCharacterVM = new PartyCharacterVM(this.PartyScreenLogic, this, currentTroopRoster, currentTroopRoster.FindIndexOfTroop(troopRosterElement.Character), type, (PartyScreenLogic.PartyRosterSide)side, this.PartyScreenLogic.IsTroopTransferable(type, troopRosterElement.Character, side));
+                    PartyCharacterVM partyCharacterVM = new(this.PartyScreenLogic, this, currentTroopRoster, currentTroopRoster.FindIndexOfTroop(troopRosterElement.Character), type, (PartyScreenLogic.PartyRosterSide)side, this.PartyScreenLogic.IsTroopTransferable(type, troopRosterElement.Character, side));
                     partyList.Add(partyCharacterVM);
                     partyCharacterVM.ThrowOnPropertyChanged();
                     partyCharacterVM.IsLocked = false;
@@ -307,6 +296,8 @@ namespace LanceSystem.UI
                     lance.LanceRoster = removedRoster;
                 else
                     lance.LanceRoster = _lancesTroopRosters[i+1];
+                //lance.LanceRoster.Count
+                //lance.LanceRoster.SetElementWoundedNumber
             }
             //for (int lanceNumber = 1; lanceNumber < _lancesTroopRosters.Count; lanceNumber++)
             //{
@@ -325,6 +316,11 @@ namespace LanceSystem.UI
         {
             Instance = null;
             base.OnFinalize();
+            //foreach (var lance in PartyBase.MainParty.Lances())
+            //{
+            //    for (int i = 0; i < lance.LanceRoster.Count; i++)
+            //        lance.LanceRoster.SetElementWoundedNumber(i, 0);
+            //}
         }
         readonly FieldInfo _thisStock = AccessTools.Field("PartyTradeVM:_thisStock");
         private void RefreshPartyCharacter(PartyCharacterVM troop, TroopRoster rosterBelongedTo)
@@ -409,7 +405,7 @@ namespace LanceSystem.UI
                         _thisStock.SetValue(tradeData, newAmount);
                     }
                     tradeData.InitialThisStock = tradeData.ThisStock;
-                    tradeData.InitialOtherStock = tradeData.InitialOtherStock - transferAmount;
+                    tradeData.InitialOtherStock -= transferAmount;
                     tradeData.OtherStock = tradeData.InitialOtherStock;
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
                     RefreshPartyCharacter(vm, roster);
@@ -427,7 +423,7 @@ namespace LanceSystem.UI
                     vm.Troop = rosterData;
                     _thisStock.SetValue(tradeData, newAmount);
                     tradeData.InitialThisStock = tradeData.ThisStock;
-                    tradeData.InitialOtherStock = tradeData.InitialOtherStock + transferAmount;
+                    tradeData.InitialOtherStock += transferAmount;
                     tradeData.OtherStock = tradeData.InitialOtherStock;
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
                     RefreshPartyCharacter(vm, roster);
@@ -462,7 +458,7 @@ namespace LanceSystem.UI
                                 lanceTroop.Troop = rosterData;
                                 _thisStock.SetValue(tradeData, newAmount);
                                 tradeData.InitialThisStock = tradeData.ThisStock;
-                                tradeData.InitialOtherStock = tradeData.InitialOtherStock + transferAmount;
+                                tradeData.InitialOtherStock += transferAmount;
                                 tradeData.OtherStock = tradeData.InitialOtherStock;
                                 tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
                                 RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex]);
@@ -470,7 +466,7 @@ namespace LanceSystem.UI
                         }
                         else
                         {
-                            tradeData.InitialOtherStock = tradeData.InitialOtherStock + transferAmount;
+                            tradeData.InitialOtherStock += transferAmount;
                             tradeData.OtherStock = tradeData.InitialOtherStock;
                             tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
                             RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex]);
@@ -512,7 +508,7 @@ namespace LanceSystem.UI
                         _thisStock.SetValue(tradeData, newAmount);
                     }
                     tradeData.InitialThisStock = tradeData.ThisStock;
-                    tradeData.InitialOtherStock = tradeData.InitialOtherStock - transferAmount;
+                    tradeData.InitialOtherStock -= transferAmount;
                     tradeData.OtherStock = tradeData.InitialOtherStock;
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
 
@@ -539,7 +535,7 @@ namespace LanceSystem.UI
                             var newAmount = tradeData.ThisStock - transferAmount;
                             _thisStock.SetValue(tradeData, newAmount);
                         }
-                        tradeData.InitialOtherStock = tradeData.InitialOtherStock - transferAmount;
+                        tradeData.InitialOtherStock -= transferAmount;
                         tradeData.OtherStock = tradeData.InitialOtherStock;
                         tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
                         RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[i]);
@@ -608,8 +604,8 @@ namespace LanceSystem.UI
                 {
                     foreach (var troop in _lancesTroopRosters[i].GetTroopRoster())
                     {
-                        PartyScreenLogic.MemberRosters[1].RemoveTroop(troop.Character, troop.Number);
-
+                        var index = PartyScreenLogic.MemberRosters[1].FindIndexOfTroop(troop.Character);
+                        PartyScreenLogic.MemberRosters[1].AddToCountsAtIndex(index, -troop.Number, -troop.WoundedNumber);
                     }
                     foreach (var troopVM in OtherPartyTroops)
                         InitializePartyCharacterVM(troopVM, PartyScreenLogic.MemberRosters[0], troopVM.Troop.Number, true);
