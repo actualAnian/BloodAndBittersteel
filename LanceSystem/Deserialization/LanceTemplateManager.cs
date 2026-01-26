@@ -23,11 +23,11 @@ namespace LanceSystem.Deserialization
             Lances = LanceDataDeserializer.LoadFromFile(_path);
             Lances.Add("fallback", FallBackLance);
         }
-        public IEnumerable<Lance> GetLances(string cultureId, LanceTemplateOriginType settlementType)
+        public IEnumerable<Lance> GetLances(string cultureId, LanceTemplateOriginType originType)
         {
             var result = Lances.Values.Where(l =>
                 l.CultureId == cultureId &&
-                (l.LanceOriginType == settlementType ||
+                (l.LanceOriginType == originType ||
                  l.LanceOriginType == LanceTemplateOriginType.All));
             return result.Any() ? result : new List<Lance> { FallBackLance };
         }

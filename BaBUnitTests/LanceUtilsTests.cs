@@ -1,4 +1,5 @@
-﻿using LanceSystem;
+﻿using LanceSystem.LanceDataClasses;
+using LanceSystem.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 
@@ -44,7 +45,7 @@ namespace BaBUnitTests
             var r2 = TroopRoster.CreateDummyTroopRoster();
             r2.AddToCounts(mockObj, 5);
 
-            var lances = new List<LanceData> { new(r1, string.Empty, string.Empty, string.Empty), new(r2, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r1, string.Empty, string.Empty, string.Empty), new NotableLanceData(r2, string.Empty, string.Empty, string.Empty) };
 
             int result = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);
 
@@ -63,7 +64,7 @@ namespace BaBUnitTests
             var r = TroopRoster.CreateDummyTroopRoster();
             r.AddToCounts(mockObj, 5);
 
-            var lances = new List<LanceData> { new(r, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r, string.Empty, string.Empty, string.Empty) };
 
             int result = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);
 
@@ -85,7 +86,7 @@ namespace BaBUnitTests
             var r3 = TroopRoster.CreateDummyTroopRoster();
             r3.AddToCounts(mockObj, 6);
 
-            var lances = new List<LanceData> { new(r1, string.Empty, string.Empty, string.Empty), new(r2, string.Empty, string.Empty, string.Empty), new(r3, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r1, string.Empty, string.Empty, string.Empty), new NotableLanceData(r2, string.Empty, string.Empty, string.Empty), new NotableLanceData(r3, string.Empty, string.Empty, string.Empty) };
 
             int result = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);
 
@@ -109,7 +110,7 @@ namespace BaBUnitTests
             var r2 = TroopRoster.CreateDummyTroopRoster();
             r2.AddToCounts(mockObj, 4);
 
-            var lances = new List<LanceData> { new(r1, string.Empty, string.Empty, string.Empty), new(r2, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r1, string.Empty, string.Empty, string.Empty), new NotableLanceData(r2, string.Empty, string.Empty, string.Empty) };
 
             var originalTotal = SumLanceCounts(lances, mockObj);
             int toRemove = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);
@@ -135,7 +136,7 @@ namespace BaBUnitTests
             var r2 = TroopRoster.CreateDummyTroopRoster();
             r2.AddToCounts(mockObj, 5);
 
-            var lances = new List<LanceData> { new(r1, string.Empty, string.Empty, string.Empty), new(r2, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r1, string.Empty, string.Empty, string.Empty), new NotableLanceData(r2, string.Empty, string.Empty, string.Empty) };
 
             SumLanceCounts(lances, mockObj);
             int toRemove = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);
@@ -162,7 +163,7 @@ namespace BaBUnitTests
             var r2 = TroopRoster.CreateDummyTroopRoster();
             r2.AddToCounts(mockObj, 10);
 
-            var lances = new List<LanceData> { new(r1, string.Empty, string.Empty, string.Empty), new(r2, string.Empty, string.Empty, string.Empty) };
+            var lances = new List<LanceData> { new NotableLanceData(r1, string.Empty, string.Empty, string.Empty), new NotableLanceData(r2, string.Empty, string.Empty, string.Empty) };
 
             var originalCounts = new List<int> { r1.GetTroopCount(mockObj), r2.GetTroopCount(mockObj) };
             int toRemove = LanceUtils.CalculateNumberOfTroopsToRemove(el, lances);

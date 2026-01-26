@@ -1,4 +1,6 @@
 ﻿using LanceSystem.Deserialization;
+using LanceSystem.LanceDataClasses;
+using LanceSystem.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +9,7 @@ using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
-using TaleWorlds.Library;
 using TaleWorlds.Localization;
-using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.Models
 {
@@ -24,7 +24,7 @@ namespace LanceSystem.Models
         public override ExplainedNumber MaxLancesForParty(PartyBase party)
         {
             var number = new ExplainedNumber();
-            number.Add(LancesFromClanTier(party.Owner.Clan.Tier), new("{bab_lances_from_clan}Lances from clan tier"));
+            number.Add(LancesFromClanTier(party.Owner.Clan.Tier), new("{lance_lances_from_clan}Lances from clan tier"));
             return number;
         }
         private static int BaseLanceCount => 20;
@@ -32,7 +32,7 @@ namespace LanceSystem.Models
         public override ExplainedNumber GetMaxTroopsInLance(Hero notable)
         {
             var number = new ExplainedNumber();
-            number.Add(BaseLanceCount, new("{=bab_lance_base}Base value"));
+            number.Add(BaseLanceCount, new("{=lance_lance_base}Base value"));
             GetTroopsInLanceFromRelation(notable, ref number);
             GetTroopsInLanceFromProsperity(notable, ref number);
             GetTroopsInLanceFromProjects(notable, ref number);
@@ -41,12 +41,12 @@ namespace LanceSystem.Models
         public void GetTroopsInLanceFromRelation(Hero notable, ref ExplainedNumber value)
         {
             int num = (int)(notable.GetRelationWithPlayer() / 10);
-            var text = new TextObject("{=bab_lance_size_from_relation}From relation");
+            var text = new TextObject("{=lance_lance_size_from_relation}From relation");
             value.Add(num, text);
         }
         public void GetTroopsInLanceFromProsperity(Hero notable, ref ExplainedNumber value)
         {
-            var text = new TextObject("{=bab_lance_size_from_prosperity}From prosperity");
+            var text = new TextObject("{=lance_lance_size_from_prosperity}From prosperity");
             if (notable.BornSettlement.IsTown)
             {
                 int num = (int)((notable.BornSettlement.Town.Prosperity - 2000f)/ 100);
@@ -76,7 +76,7 @@ namespace LanceSystem.Models
                     var level = building.CurrentLevel;
                     var gain = LanceModelUtils.GetTroopsFromBuildingTypeAndLevelFromItself(buildingType, level);
                     if (gain == 0) continue;
-                    var explanationText = new TextObject("{=bab_from_project}From {PROJECT}, level {LEVEL}");
+                    var explanationText = new TextObject("{=lance_from_project}From {PROJECT}, level {LEVEL}");
                     GameTexts.SetVariable("PROJECT", building.BuildingType.Name);
                     GameTexts.SetVariable("LEVEL", level);
                     value.Add(gain, explanationText);
@@ -90,43 +90,30 @@ namespace LanceSystem.Models
                     var level = building.CurrentLevel;
                     var gain = LanceModelUtils.GetTroopsFromBuildingTypeAndLevelFromBoundTown(buildingType, level);
                     if (gain == 0) continue;
-                    var explanationText = new TextObject("{=bab_from_bound_project}From bound settlements {PROJECT}, level {LEVEL}");
+                    var explanationText = new TextObject("{=lance_from_bound_project}From bound settlements {PROJECT}, level {LEVEL}");
                     GameTexts.SetVariable("PROJECT", building.BuildingType.Name);
                     GameTexts.SetVariable("LEVEL", level);
                     value.Add(gain, explanationText);
                 }
             }
         }
-        public override void UpdateNotablesLanceTroops(Hero notable, NotableLanceData lanceData)
+        public override void UpdateNotablesLanceTroops(Hero notable, SettlementNotableLanceInfo lanceData)
         {
             RecruitNewNotableTroops(notable, lanceData);
             IncreaseNotableTroopsTier(notable, lanceData);
         }
-        private void RecruitNewNotableTroops(Hero notable, NotableLanceData lanceData)
+        private void RecruitNewNotableTroops(Hero notable, SettlementNotableLanceInfo lanceData)
         {
             var availableLanceTroops = lanceData.CurrentNotableLanceTroopRoster;
-            int troopsToGet = DailyTroopsGet(notable);
-            while (availableLanceTroops.Count < lanceData.CachedMaxLanceTroops.RoundedResultNumber
-                && troopsToGet > 0)
-            {
-                troopsToGet--;
-                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.Troops);
-                string troopStringId = LanceModelUtils.ChooseNextTroopToRecruit(lanceData.CurrentLance.Troops, troopType);
-                var character = MBObjectManager.Instance.GetObject<CharacterObject>(troopStringId);
-                if (character == null)
-                {
-                    InformationManager.DisplayMessage(new($"No troop with id {troopStringId}"));
-                    break;
-                }
-                availableLanceTroops.AddToCounts(character, 1);
-            }
+            int troopsToGet = Math.Min(lanceData.CachedMaxLanceTroops.RoundedResultNumber, DailyTroopsGet(notable));
+            LanceModelUtils.RecruitNTroopsToRoster(troopsToGet, availableLanceTroops, lanceData.CurrentLance.TroopsTemplate);
         }
-        private void IncreaseNotableTroopsTier(Hero notable, NotableLanceData lanceData)
+        private void IncreaseNotableTroopsTier(Hero notable, SettlementNotableLanceInfo lanceData)
         {
             var troopsToUpgrade = random.Next(DailyTroopsToUpgrade(notable));
             while (troopsToUpgrade > 0)
             {
-                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.Troops);
+                var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.TroopsTemplate);
                 var troopToUpgrade = LanceModelUtils.GetNextTroopToUpgrade(lanceData.CachedMaxTroopPerTier, lanceData.CurrentNotableLanceTroopRoster, troopType);
                 if (troopToUpgrade == null)
                     break;
@@ -215,7 +202,7 @@ namespace LanceSystem.Models
         public override ExplainedNumber GetRetinueSizeLimit(PartyBase party)
         {
             var number = new ExplainedNumber();
-            number.Add(MaxMainPartySize(party.Owner.Clan.Tier), new("{=bab_lance_party_size_base}From clan tier"));
+            number.Add(MaxMainPartySize(party.Owner.Clan.Tier), new("{=lance_lance_party_size_base}From clan tier"));
             GetRetinueSizeFromPerks(party, ref number);
             return number;
         }

@@ -1,6 +1,5 @@
-
-using LanceSystem;
 using LanceSystem.Deserialization;
+using LanceSystem.Utils;
 
 namespace BaBUnitTests
 {
@@ -93,6 +92,21 @@ namespace BaBUnitTests
             // With empty current, total = 0; adding one yields share 1.0 for whichever chosen; none will be <= likelihood, so pick highest likelihood
             Assert.AreEqual(LanceTroopCategory.Infantry, chosen);
         }
+        [TestMethod]
+        public void ChooseTroopTypeToGet_NotFull()
+        {
+            var current = new Dictionary<LanceTroopCategory, int>();
+
+            var template = new LanceTroopsTemplate(
+            [
+                new TroopData(LanceTroopCategory.Infantry, 0.6, "m"),
+                new TroopData(LanceTroopCategory.Cavalry, 0.4, "c"),
+            ]);
+
+            var chosen = LanceModelUtils.DetermineTroopTypeToAdd(current, template);
+            Assert.AreEqual(LanceTroopCategory.Infantry, chosen);
+        }
+
         [TestMethod]
         public void ClampTroopQuality_NoChangeWhenSumBelowOne()
         {

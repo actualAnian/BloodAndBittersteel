@@ -1,17 +1,36 @@
-using System.Collections.Generic;
-using TaleWorlds.Core;
-using TaleWorlds.CampaignSystem.Roster;
-using TaleWorlds.CampaignSystem;
-using System;
-using System.Linq;
 using LanceSystem.Deserialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Roster;
+using TaleWorlds.Core;
+using TaleWorlds.Library;
+using TaleWorlds.ObjectSystem;
 
-namespace LanceSystem
+namespace LanceSystem.Utils
 {
 
     internal static class LanceModelUtils
     {
         static readonly Random random = new();
+        public static void RecruitNTroopsToRoster(int troopsToGet, TroopRoster roster, LanceTroopsTemplate template)
+        {
+            while (troopsToGet > 0)
+            {
+                troopsToGet--;
+                var troopType = ChooseNextTroopTypeToGet(roster, template);
+                string troopStringId = ChooseNextTroopToRecruit(template, troopType);
+                var character = MBObjectManager.Instance.GetObject<CharacterObject>(troopStringId);
+                if (character == null)
+                {
+                    InformationManager.DisplayMessage(new($"No troop with id {troopStringId}"));
+                    break;
+                }
+                roster.AddToCounts(character, 1);
+            }
+
+        }
         public static LanceTroopCategory ChooseNextTroopTypeToGet(TroopRoster roster, LanceTroopsTemplate lanceTemplate)
         {
             var troops = GetTroopTypeDistribution(roster);
@@ -19,13 +38,14 @@ namespace LanceSystem
         }
         internal static LanceTroopCategory DetermineTroopTypeToAdd(Dictionary<LanceTroopCategory, int>? currentTroops, LanceTroopsTemplate lanceTemplate)
         {
-            // Extract likelihoods (expected to be normalized between 0 and 1)
-            var likelihoods = lanceTemplate.TroopTypes
-            .GroupBy(t => t.Category)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Sum(t => t.Likelihood)
-            );
+            var likelihoods = new Dictionary<LanceTroopCategory, double>();
+            foreach (LanceTroopCategory value in Enum.GetValues(typeof(LanceTroopCategory)))
+                likelihoods[value] = 0;
+
+            foreach (var t in lanceTemplate.TroopTypes)
+            {
+                likelihoods[t.Category] += t.Likelihood;
+            }
 
             var counts = new Dictionary<LanceTroopCategory, int>
             {
@@ -117,10 +137,10 @@ namespace LanceSystem
 
             if (pairs == null) return res;
 
-            foreach (var p in pairs)
+            foreach (var (type, number) in pairs)
             {
-                if (!res.ContainsKey(p.type)) res[p.type] = 0;
-                res[p.type] += p.number;
+                if (!res.ContainsKey(type)) res[type] = 0;
+                res[type] += number;
             }
 
             return res;
@@ -299,10 +319,10 @@ namespace LanceSystem
             if (weightSum <= 0) return candidates[0].obj;
             int r = random.Next(weightSum);
             int acc = 0;
-            foreach (var c in candidates)
+            foreach (var (obj, weight) in candidates)
             {
-                acc += c.weight;
-                if (r < acc) return c.obj;
+                acc += weight;
+                if (r < acc) return obj;
             }
             return candidates[0].obj;
         }

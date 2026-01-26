@@ -8,9 +8,9 @@ using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 
-namespace LanceSystem
+namespace LanceSystem.LanceDataClasses
 {
-    public class NotableLanceData
+    public class SettlementNotableLanceInfo
     {
         [SaveableProperty(1)]
         public string NotableId { get; private set; }
@@ -48,7 +48,7 @@ namespace LanceSystem
             InformationManager.DisplayMessage(new($"error getting the settlement type from {settlement.Name}"));
             return LanceTemplateOriginType.All;
         }
-        public NotableLanceData(Hero notable, TroopRoster lanceRoster, bool isTaken, string? lanceTemplateId = null)
+        public SettlementNotableLanceInfo(Hero notable, TroopRoster lanceRoster, bool isTaken, string? lanceTemplateId = null)
         {
             NotableId = notable.StringId;
             CurrentNotableLanceTroopRoster = lanceRoster;

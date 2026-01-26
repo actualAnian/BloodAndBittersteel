@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using LanceSystem.CampaignBehaviors;
+using LanceSystem.LanceDataClasses;
+using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 

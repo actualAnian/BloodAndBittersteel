@@ -6,6 +6,7 @@ using TaleWorlds.MountAndBlade;
 using LanceSystem.Deserialization;
 using BloodAndBittersteel;
 using LanceSystem.Models;
+using LanceSystem.CampaignBehaviors;
 
 namespace LanceSystem
 {
@@ -18,8 +19,11 @@ namespace LanceSystem
             {
                 campaignGameStarter.AddBehavior(new LancesCampaignBehavior());
                 campaignGameStarter.AddBehavior(new AskForVolunteersCampaignBehavior());
+                campaignGameStarter.AddBehavior(new MercenaryLancesInTavernsCampaignBehavior());
+                campaignGameStarter.AddBehavior(new NotablesInCastlesBehavior());
 
                 campaignGameStarter.AddModel(new LancePartySizeLimitModel(gameStarterObject.GetExistingModel<PartySizeLimitModel>()));
+                campaignGameStarter.AddModel(new LanceTavernMercenaryTroopsModel());
             }
         }
         protected override void OnSubModuleLoad()

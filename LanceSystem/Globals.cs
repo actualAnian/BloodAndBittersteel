@@ -1,9 +1,7 @@
-﻿using BloodAndBittersteel;
-
-namespace LanceSystem
+﻿namespace LanceSystem
 {
     public static class Globals
     {
-        public static ICustomSettingsProvider LanceSettings => BaBSettings.Instance;
+        //public static ICustomSettingsProvider LanceSettings => LanceSettings.Instance;
     }
 }

@@ -419,7 +419,7 @@
                                   </Children>
                                 </PartyHeaderToggleWidget>
 
-                                <Widget Id="TroopListId" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" IsVisible="@IsNotDisbanded">
+                                <Widget Id="TroopListId" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren">
                                   <Children>
                                     <!--_____Main Party Troops_______-->
                                     <PartyListPanel Id="List" DataSource="{LanceTroops}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" AcceptDrop="true" Command.Drop="..\ExecuteTransferWithParameters" CommandParameter.Drop="MainPartyTroops" StackLayout.LayoutMethod="VerticalBottomToTop" MinIndex="1" MaxIndex="1000000" StepSize="10" AutoScrollTopOffset="150" AutoScrollBottomOffset="150">

@@ -24,7 +24,7 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_neutral_14}No one here is prepared to leave their work.",
             "{=lance_volunteer_response_neutral_15}None are available to follow you.",
             "{=lance_volunteer_response_neutral_16}No one here is looking to leave their current obligations.",
-            "{=lance_volunteer_response_neutral_17}There is no lack of men — only of freedom.",
+            "{=lance_volunteer_response_neutral_17}There is no lack of men, only of freedom.",
             "{=lance_volunteer_response_neutral_18}No volunteers present themselves today.",
             "{=lance_volunteer_response_neutral_19}There are no willing hands at this time."
         };
@@ -45,12 +45,12 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_courteous_13}I wish I could be of greater help, but there are none.",
             "{=lance_volunteer_response_courteous_14}None here are free to follow another banner.",
             "{=lance_volunteer_response_courteous_15}We have no men who may answer your call.",
-            "{=lance_volunteer_response_courteous_16}None are free — though your request is well received.",
+            "{=lance_volunteer_response_courteous_16}None are free, though your request is well received.",
             "{=lance_volunteer_response_courteous_17}No volunteers today, my {?PLAYER.GENDER}lady{?}lord{\\?}."
         };
         static readonly List<string> SlightlyCourteous = new()
         {
-            "{=lance_volunteer_response_slight_01}You have some name, at least — but no men to offer.",
+            "{=lance_volunteer_response_slight_01}You have some name, at least, but I have no men to offer.",
             "{=lance_volunteer_response_slight_02}Your request is heard, though none may answer it.",
             "{=lance_volunteer_response_slight_03}I see your intent, but there are no volunteers here.",
             "{=lance_volunteer_response_slight_04}You ask plainly enough, yet none are free.",
@@ -125,7 +125,7 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_brazen_t1_02}Ambition alone does not earn followers.",
             "{=lance_volunteer_response_brazen_t1_03}Men here choose carefully whom they serve.",
             "{=lance_volunteer_response_brazen_t1_04}This is not a call that stirs many hearts.",
-            "{=lance_volunteer_response_brazen_t1_05}You may ask — that is all.",
+            "{=lance_volunteer_response_brazen_t1_05}You may ask. That is all.",
             "{=lance_volunteer_response_brazen_t1_06}Not every banner finds takers.",
             "{=lance_volunteer_response_brazen_t1_07}Men are not so easily impressed.",
             "{=lance_volunteer_response_brazen_t1_08}You expect more than is owed.",
@@ -153,20 +153,20 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_female_t0_04}You would have men die, yet you’ve never stood where they stand.",
             "{=lance_volunteer_response_female_t0_05}War does not answer to soft hands, no matter how bold the tongue.",
             "{=lance_volunteer_response_female_t0_06}I will not mock my people by sending them to a woman’s banner.",
-            "{=lance_volunteer_response_female_t0_07}Men follow strength — not novelty.",
+            "{=lance_volunteer_response_female_t0_07}Men follow strength, not novelty.",
             "{=lance_volunteer_response_female_t0_08}This land has seen many fools, but few so misplaced.",
             "{=lance_volunteer_response_female_t0_09}You should seek a hearth, not soldiers.",
             "{=lance_volunteer_response_female_t0_10}No man here would shame himself by following you."
         }; 
         static readonly List<string> FemaleTier1 = new()
         {
-            "{=lance_volunteer_response_female_t1_01}Your name is spoken, but doubts remain — especially given who you are.",
+            "{=lance_volunteer_response_female_t1_01}Your name is spoken, but doubts remain, especially given who you are.",
             "{=lance_volunteer_response_female_t1_02}Some find it… unusual, seeing a woman ask for men.",
             "{=lance_volunteer_response_female_t1_03}Men hesitate when custom is bent too far.",
             "{=lance_volunteer_response_female_t1_04}You are bold, I grant that, though many still question it.",
             "{=lance_volunteer_response_female_t1_05}Not all are ready to serve beneath a woman’s command.",
             "{=lance_volunteer_response_female_t1_06}This is no tale to stir men into following you.",
-            "{=lance_volunteer_response_female_t1_07}Such things invite talk — and caution.",
+            "{=lance_volunteer_response_female_t1_07}Such things invite talk, and caution.",
             "{=lance_volunteer_response_female_t1_08}Men here weigh tradition heavily.",
             "{=lance_volunteer_response_female_t1_09}Some find your presence… unsettling.",
         };
@@ -185,17 +185,17 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_gang_06}We survive by staying put.",
             "{=lance_volunteer_response_gang_07}My men answer to me, not passing ambitions.",
             "{=lance_volunteer_response_gang_08}They know better than to follow promises.",
-            "{=lance_volunteer_response_gang_09}War chews men up — smart ones stay here.",
+            "{=lance_volunteer_response_gang_09}War chews men up. Smart ones stay here.",
             "{=lance_volunteer_response_gang_10}No volunteers. No fools."
         };
-        static readonly List<string> MerchantLines= new()
+        static readonly List<string> MerchantLines = new()
         {
             "{=lance_volunteer_response_merch_01}Trade keeps men fed better than war.",
             "{=lance_volunteer_response_merch_02}Those with sense keep to their ledgers.",
             "{=lance_volunteer_response_merch_03}Risk is best avoided when profit is steady.",
             "{=lance_volunteer_response_merch_04}No one leaves honest work lightly.",
             "{=lance_volunteer_response_merch_05}Men here value coin over glory.",
-            "{=lance_volunteer_response_merch_06}Uncertainty frightens investors — and families.",
+            "{=lance_volunteer_response_merch_06}Uncertainty frightens investors and families.",
             "{=lance_volunteer_response_merch_07}War disrupts markets, not inspires them.",
             "{=lance_volunteer_response_merch_08}There is little appetite for danger today.",
             "{=lance_volunteer_response_merch_09}Stability keeps men where they are.",
@@ -222,7 +222,7 @@ namespace LanceSystem.Dialogues
             "{=lance_volunteer_response_artisan_04}No one abandons their trade lightly.",
             "{=lance_volunteer_response_artisan_05}War dulls talents better used elsewhere.",
             "{=lance_volunteer_response_artisan_06}Our work is our survival.",
-            "{=lance_volunteer_response_artisan_07}Men here build — not destroy.",
+            "{=lance_volunteer_response_artisan_07}Men here build, not destroy.",
             "{=lance_volunteer_response_artisan_08}There are no idle hands.",
             "{=lance_volunteer_response_artisan_09}Craft keeps men grounded.",
             "{=lance_volunteer_response_artisan_10}None wish to leave their work."
@@ -240,7 +240,7 @@ namespace LanceSystem.Dialogues
                     if (notable.IsHeadman) pool.AddRange(HeadmanLines);
                     if (notable.IsMerchant) pool.AddRange(MerchantLines);
                     if (notable.IsArtisan) pool.AddRange(ArtisanLines);
-                    if (Globals.LanceSettings.FemalePrejudice && isFemale) pool.AddRange(Female_T0);
+                    if (LanceSettings.Instance.FemalePrejudice && isFemale) pool.AddRange(Female_T0);
                     break;
 
                 case 1:
@@ -251,7 +251,7 @@ namespace LanceSystem.Dialogues
                     if (notable.IsHeadman) pool.AddRange(HeadmanLines);
                     if (notable.IsMerchant) pool.AddRange(MerchantLines);
                     if (notable.IsArtisan) pool.AddRange(ArtisanLines);
-                    if (Globals.LanceSettings.FemalePrejudice && isFemale) pool.AddRange(FemaleTier1);
+                    if (LanceSettings.Instance.FemalePrejudice && isFemale) pool.AddRange(FemaleTier1);
                     break;
                 case 2:
                     pool.AddRange(Suspicious_T2);
@@ -262,7 +262,7 @@ namespace LanceSystem.Dialogues
                     if (notable.IsHeadman) pool.AddRange(HeadmanLines);
                     if (notable.IsMerchant) pool.AddRange(MerchantLines);
                     if (notable.IsArtisan) pool.AddRange(ArtisanLines);
-                    if (Globals.LanceSettings.FemalePrejudice && isFemale) pool.AddRange(FemaleTier2);
+                    if (LanceSettings.Instance.FemalePrejudice && isFemale) pool.AddRange(FemaleTier2);
                     break;
                 default:
                     pool.AddRange(Neutral);

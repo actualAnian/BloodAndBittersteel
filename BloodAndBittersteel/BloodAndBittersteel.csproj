@@ -16,10 +16,10 @@
       <HintPath>%(Identity)</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MCMv5">
-      <HintPath>_Module\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>
+	<Reference Include="MCMv5">
+	  <HintPath>$(SolutionDir)_Module\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>
     </Reference>
-    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
+	  <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
       <HintPath>%(Identity)</HintPath>
       <Private>False</Private>
     </Reference>

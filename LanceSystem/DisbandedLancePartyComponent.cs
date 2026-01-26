@@ -1,4 +1,6 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using LanceSystem.CampaignBehaviors;
+using LanceSystem.LanceDataClasses;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Party.PartyComponents;
 using TaleWorlds.CampaignSystem.Roster;
@@ -36,11 +38,11 @@ namespace LanceSystem
             _owner = owner;
             _notableLanceBelongsTo = notableLanceBelongsTo;
         }
-        public static MobileParty CreateDisbandedLanceParty(LanceData lanceToDisband, PartyBase previousOwner)
+        public static MobileParty CreateDisbandedLanceParty(NotableLanceData lanceToDisband, PartyBase previousOwner)
         {
             var settlement = MBObjectManager.Instance.GetObject<Settlement>(lanceToDisband.SettlementStringId);
             var notable = MBObjectManager.Instance.GetObject<CharacterObject>(lanceToDisband.NotableId).HeroObject;
-            var lanceName = LancesCampaignBehavior.GetLanceName(notable, settlement, lanceToDisband.GetNotableLanceData().CurrentLance);
+            var lanceName = LancesCampaignBehavior.GetLanceName(notable, settlement, lanceToDisband.GetSettlementNotableLanceInfo().CurrentLance);
             MobileParty disbandedParty = MobileParty.CreateParty("disbanded_lance", new DisbandedLancePartyComponent(settlement, lanceName, settlement.Owner, lanceToDisband.NotableId));
             disbandedParty.ActualClan = settlement.OwnerClan;
             disbandedParty.InitializeMobilePartyAroundPosition(lanceToDisband.LanceRoster, TroopRoster.CreateDummyTroopRoster(), previousOwner.Position, 5);

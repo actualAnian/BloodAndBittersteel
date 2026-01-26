@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LanceSystem.LanceDataClasses;
+using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Naval;
@@ -61,9 +62,7 @@ namespace LanceSystem.Models
             number.Add(Campaign.Current.Models.LanceModel().GetRetinueSizeLimit(party).RoundedResultNumber, new("{=lance_retinue_size}Retinue size"));
             foreach (LanceData lance in party.Lances())
             {
-                var behavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
-                var notableLanceData = behavior.GetNotableData(lance.NotableId);
-                number.Add(lance.LanceRoster.TotalManCount, new("lance troops"));
+                number.Add(lance.TotalManCount, new("lance troops"));
             }
             return number;
         }

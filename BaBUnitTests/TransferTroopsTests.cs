@@ -1,5 +1,5 @@
 ﻿using BaBUnitTests.TestUtilities;
-using LanceSystem;
+using LanceSystem.Utils;
 using System.Reflection;
 using System.Runtime.Serialization;
 using TaleWorlds.CampaignSystem;
@@ -90,8 +90,10 @@ namespace BaBUnitTests
         [TestMethod]
         public void Transfer_AmountLessThanOrEqualZero_NoChange()
         {
-            var c = new CharacterObject() { };
-            c.Level = 2;
+            var c = new CharacterObject
+            {
+                Level = 2
+            };
 
             var from = TroopRoster.CreateDummyTroopRoster();
             from.AddToCounts(c, 5);
@@ -109,9 +111,13 @@ namespace BaBUnitTests
         [TestMethod]
         public void Transfer_AmountGreaterThanAvailable_MovesAll()
         {
-            var a = new CharacterObject() { }; a.Level = 2;
-            var b = new CharacterObject() { }; b.Level = 1;
-
+            var a = new CharacterObject
+            {
+                Level = 2
+            }; var b = new CharacterObject
+            {
+                Level = 1
+            };
             var from = TroopRoster.CreateDummyTroopRoster();
             from.AddToCounts(a, 3);
             from.AddToCounts(b, 2);
@@ -180,8 +186,10 @@ namespace BaBUnitTests
         [TestMethod]
         public void Transfer_NoMoveWhenMaxLessOrEqualCurrentToTotal()
         {
-            var cA = new CharacterObject() { };
-            cA.Level = 3;
+            var cA = new CharacterObject
+            {
+                Level = 3
+            };
 
             var from = TroopRoster.CreateDummyTroopRoster();
             from.AddToCounts(cA, 5);

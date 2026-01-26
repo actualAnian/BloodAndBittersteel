@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LanceSystem.LanceDataClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 
-namespace LanceSystem
+namespace LanceSystem.Utils
 {
     public static class LanceUtils
     {
@@ -44,27 +45,25 @@ namespace LanceSystem
                 for (int i = sameTier.Count - 1; i > 0; i--)
                 {
                     int j = rnd.Next(i + 1);
-                    var tmp = sameTier[i];
-                    sameTier[i] = sameTier[j];
-                    sameTier[j] = tmp;
+                    (sameTier[j], sameTier[i]) = (sameTier[i], sameTier[j]);
                 }
 
-                foreach (var item in sameTier)
+                foreach (var (Character, Count, Tier) in sameTier)
                 {
                     if (remainingToMove <= 0) break;
-                    int available = fromRoster.GetTroopCount(item.Character);
+                    int available = fromRoster.GetTroopCount(Character);
                     if (available <= 0) continue;
 
                     int move = Math.Min(available, remainingToMove);
                     if (move <= 0) continue;
 
-                    fromRoster.AddToCounts(item.Character, -move);
-                    toRoster.AddToCounts(item.Character, move);
+                    fromRoster.AddToCounts(Character, -move);
+                    toRoster.AddToCounts(Character, move);
 
                     remainingToMove -= move;
                     for (int k = 0; k < entries.Count; k++)
                     {
-                        if (ReferenceEquals(entries[k].Character, item.Character))
+                        if (ReferenceEquals(entries[k].Character, Character))
                         {
                             entries[k] = (entries[k].Character, Math.Max(0, entries[k].Count - move), entries[k].Tier);
                             break;

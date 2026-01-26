@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <strings>
+	<!-- NOTABLE LANCES-->
 	<!-- ids: str_lance_name.[cultureId]-->
 	<!-- possible variables: NOTABLE_NAME, TEMPLATE_NAME, SETTLEMENT_NAME-->
+	<!-- MERCENARY LANCES-->
+	<!-- ids: str_mercenary_lance_name.[cultureId]-->
+	<!-- possible variables: TEMPLATE_NAME, SETTLEMENT_NAME-->
 	<string id="str_lance_name.base" text="{=lance_name_base}{TEMPLATE_NAME} of {SETTLEMENT_NAME}" />
+	<string id="str_mercenary_lance_name.base" text="{=lance_mercenary_name_base}{TEMPLATE_NAME} " />
+	
 </strings>

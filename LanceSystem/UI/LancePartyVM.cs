@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LanceSystem.CampaignBehaviors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Party;
 using TaleWorlds.Library;
-using TaleWorlds.ObjectSystem;
 using static TaleWorlds.CampaignSystem.Party.PartyScreenLogic;
 
 namespace LanceSystem.UI
@@ -61,7 +61,7 @@ namespace LanceSystem.UI
                 return lancesTroopRoster;
             }
             lancesTroopRoster.Add(otherTroops);
-            List<LanceData> list = PartyBase.MainParty.Lances();
+            var list = PartyBase.MainParty.Lances();
             for (int i = 0; i < list.Count; i++)
                 lancesTroopRoster.Add(TroopRoster.CreateDummyTroopRoster());
 
@@ -70,10 +70,10 @@ namespace LanceSystem.UI
                 var character = troop.Character;
                 int total = troop.Number;
                 int woundedRemaining = troop.WoundedNumber;
-                List<LanceData> savedLances = PartyBase.MainParty.Lances();
+                var savedLances = PartyBase.MainParty.Lances();
                 for (int i = 0; i < savedLances.Count; i++)
                 {
-                    LanceData? savedLance = savedLances[i];
+                    var savedLance = savedLances[i];
                     var lanceTroops = savedLance.LanceRoster;
                     if (total <= 0)
                         break;
@@ -249,9 +249,8 @@ namespace LanceSystem.UI
             {
                 TroopRoster lance = _lancesTroopRosters[i];
                 var lanceName = lanceData[i-1].Name;
-                CharacterObject notableId = MBObjectManager.Instance.GetObject<CharacterObject>(lanceData[i-1].NotableId);
-                var lanceAmount = notableId == null ? 0 : Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notableId.HeroObject).RoundedResultNumber;
-                partyLances.Add(new(this, i, "lance_" + i, new(), lanceName + " ({CURRENT_TROOPS}/{MAX_TROOPS})", lanceAmount));
+                var lanceSize = lanceData[i - 1].TotalManCount;
+                partyLances.Add(new(this, i, "lance_" + i, new(), lanceName + " ({CURRENT_TROOPS}/{MAX_TROOPS})", lanceSize));
                 InitializePartyList(partyLances.Last().LanceTroops, lance, PartyScreenLogic.TroopType.Member, 1);
             }
             return partyLances;
@@ -291,7 +290,7 @@ namespace LanceSystem.UI
             var playerLances = PartyBase.MainParty.Lances();
             for (int i = 0; i < playerLances.Count; i++)
             {
-                LanceData? lance = playerLances[i];
+                var lance = playerLances[i];
                 if (_disbandedRosters.TryGetValue(i+1, out var removedRoster))
                     lance.LanceRoster = removedRoster;
                 else

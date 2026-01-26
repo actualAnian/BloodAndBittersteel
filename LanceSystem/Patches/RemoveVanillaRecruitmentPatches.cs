@@ -7,7 +7,7 @@ namespace LanceSystem.Patches
         public static bool Prefix(MenuCallbackArgs args, ref bool __result)
         {
             args.IsEnabled = false;
-            args.Tooltip = new("{=bab_disabled_recruitment}The recruitment system is disabled, talk to the notables");
+            args.Tooltip = new("{=lance_disabled_recruitment}The recruitment system is disabled, talk to the notables");
             __result = true;
             return false;
         }

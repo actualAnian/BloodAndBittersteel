@@ -1,4 +1,5 @@
-﻿using TaleWorlds.CampaignSystem;
+﻿using LanceSystem.CampaignBehaviors;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Encounters;
 
 namespace LanceSystem.Dialogues
@@ -11,7 +12,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_start_not_owner",
                 "start",
                 "disbanded_lance_response",
-                "{=dlp01}These men are no longer bound by the lance, my lord. Their service is done, and they now make their way home with what coin and honor they earned.",
+                "{=lance_disbanded_not_owner}These men are no longer bound by the lance, my lord. Their service is done, and they now make their way home with what coin and honor they earned.",
                 () =>
                 {
                     return PlayerEncounter.EncounteredParty.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner != Hero.MainHero;
@@ -22,7 +23,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_start_owner",
                 "start",
                 "disbanded_lance_owner_response",
-                "{=dlp02}We stand ready, my lord. The lance was dismissed, but the men still look to you for command.",
+                "{=lance_disbanded_owner}We stand ready, my lord. The lance was dismissed, but the men still look to you for command.",
                 () =>
                 {
                     return PlayerEncounter.EncounteredParty.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner == Hero.MainHero;
@@ -33,7 +34,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_rejoin",
                 "disbanded_lance_owner_response",
                 "disbanded_lance_rejoin_response",
-                "{=dlp03}The lance rides with me again. Gather the men and fall in.",
+                "{=lance_disbanded_rejoin}The lance rides with me again. Gather the men and fall in.",
                 null, null
             );
 
@@ -41,7 +42,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_rejoin_confirm",
                 "disbanded_lance_rejoin_response",
                 "close_window",
-                "{=dlp04}At once, my lord. The banner will be raised and the men will follow.",
+                "{=lance_disbanded_rejoin_confirm}At once, my lord. The banner will be raised and the men will follow.",
                 null,
                 () =>
                 {
@@ -54,7 +55,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_threaten",
                 "disbanded_lance_response",
                 "disbanded_lance_threat_response",
-                "{=dlp05}Stand aside or be cut down. I will not be gainsaid.",
+                "{=lance_disbanded_threaten}Stand aside or be cut down. I will not be gainsaid.",
                 static () =>
                 {
                     return PlayerEncounter.EncounteredParty.Owner != Hero.MainHero;
@@ -65,7 +66,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_threat_reply",
                 "disbanded_lance_threat_response",
                 "disbanded_lance_confirm_attack",
-                "{=dlp06}Choose your words carefully. To strike us is to strike the realm itself. Such blood will not be forgotten.",
+                "TEMPORARY - Choose your words carefully. To strike us is to strike the realm itself. Such blood will not be forgotten.",
                 null,
                 null
             );
@@ -73,10 +74,11 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_attack_confirm",
                 "disbanded_lance_confirm_attack",
                 "close_window",
-                "{=dlp07}Then let steel decide.",
+                "TEMPORARY - Then let steel decide.",
                 null,
                 () =>
                 {
+                    // @TODO once ai can create disbanded lances
                     //PlayerEncounter.Current.IsEnemy = true;
                     //PlayerEncounter.StartBattle();
                 }
@@ -85,7 +87,7 @@ namespace LanceSystem.Dialogues
                 "disbanded_lance_leave",
                 "disbanded_lance_response",
                 "close_window",
-                "{=dlp08}Very well. Go in peace.",
+                "{=VbUnP1M5}Very well. For now, go in peace.",
                 null, () => { PlayerEncounter.LeaveEncounter = true; }
 
             );
@@ -93,7 +95,7 @@ namespace LanceSystem.Dialogues
                 "lance_owner_leave",
                 "disbanded_lance_owner_response",
                 "close_window",
-                "{=dlp09} Go to your homes and families",
+                "{=lance_disbanded_go} Go to your homes and families",
                 null, () => { PlayerEncounter.LeaveEncounter = true; }
             );
         }
