@@ -18,8 +18,10 @@ namespace LanceSystem
 #pragma warning disable BHA0003 // Type was not found
         public static void RunRecruitmentPatches(Harmony harmony)
         {
-            MethodInfo originalMethod = AccessTools.Method("PlayerTownVisitCampaignBehavior:game_menu_town_recruit_troops_on_condition");
-            harmony.Patch(originalMethod, prefix: new HarmonyMethod(typeof(PlayerTownVisitCampaignBehaviorPatch), nameof(PlayerTownVisitCampaignBehaviorPatch.Prefix)));
+            MethodInfo townMethod = AccessTools.Method("PlayerTownVisitCampaignBehavior:game_menu_town_recruit_troops_on_condition");
+            harmony.Patch(townMethod, prefix: new HarmonyMethod(typeof(PlayerTownVisitCampaignBehaviorPatch), nameof(PlayerTownVisitCampaignBehaviorPatch.Prefix)));
+            MethodInfo villageMethod = AccessTools.Method("PlayerTownVisitCampaignBehavior:game_menu_recruit_volunteers_on_condition");
+            harmony.Patch(villageMethod, prefix: new HarmonyMethod(typeof(PlayerTownVisitCampaignBehaviorPatch), nameof(PlayerTownVisitCampaignBehaviorPatch.Prefix)));
         }
         public static void RunUIPatches(Harmony harmony)
         {

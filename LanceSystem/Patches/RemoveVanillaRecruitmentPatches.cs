@@ -6,6 +6,7 @@ namespace LanceSystem.Patches
     {
         public static bool Prefix(MenuCallbackArgs args, ref bool __result)
         {
+            args.optionLeaveType = GameMenuOption.LeaveType.Recruit;
             args.IsEnabled = false;
             args.Tooltip = new("{=lance_disabled_recruitment}The recruitment system is disabled, talk to the notables");
             __result = true;
