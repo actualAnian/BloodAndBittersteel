@@ -1,6 +1,6 @@
-﻿using BloodAndBittersteel.Features;
-using BloodAndBittersteel.Features.BaBIncidents;
+﻿using BloodAndBittersteel.Features.BaBIncidents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
+using BloodAndBittersteel.Features.CampaignStart;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
@@ -22,29 +22,26 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBIncidentsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
-                
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
                 campaignGameStarter.AddModel(new BaBKingdomDecisionPermissionModel(gameStarterObject.GetExistingModel<KingdomDecisionPermissionModel>()));
+                campaignGameStarter.AddModel(new BaBSettlementAccessModel(gameStarterObject.GetExistingModel<SettlementAccessModel>()));
+                campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
+                // lance system defines PartySizeLimitModel
+
+
+                // temporary, before it implements proper characterCreation interface
+                campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
         }
-        //public override void OnCampaignStart(Game game, object starterObject)
-        //{
-        //    var a = Kingdom.All;
-        //    foreach (var k1 in Kingdom.All)
-        //    {
-        //        foreach (var k2 in Kingdom.All)
-        //        {
-        //            var link = k1.GetStanceWith(k2);
-        //        }
-        //    }
-        //}
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
         }
-
+        public override void OnGameInitializationFinished(Game game)
+        {
+        }
         protected override void OnSubModuleUnloaded()
         {
             base.OnSubModuleUnloaded();

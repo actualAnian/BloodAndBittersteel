@@ -33,11 +33,26 @@
       <SubModuleClassType value="$modulename$.SubModule" />
       <Tags />
     </SubModule>
+	  <SubModule>
+		  <Name value="LanceSystem" />
+		  <DLLName value="LanceSystem.dll" />
+		  <SubModuleClassType value="LanceSystem.SubModule" />
+		  <Tags />
+	  </SubModule>
+	  
   </SubModules>
   <Xmls>
 	  <!-- Strings -->
 	  <XmlNode>
 		  <XmlName id="GameText" path="module_strings" />
+		  <IncludedGameTypes>
+			  <GameType value="Campaign" />
+			  <GameType value="CampaignStoryMode" />
+			  <GameType value="CustomGame" />
+		  </IncludedGameTypes>
+	  </XmlNode>
+	  <XmlNode>
+		  <XmlName id="GameText" path="lance_strings" />
 		  <IncludedGameTypes>
 			  <GameType value="Campaign" />
 			  <GameType value="CampaignStoryMode" />
