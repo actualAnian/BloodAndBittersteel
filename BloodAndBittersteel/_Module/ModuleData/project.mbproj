@@ -3,5 +3,5 @@
   <outputDirectory>..\MBModule\MBModule\</outputDirectory>
   <XMLDirectory>..\WOTS\Modules\BloodAndBittersteel\</XMLDirectory>
   <ModuleAssemblyDirectory>..\WOTS\bin\</ModuleAssemblyDirectory>
-	<file id="sol_skins" name="ModuleData/skins.xml" type="skin" />
+	<file id="soln_skins" name="ModuleData/skins.xml" type="skin" />
 </base>
