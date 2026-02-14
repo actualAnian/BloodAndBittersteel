@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	type="string">
+	<BannerIconData>
+		<BannerColors>
+				<Color
+				id="37"
+				hex="0xfff5b365" />
+				<Color
+				id="40"
+				hex="0xffffffff" />
+				<Color
+				id="117"
+				hex="0xfff5b365" />
+				<Color
+				id="124"
+				hex="0xff41281b" />
+				<Color
+				id="125"
+				hex="0xffa97435" />
+				<Color
+				id="128"
+				hex="0xfff3f3f3" />
+				<Color
+				id="129"
+				hex="0xff34671e" />
+				<Color
+				id="132"
+				hex="0xfff1c232" />
+				<Color
+				id="133"
+				hex="0xff7739a7" />
+				<Color
+				id="136"
+				hex="0xffffe9d4" />
+				<Color
+				id="137"
+				hex="0xff5aa4ad" />
+				<Color
+				id="140"
+				hex="0xffd9d9d9" />
+				<Color
+				id="141"
+				hex="0xff3a6298" />
+				<Color
+				id="144"
+				hex="0xfff4ca14" />
+				<Color
+				id="145"
+				hex="0xff830808" />
+		</BannerColors>
+	</BannerIconData>
+</base>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.3.11312.210
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodAndBittersteel", "BloodAndBittersteel\BloodAndBittersteel.csproj", "{05502B10-3A15-D2D0-F302-84F249FAC569}"
 EndProject
@@ -28,8 +28,8 @@ Global
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Debug|x64.Build.0 = Debug|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Release|x64.ActiveCfg = Release|Any CPU
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Release|x64.Build.0 = Release|Any CPU
-		{574F7696-BEE2-41E9-910D-36257D0F21DE}.aaa|x64.ActiveCfg = Debug|x64
-		{574F7696-BEE2-41E9-910D-36257D0F21DE}.aaa|x64.Build.0 = Debug|x64
+		{574F7696-BEE2-41E9-910D-36257D0F21DE}.aaa|x64.ActiveCfg = aaa|x64
+		{574F7696-BEE2-41E9-910D-36257D0F21DE}.aaa|x64.Build.0 = aaa|x64
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Debug|x64.Build.0 = Debug|Any CPU
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Release|x64.ActiveCfg = Release|Any CPU

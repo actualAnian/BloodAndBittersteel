@@ -59,5 +59,17 @@
 			  <GameType value="CustomGame" />
 		  </IncludedGameTypes>
 	  </XmlNode>
+	  <SubModule>
+		  <Name value="BannerColorPersistence"/>
+		  <DLLName value="BannerColorPersistence.dll"/>
+		  <SubModuleClassType value="BannerColorPersistence.PersistColorSubModule"/>
+		  <Tags>
+			  <Tag key="DedicatedServerType" value="none" />
+			  <Tag key="IsNoRenderModeElement" value="false" />
+		  </Tags>
+	  </SubModule>
+	  <XmlNode>
+		  <XmlName id="BannerIcons" path="BannerColorPersistencebanner_icons" />
+	  </XmlNode>
   </Xmls>
 </Module>
