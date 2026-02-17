@@ -4,7 +4,9 @@ using BloodAndBittersteel.Features.CampaignStart;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
@@ -30,10 +32,16 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
                 // lance system defines PartySizeLimitModel
 
+                RemoveChildGenerationAtGameStart(campaignGameStarter);
 
                 // temporary, before it implements proper characterCreation interface
                 campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
+        }
+        private void RemoveChildGenerationAtGameStart(CampaignGameStarter campaignGameStarter)
+        {
+            var behavior = campaignGameStarter.CampaignBehaviors.First(b => b is InitialChildGenerationCampaignBehavior);
+            campaignGameStarter.RemoveBehavior(behavior);
         }
         protected override void OnSubModuleLoad()
         {
