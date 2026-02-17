@@ -8,6 +8,7 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
+using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
@@ -33,7 +34,7 @@ namespace BloodAndBittersteel
                 // lance system defines PartySizeLimitModel
 
                 RemoveChildGenerationAtGameStart(campaignGameStarter);
-
+                ToggleInformationRestrictionModel(campaignGameStarter);
                 // temporary, before it implements proper characterCreation interface
                 campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
@@ -42,6 +43,12 @@ namespace BloodAndBittersteel
         {
             var behavior = campaignGameStarter.CampaignBehaviors.First(b => b is InitialChildGenerationCampaignBehavior);
             campaignGameStarter.RemoveBehavior(behavior);
+        }
+        private void ToggleInformationRestrictionModel(CampaignGameStarter campaignGameStarter)
+        {
+            DefaultInformationRestrictionModel defaultInformationRestrictionModel = (DefaultInformationRestrictionModel)campaignGameStarter.Models.First(m => m is DefaultInformationRestrictionModel);
+
+            defaultInformationRestrictionModel.IsDisabledByCheat = true;
         }
         protected override void OnSubModuleLoad()
         {
