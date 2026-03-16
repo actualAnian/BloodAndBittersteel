@@ -45,6 +45,7 @@ namespace LanceSystem.CampaignBehaviors
         {
             CampaignEvents.SettlementEntered.AddNonSerializedListener(this, OnSettlementEntered);
             CampaignEvents.AiHourlyTickEvent.AddNonSerializedListener(this, AiLanceTick);
+            //CampaignEvents.troo
         }
         private void AiLanceTick(MobileParty party, PartyThinkParams p)
         {
@@ -53,8 +54,9 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void ConsiderRecruitingLances(MobileParty party, PartyThinkParams p)
         {
-            if (party.StringId == "lord_A9_l_party_1")
-            { int a = 5; }
+            if (party.Owner?.StringId == "lord_6_19")
+            { 
+                int a = 5; }
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
             if (LanceModel.MaxLancesForParty(party.Party).RoundedResultNumber <= party.Party.Lances().Count
                 && !HasLancesToBeDisbanded(party)) return;
@@ -62,7 +64,6 @@ namespace LanceSystem.CampaignBehaviors
             foreach (var settlement in ownedSettlements)
             {
                 if (settlement.SiegeEvent != null) continue;
-                if (!settlement.IsTown && !settlement.IsCastle) continue;
                 if (!CanAffordLance(party, settlement)) return;
                 var score = ScoreFromDistance(party, settlement) + 
                     ScoreFromFreeLanceSpots(party) + 
@@ -83,7 +84,7 @@ namespace LanceSystem.CampaignBehaviors
                 var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(lanceInfo.NotableId).HeroObject.CurrentSettlement;
                 var maxLanceMembers = lanceInfo.CachedMaxLanceTroops;
                 var missingPercentage = (maxLanceMembers.ResultNumber - lance.MaxSize) / maxLanceMembers.ResultNumber;
-                if (1-missingPercentage < LanceStrengthToConsiderRefilling) continue;
+                if (1-missingPercentage > LanceStrengthToConsiderRefilling) continue;
                 var score = missingPercentage * RefillLanceMultiplier + ScoreFromDistance(party, settlement);
                 AddBehaviorTupleWithScore(p, settlement, score);
             }
@@ -118,13 +119,18 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void OnSettlementEntered(MobileParty party, Settlement settlement, Hero hero)
         {
-            //var aa = MobileParty.All.Where(p => p.StringId == "lord_A9_l_party_1").FirstOrDefault();
-            //var test = aa.ThinkParamsCache;
+            var aa = MobileParty.All.Where(p => p.Owner?.StringId == "lord_1_42").FirstOrDefault();
+            if (aa != null)
+            {
+                var test = aa.ThinkParamsCache;
+
+            }
             if (party  == null || party == MobileParty.MainParty) return;
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
             TryRefillLances(party, settlement);
             while (CanRecruitLance(party, settlement))
             {
+                //break;
                 DisbandLanceIfNecessary(party);
                 RecruitLance(party, settlement);
             }

@@ -1,4 +1,5 @@
 ﻿using LanceSystem.LanceDataClasses;
+using LanceSystem.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace LanceSystem.Utils
 {
     public static class LanceUtils
     {
+        public static Random UtilsRandom = new();
         public static void TransferTroopsBetweenTroopRosters(TroopRoster fromRoster, TroopRoster toRoster, int amount, int maxAmountInToRoster)
         {
             if (amount <= 0) return;
@@ -37,14 +39,13 @@ namespace LanceSystem.Utils
             if (entries.Count == 0) return;
 
             var tiers = entries.Select(e => e.Tier).Distinct().OrderByDescending(t => t).ToList();
-            var rnd = new Random();
 
             foreach (var tier in tiers)
             {
                 var sameTier = entries.Where(e => e.Tier == tier && e.Count > 0).ToList();
                 for (int i = sameTier.Count - 1; i > 0; i--)
                 {
-                    int j = rnd.Next(i + 1);
+                    int j = UtilsRandom.Next(i + 1);
                     (sameTier[j], sameTier[i]) = (sameTier[i], sameTier[j]);
                 }
 
@@ -84,6 +85,64 @@ namespace LanceSystem.Utils
 
             return Math.Max(0, lanceCount - memberCount);
         }
+        public static void UpgradeTroopsRandomlyInLances(CharacterObject from, CharacterObject to, int toAdd, List<LanceData> lances)
+        {
+            if (toAdd <= 0 || lances.Count == 0)
+                return;
+
+            var counts = new int[lances.Count];
+            int totalAvailable = 0;
+
+            for (int i = 0; i < lances.Count; i++)
+            {
+                counts[i] = lances[i].LanceRoster.GetTroopCount(from);
+                totalAvailable += counts[i];
+            }
+            if (toAdd > totalAvailable)
+            {
+                LanceLogger.Logger.Warning(
+                    $"UpgradeTroopsRandomlyInLances requested {toAdd} upgrades but only {totalAvailable} '{from?.StringId}' troops available.");
+            }
+            toAdd = Math.Min(toAdd, totalAvailable);
+
+            for (int i = 0; i < lances.Count; i++)
+            {
+                counts[i] = lances[i].LanceRoster.GetTroopCount(from);
+                totalAvailable += counts[i];
+            }
+
+            toAdd = Math.Min(toAdd, totalAvailable);
+
+            var upgradeCounts = new int[lances.Count];
+            int remaining = toAdd;
+
+            var indices = new List<int>();
+            for (int i = 0; i < counts.Length; i++)
+                if (counts[i] > 0)
+                    indices.Add(i);
+
+            while (remaining > 0 && indices.Count > 0)
+            {
+                int pick = UtilsRandom.Next(indices.Count);
+                int i = indices[pick];
+
+                upgradeCounts[i]++;
+                remaining--;
+
+                if (upgradeCounts[i] >= counts[i])
+                    indices.RemoveAt(pick);
+            }
+
+            for (int i = 0; i < lances.Count; i++)
+            {
+                int amount = upgradeCounts[i];
+                if (amount > 0)
+                {
+                    lances[i].LanceRoster.AddToCounts(from, -amount);
+                    lances[i].LanceRoster.AddToCounts(to, amount);
+                }
+            }
+        }
         public static void RemoveTroopsRandomlyFromLances(TroopRosterElement troop, int toRemove, List<LanceData> lances)
         {
             var character = troop.Character;
@@ -101,8 +160,6 @@ namespace LanceSystem.Utils
             var removeCounts = new int[lances.Count];
             int remainingToRemove = toRemove;
 
-            var rnd = new Random();
-
             var indices = new List<int>();
             for (int i = 0; i < counts.Length; i++)
                 if (counts[i] > 0)
@@ -110,7 +167,7 @@ namespace LanceSystem.Utils
 
             while (remainingToRemove > 0 && indices.Count > 0)
             {
-                int pick = rnd.Next(indices.Count);
+                int pick = UtilsRandom.Next(indices.Count);
                 int i = indices[pick];
 
                 int removeHere = Math.Min(remainingToRemove, counts[i] - removeCounts[i]);

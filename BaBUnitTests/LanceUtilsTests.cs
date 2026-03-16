@@ -1,4 +1,5 @@
 ﻿using LanceSystem.LanceDataClasses;
+using LanceSystem.Logger;
 using LanceSystem.Utils;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
@@ -8,6 +9,14 @@ namespace BaBUnitTests
     [TestClass]
     public sealed class LanceUtilsTests
     {
+        [TestInitialize]
+        public void Setup()
+        {
+            LanceUtils.UtilsRandom = new Random(12345);
+            _testLogger = new TestLogger();
+            LanceLogger.Logger = _testLogger;
+        }
+        private static TestLogger _testLogger = new();
         private static int SumLanceCounts(List<LanceData> lances, CharacterObject character)
         {
             int sum = 0;
@@ -180,6 +189,142 @@ namespace BaBUnitTests
             // Total should equal member count (or unchanged if no excess)
             var finalTotal = SumLanceCounts(lances, mockObj);
             Assert.AreEqual(el.Number, finalTotal);
+        }
+        // add troops randomly
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_BasicUpgrade_WorksCorrectly()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(from, 5);
+
+            var r2 = TroopRoster.CreateDummyTroopRoster();
+            r2.AddToCounts(from, 5);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", ""),
+                new NotableLanceData(r2, "", "", "")
+            };
+
+            int toAdd = 6;
+
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, toAdd, lances);
+
+            int remainingFrom = SumLanceCounts(lances, from);
+            int addedTo = SumLanceCounts(lances, to);
+
+            Assert.AreEqual(4, remainingFrom);
+            Assert.AreEqual(6, addedTo);
+        }
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_ToAddZero_NoChange()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(from, 3);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", "")
+            };
+
+            int originalFrom = SumLanceCounts(lances, from);
+
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, 0, lances);
+
+            Assert.AreEqual(originalFrom, SumLanceCounts(lances, from));
+            Assert.AreEqual(0, SumLanceCounts(lances, to));
+        }
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_NoFromTroops_NoChange()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            var r2 = TroopRoster.CreateDummyTroopRoster();
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", ""),
+                new NotableLanceData(r2, "", "", "")
+            };
+
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, 5, lances);
+
+            Assert.AreEqual(0, SumLanceCounts(lances, from));
+            Assert.AreEqual(0, SumLanceCounts(lances, to));
+        }
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_RequestMoreThanAvailable_Clamped()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(from, 2);
+
+            var r2 = TroopRoster.CreateDummyTroopRoster();
+            r2.AddToCounts(from, 1);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", ""),
+                new NotableLanceData(r2, "", "", "")
+            };
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, 10, lances);
+
+            Assert.AreEqual(1, _testLogger.WarningCalls);
+            Assert.Contains("requested 10", _testLogger.LastMessage!);
+
+            Assert.AreEqual(0, SumLanceCounts(lances, from));
+            Assert.AreEqual(3, SumLanceCounts(lances, to));
+        }
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_SingleLance_AllUpgradedFromThatLance()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(from, 5);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", "")
+            };
+
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, 3, lances);
+
+            Assert.AreEqual(2, r1.GetTroopCount(from));
+            Assert.AreEqual(3, r1.GetTroopCount(to));
+        }
+        [TestMethod]
+        public void UpgradeTroopsRandomlyInLances_ManyLancesUpgraded()
+        {
+            var from = new CharacterObject();
+            var to = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(from, 3);
+
+            var r2 = TroopRoster.CreateDummyTroopRoster();
+            r2.AddToCounts(from, 3);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(r1, "", "", ""),
+                new NotableLanceData(r2, "", "", "")
+            };
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, 5, lances);
+            
+            Assert.AreEqual(2, r1.GetTroopCount(to));
+            Assert.AreEqual(3, r2.GetTroopCount(to));
         }
     }
 }

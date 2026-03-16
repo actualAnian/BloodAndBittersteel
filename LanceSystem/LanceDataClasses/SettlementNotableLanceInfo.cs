@@ -23,7 +23,7 @@ namespace LanceSystem.LanceDataClasses
         [SaveableProperty(4)]
         public string? PartyLanceBelongsTo { get; set; }
         [SaveableField(5)]
-        private string _lanceTemplateId;
+        private string _lanceTemplateId= null!;
         public ExplainedNumber CachedMaxLanceTroops { get; set; }
         public List<float> CachedMaxTroopPerTier;
         private Lance? _cachedLance;
@@ -54,9 +54,13 @@ namespace LanceSystem.LanceDataClasses
             foreach (var lance in possibleTemplates)
             {
                 if (roll < lance.weight)
+                {
                     SetLanceTemplate(lance);
+                    return;
+                }
                 roll -= lance.weight;
             }
+            SetLanceTemplate(possibleTemplates.First());
         }
         private static LanceTemplateOriginType GetLanceSettlementType(Settlement settlement)
         {
@@ -73,7 +77,7 @@ namespace LanceSystem.LanceDataClasses
             IsTaken = isTaken;
             CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
             if (lanceTemplateId == null)
-                _lanceTemplateId = LanceTemplateManager.Instance.GetLances(notable.StringId, GetLanceSettlementType(notable.BornSettlement)).GetRandomElementInefficiently().StringId;
+                SetRandomLanceTemplateWeighted();//LanceTemplateManager.Instance.GetLances(notable.Culture.StringId, GetLanceSettlementType(notable.BornSettlement)).GetRandomElementInefficiently().StringId;
             else
                 _lanceTemplateId = lanceTemplateId;
             CachedMaxTroopPerTier = new(Campaign.Current.Models.LanceModel().DefaultTroopQuality);

@@ -57,6 +57,13 @@ namespace LanceSystem.CampaignBehaviors
             CampaignEvents.HeroCreated.AddNonSerializedListener(this, OnHeroCreated);
             CampaignEvents.SettlementEntered.AddNonSerializedListener(this, DisbandReturningLanceTroops);
             CampaignEvents.OnNewGameCreatedPartialFollowUpEvent.AddNonSerializedListener(this, FillNotablesData);
+            LanceEvents.AiUpgradeTroops.AddNonSerializedListener(this, OnAiUpgradeTroops);
+        }
+
+        private void OnAiUpgradeTroops(PartyBase party, CharacterObject from, CharacterObject to, int amount)
+        {
+            if (!Campaign.Current.Models.LanceModel().IsUsingLanceSystem(party)) return;
+            LanceUtils.UpgradeTroopsRandomlyInLances(from, to, amount, party.Lances());
         }
 
         private void FillNotablesData(CampaignGameStarter starter, int arg2)
@@ -67,7 +74,7 @@ namespace LanceSystem.CampaignBehaviors
                 var lanceData = data.Value;
                 var character = MBObjectManager.Instance.GetObject<CharacterObject>(data.Key);
                 var notable = character.HeroObject;
-                lanceData.SetRandomLanceTemplateWeighted();
+                //lanceData.SetRandomLanceTemplateWeighted();
                 while (lanceData.CachedMaxLanceTroops.RoundedResultNumber > lanceData.CurrentNotableLanceTroopRoster.TotalHealthyCount)
                     lanceModel.UpdateNotablesLanceTroops(notable, lanceData);
             }
@@ -82,7 +89,6 @@ namespace LanceSystem.CampaignBehaviors
             LanceUtils.TransferTroopsBetweenTroopRosters(party.MemberRoster, lanceData.CurrentNotableLanceTroopRoster, party.MemberRoster.TotalManCount, maxAmount.RoundedResultNumber);
             DestroyPartyAction.Apply(null, party);
         }
-
         private void OnHeroCreated(Hero hero, bool arg2)
         {
             var list = new List<Occupation>
@@ -170,6 +176,10 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void UpdateNotablesLance(Settlement settlement)
         {
+            if (settlement.StringId == "castle_V6")
+            {
+                int a = 5;
+            }
             try
             {
                 foreach (var notable in settlement.Notables)
@@ -274,6 +284,7 @@ namespace LanceSystem.CampaignBehaviors
         public void RefillLanceTroops(NotableLanceData lance, PartyBase party)
         {
             var amountToGet = lance.MaxSize - lance.LanceRoster.TotalManCount;
+            if (amountToGet == 0) return;
             TroopRoster tempRoster = TroopRoster.CreateDummyTroopRoster();
             var notableTroopRoster = lance.GetSettlementNotableLanceInfo().CurrentNotableLanceTroopRoster;
             LanceUtils.TransferTroopsBetweenTroopRosters(notableTroopRoster, tempRoster, amountToGet, lance.MaxSize);
@@ -395,6 +406,7 @@ namespace LanceSystem.CampaignBehaviors
             {
                 if (_notablesLance.TryGetValue(notable.StringId, out var lanceData))
                 {
+                    if (lanceData.IsTaken) continue;
                     PowerCalculationContext context = Campaign.Current.Models.MilitaryPowerModel.GetContextForPosition(settlement.Position);
                     var strength = TroopRosterExtensions.CalculateTroopRosterStrength(lanceData.CurrentNotableLanceTroopRoster, BattleSideEnum.Defender, context);
                     if (strength > strongestLanceStrength)
