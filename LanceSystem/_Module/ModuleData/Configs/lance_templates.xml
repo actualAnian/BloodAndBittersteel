@@ -11,7 +11,7 @@
 		<Troops>
 			<MeleeTroop>
 				<Likelihood>0.3</Likelihood>
-				<BasicTroopId>"looter"</BasicTroopId>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
 			</MeleeTroop>
 			<MeleeTroop>
 				<Likelihood>0.1</Likelihood>
@@ -19,15 +19,102 @@
 			</MeleeTroop>
 			<RangedTroop>
 				<Likelihood>0.6</Likelihood>
-				<BasicTroopId>"looter"</BasicTroopId>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
 			</RangedTroop>
 			<CavalryTroop>
 				<Likelihood>0.1</Likelihood>
-				<BasicTroopId>"looter"</BasicTroopId>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
 			</CavalryTroop>
 			<HorseArcherTroop>
 				<Likelihood>0.0</Likelihood>
-				<BasicTroopId>"looter"</BasicTroopId>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</HorseArcherTroop>
+		</Troops>
+	</Lance>
+	<Lance>
+		<StringId>"test_lance_castle"</StringId>
+		<Name>Castle</Name>
+		<LanceOriginType>"castle"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.6</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</RangedTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</CavalryTroop>
+			<HorseArcherTroop>
+				<Likelihood>0.0</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</HorseArcherTroop>
+		</Troops>
+	</Lance>
+	<Lance>
+		<StringId>"test_lance_village"</StringId>
+		<Name>Village troops</Name>
+		<LanceOriginType>"village"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.6</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</RangedTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</CavalryTroop>
+			<HorseArcherTroop>
+				<Likelihood>0.0</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</HorseArcherTroop>
+		</Troops>
+	</Lance>
+	<Lance>
+		<StringId>"test_lance_town"</StringId>
+		<Name>Town troops</Name>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.6</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</RangedTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</CavalryTroop>
+			<HorseArcherTroop>
+				<Likelihood>0.0</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
 			</HorseArcherTroop>
 		</Troops>
 	</Lance>

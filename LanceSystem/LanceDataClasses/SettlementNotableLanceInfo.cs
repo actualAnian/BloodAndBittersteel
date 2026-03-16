@@ -1,5 +1,7 @@
 ﻿using LanceSystem.Deserialization;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -39,6 +41,22 @@ namespace LanceSystem.LanceDataClasses
         {
             var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject.HomeSettlement;
             return LanceTemplateManager.Instance.GetLances(settlement.Culture.StringId, settlement);
+        }
+        static Random _random = new();
+        public void SetRandomLanceTemplateWeighted()
+        {
+            var possibleTemplates = GetPossibleTemplates();
+            if (possibleTemplates.Count() == 1) SetLanceTemplate(possibleTemplates.First());
+            int totalWeight = possibleTemplates.Sum(l => l.weight);
+
+            int roll = _random.Next(totalWeight);
+
+            foreach (var lance in possibleTemplates)
+            {
+                if (roll < lance.weight)
+                    SetLanceTemplate(lance);
+                roll -= lance.weight;
+            }
         }
         private static LanceTemplateOriginType GetLanceSettlementType(Settlement settlement)
         {

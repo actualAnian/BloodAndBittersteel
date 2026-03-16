@@ -30,6 +30,6 @@ namespace LanceSystem.LanceDataClasses
         private Lance? _cachedTemplate;
         public Lance TroopsTemplate => _cachedTemplate ??= LanceTemplateManager.Instance.GetLanceFromId(_templateId);
 
-        public override int TotalManCount => Size;
+        public override int MaxSize => Size;
     }
 }

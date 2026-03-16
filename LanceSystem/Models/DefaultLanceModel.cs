@@ -259,5 +259,9 @@ namespace LanceSystem.Models
                 }
             }
         }
+        public override bool IsUsingLanceSystem(PartyBase party)
+        {
+            return party == PartyBase.MainParty || party.LeaderHero != null && party.MapFaction.IsKingdomFaction;
+        }
     }
 }

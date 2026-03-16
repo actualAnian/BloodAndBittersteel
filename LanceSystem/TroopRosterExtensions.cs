@@ -18,5 +18,13 @@ namespace LanceSystem
                 }
             return value;
         }
+        public static int CalculateTroopRosterDailyCost(this TroopRoster roster)
+        {
+            int cost = 0;
+            foreach(var troop in roster.GetTroopRoster())
+                if (troop.Character != null)
+                    cost += troop.Number * troop.Character.TroopWage;
+            return cost;
+        }
     }
 }
