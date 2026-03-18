@@ -91,9 +91,9 @@ namespace LanceSystem.Deserialization
                 _ => LanceTemplateOriginType.All
             };
         }
-        private static string? CleanString(XElement? value)
+        private static string CleanString(XElement? value)
         {
-            if (value == null) return null;
+            if (value == null) return "";
             return value.Value.Trim().Trim('"');
         }
     }

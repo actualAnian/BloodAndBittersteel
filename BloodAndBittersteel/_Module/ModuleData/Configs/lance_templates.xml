@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanceTemplates>
+	<Lance>
+		<StringId>"aserai_all"</StringId>
+		<Name>Epic Troops</Name>
+		<CultureId>"aserai"</CultureId>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>10</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.6</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</RangedTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</CavalryTroop>
+			<HorseArcherTroop>
+				<Likelihood>0.0</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</HorseArcherTroop>
+		</Troops>
+	</Lance>
+	<Lance>
+		<StringId>"house_troops"</StringId>
+		<Name>House Troops</Name>
+		<CultureId>"aserai"</CultureId>
+		<ClanId>"CLAN_A"</ClanId>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"looter"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.6</Likelihood>
+				<BasicTroopId>"looter"</BasicTroopId>
+			</RangedTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"looter"</BasicTroopId>
+			</CavalryTroop>
+			<HorseArcherTroop>
+				<Likelihood>0.0</Likelihood>
+				<BasicTroopId>"looter"</BasicTroopId>
+			</HorseArcherTroop>
+		</Troops>
+	</Lance>
+
+</LanceTemplates>

@@ -46,9 +46,9 @@ namespace LanceSystem
             MobileParty disbandedParty = MobileParty.CreateParty("disbanded_lance", new DisbandedLancePartyComponent(settlement, lanceName, settlement.Owner, lanceToDisband.NotableId));
             disbandedParty.ActualClan = settlement.OwnerClan;
             disbandedParty.InitializeMobilePartyAroundPosition(lanceToDisband.LanceRoster, TroopRoster.CreateDummyTroopRoster(), previousOwner.Position, 5);
-            MobileParty.MainParty.Position = previousOwner.Position;
             disbandedParty.Party.SetVisualAsDirty();
             disbandedParty.SetTargetSettlement(settlement, settlement.HasPort);
+            disbandedParty.Ai.SetDoNotAttackMainParty(100);
             return disbandedParty;
         }
         public override Hero PartyOwner

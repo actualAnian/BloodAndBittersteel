@@ -1,8 +1,8 @@
 ﻿using BloodAndBittersteel;
+using LanceSystem.Logger;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Settlements;
-using TaleWorlds.Library;
 
 namespace LanceSystem.Deserialization
 {
@@ -46,7 +46,7 @@ namespace LanceSystem.Deserialization
         {
             Lances.TryGetValue(lanceId, out var lance);
             if (lance == null)
-                InformationManager.DisplayMessage(new($"Error, lance with id {lanceId} does not exist!"));
+                LanceLogger.Logger.Warning($"Warning, Lance with id {lanceId} does not exist!");
             return lance ?? FallBackLance;
         }
     }

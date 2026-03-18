@@ -159,20 +159,8 @@ namespace LanceSystem.CampaignBehaviors
             if (lances.Count == 0)
                 return;
             LanceUtils.NormalizeLanceTroopsToParty(party.MemberRoster, party.Lances());
-            //var memberRoster = party.MemberRoster;
-            //var tempRoster = TroopRoster.CreateDummyTroopRoster();
-            //foreach (var lance in party.Lances())
-            //    tempRoster.Add(lance.LanceRoster);
-
-            //foreach (var troop in memberRoster.GetTroopRoster())
-            //{
-            //    int excess = LanceUtils.CalculateNumberOfTroopsToRemove(troop, tempRoster);
-            //    if (excess <= 0)
-            //        continue;
-            //    LanceUtils.RemoveTroopsRandomlyFromLances(troop, excess, lances);
-            //}
             RemoveLancesIfEmpty(party);
-            CheckLanceConsistency(party);
+            //CheckLanceConsistency(party);
         }
 
         private void RemoveLance(List<LanceData> allLances, LanceData lance)
@@ -198,10 +186,6 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void UpdateNotablesLance(Settlement settlement)
         {
-            if (settlement.StringId == "castle_V6")
-            {
-                int a = 5;
-            }
             try
             {
                 foreach (var notable in settlement.Notables)

@@ -18,7 +18,6 @@ namespace LanceSystem
         {
             _lanceDisbanded.Invoke(lance);
         }
-
         private static readonly MbEvent<PartyBase, CharacterObject, CharacterObject, int> _aiUpgradeTroops = new();
         public static IMbEvent<PartyBase, CharacterObject, CharacterObject, int> AiUpgradeTroops
         {
@@ -31,6 +30,5 @@ namespace LanceSystem
         {
             _aiUpgradeTroops.Invoke(party, from, to, amount);
         }
-
     }
 }

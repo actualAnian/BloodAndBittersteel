@@ -45,7 +45,6 @@ namespace LanceSystem.CampaignBehaviors
         {
             CampaignEvents.SettlementEntered.AddNonSerializedListener(this, OnSettlementEntered);
             CampaignEvents.AiHourlyTickEvent.AddNonSerializedListener(this, AiLanceTick);
-            //CampaignEvents.troo
         }
         private void AiLanceTick(MobileParty party, PartyThinkParams p)
         {
@@ -54,9 +53,6 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void ConsiderRecruitingLances(MobileParty party, PartyThinkParams p)
         {
-            if (party.LeaderHero?.StringId == "lord_1_18")
-            { 
-                int a = 5; }
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
             if (LanceModel.MaxLancesForParty(party.Party).RoundedResultNumber <= party.Party.Lances().Count
                 && !HasLancesToBeDisbanded(party)) return;
@@ -104,7 +100,7 @@ namespace LanceSystem.CampaignBehaviors
         private float ScoreFromDistance(MobileParty party, Settlement settlement)
         {
             float maxDistance = Campaign.MapDiagonal / 2;
-            AiHelper.GetBestNavigationTypeAndAdjustedDistanceOfSettlementForMobileParty(party, settlement, settlement.HasPort, out var navigationType, out var distance, out var fromPort);
+            AiHelper.GetBestNavigationTypeAndAdjustedDistanceOfSettlementForMobileParty(party, settlement, settlement.HasPort, out _, out var distance, out _);
             distance = Math.Min(distance, maxDistance);
             distance /= maxDistance * MaxScoreFromDistance;
             return MaxScoreFromDistance - distance;
@@ -120,17 +116,11 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void OnSettlementEntered(MobileParty party, Settlement settlement, Hero hero)
         {
-            var aa = MobileParty.All.Where(p => p.StringId.Contains("disbanded_lance")).FirstOrDefault();
-            if (party?.Owner?.StringId == "lord_1_18")
-            {
-                //var test = aa.ThinkParamsCache;
-            }
             if (party  == null || party == MobileParty.MainParty) return;
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
             TryRefillLances(party, settlement);
             while (CanRecruitLance(party, settlement))
             {
-                //break;
                 DisbandLanceIfNecessary(party);
                 if (!RecruitLance(party, settlement)) break;
             }
