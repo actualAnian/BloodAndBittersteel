@@ -23,7 +23,7 @@ namespace LanceSystem.Patches
             var from = (CharacterObject)fromField.GetValue(upgradeArgs);
             var toField = type.GetField("UpgradeTarget", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             var to = (CharacterObject)toField.GetValue(upgradeArgs);
-            var PossibleUpgradeCountField = type.GetField("Target", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var PossibleUpgradeCountField = type.GetField("PossibleUpgradeCount", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             var amount = (int)PossibleUpgradeCountField.GetValue(upgradeArgs);
             LanceEvents.OnAiUpgradeTroops(party, from, to, amount);
         }

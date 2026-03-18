@@ -15,13 +15,13 @@ namespace LanceSystem
     public class DisbandedLancePartyComponent : PartyComponent
     {
         [SaveableField(0)]
-        private TextObject _name;
+        private readonly TextObject _name;
         [SaveableField(1)]
-        private Settlement _homeSettlement;
+        private readonly Settlement _homeSettlement;
         [SaveableField(2)]
-        private Hero _owner;
+        private readonly Hero _owner;
         [SaveableField(3)]
-        private string _notableLanceBelongsTo;
+        private readonly string _notableLanceBelongsTo;
         public string NotableLanceBelongsTo => _notableLanceBelongsTo;
 
         public override bool AvoidHostileActions
@@ -31,9 +31,9 @@ namespace LanceSystem
                 return true;
             }
         }
-        public DisbandedLancePartyComponent(Settlement homeSettlement, TextObject name, Hero owner, string notableLanceBelongsTo)
+        public DisbandedLancePartyComponent(Settlement homeSettlement, string name, Hero owner, string notableLanceBelongsTo)
         {
-            _name = name;
+            _name = new(name);
             _homeSettlement = homeSettlement;
             _owner = owner;
             _notableLanceBelongsTo = notableLanceBelongsTo;
@@ -46,9 +46,9 @@ namespace LanceSystem
             MobileParty disbandedParty = MobileParty.CreateParty("disbanded_lance", new DisbandedLancePartyComponent(settlement, lanceName, settlement.Owner, lanceToDisband.NotableId));
             disbandedParty.ActualClan = settlement.OwnerClan;
             disbandedParty.InitializeMobilePartyAroundPosition(lanceToDisband.LanceRoster, TroopRoster.CreateDummyTroopRoster(), previousOwner.Position, 5);
+            MobileParty.MainParty.Position = previousOwner.Position;
             disbandedParty.Party.SetVisualAsDirty();
             disbandedParty.SetTargetSettlement(settlement, settlement.HasPort);
-
             return disbandedParty;
         }
         public override Hero PartyOwner
@@ -71,8 +71,7 @@ namespace LanceSystem
             {
                 return _homeSettlement;
             }
-        }
-
+        } 
         public override Banner GetDefaultComponentBanner()
         {
             return HomeSettlement.OwnerClan.Banner;

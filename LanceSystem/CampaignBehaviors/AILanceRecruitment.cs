@@ -54,7 +54,7 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void ConsiderRecruitingLances(MobileParty party, PartyThinkParams p)
         {
-            if (party.Owner?.StringId == "lord_6_19")
+            if (party.LeaderHero?.StringId == "lord_1_18")
             { 
                 int a = 5; }
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
@@ -64,10 +64,11 @@ namespace LanceSystem.CampaignBehaviors
             foreach (var settlement in ownedSettlements)
             {
                 if (settlement.SiegeEvent != null) continue;
-                if (!CanAffordLance(party, settlement)) return;
-                var score = ScoreFromDistance(party, settlement) + 
-                    ScoreFromFreeLanceSpots(party) + 
-                    ScoreFromNotableLanceStrength(settlement);
+                if (!CanAffordLance(party, settlement)) continue;
+                var score = ScoreFromNotableLanceStrength(settlement);
+                if (score == 0) continue;
+                score += ScoreFromDistance(party, settlement) +
+                    ScoreFromFreeLanceSpots(party);
                 AddBehaviorTupleWithScore(p, settlement, score);
             }
         }
@@ -119,11 +120,10 @@ namespace LanceSystem.CampaignBehaviors
         }
         private void OnSettlementEntered(MobileParty party, Settlement settlement, Hero hero)
         {
-            var aa = MobileParty.All.Where(p => p.Owner?.StringId == "lord_1_42").FirstOrDefault();
-            if (aa != null)
+            var aa = MobileParty.All.Where(p => p.StringId.Contains("disbanded_lance")).FirstOrDefault();
+            if (party?.Owner?.StringId == "lord_1_18")
             {
-                var test = aa.ThinkParamsCache;
-
+                //var test = aa.ThinkParamsCache;
             }
             if (party  == null || party == MobileParty.MainParty) return;
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
@@ -132,15 +132,15 @@ namespace LanceSystem.CampaignBehaviors
             {
                 //break;
                 DisbandLanceIfNecessary(party);
-                RecruitLance(party, settlement);
+                if (!RecruitLance(party, settlement)) break;
             }
         }
 
         private void DisbandLanceIfNecessary(MobileParty party)
         {
-            if (!party.Party.HasFreeLanceSlots()) return;
+            if (party.Party.HasFreeLanceSlots()) return;
             foreach (var lance in party.Party.Lances())
-                if (lance.TotalManCount / lance.MaxSize < LanceStrengthToConsiderDisbanding)
+                if ((float)lance.TotalManCount / lance.MaxSize < LanceStrengthToConsiderDisbanding)
                 {
                     LancesBehavior.DisbandLanceInParty(party.Party, lance, true);
                     return;
@@ -171,11 +171,12 @@ namespace LanceSystem.CampaignBehaviors
             var roster = LancesBehavior.GetNotableData(hero.StringId).CurrentNotableLanceTroopRoster;
             return party.Owner.Gold > TroopRosterExtensions.CalculateTroopRosterDailyCost(roster) * 7;
         }
-        private void RecruitLance(MobileParty party, Settlement settlement)
+        private bool RecruitLance(MobileParty party, Settlement settlement)
         {
             var hero = LancesBehavior.GetHeroWithStrongestLanceInSettlement(settlement);
-            if (hero == null) return;
+            if (hero == null) return false;
             LancesBehavior.RecruitNotableLanceToParty(party.Party, hero);
+            return true;
         }
         public override void SyncData(IDataStore dataStore) { }
     }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
 
 namespace LanceSystem.Utils
@@ -75,16 +76,14 @@ namespace LanceSystem.Utils
                 if (remainingToMove <= 0) break;
             }
         }
-        public static int CalculateNumberOfTroopsToRemove(TroopRosterElement troop, List<LanceData> lances)
-        {
-            var character = troop.Character;
-            int memberCount = troop.Number;
-            int lanceCount = 0;
-            for (int i = 0; i < lances.Count; i++)
-                lanceCount += lances[i].LanceRoster.GetTroopCount(character);
+        //public static int CalculateNumberOfTroopsToRemove(TroopRosterElement troop, TroopRoster roster)
+        //{
+        //    var character = troop.Character;
+        //    int memberCount = troop.Number;
+        //    int lanceCount = roster.GetTroopCount(character);
 
-            return Math.Max(0, lanceCount - memberCount);
-        }
+        //    return Math.Max(0, lanceCount - memberCount);
+        //}
         public static void UpgradeTroopsRandomlyInLances(CharacterObject from, CharacterObject to, int toAdd, List<LanceData> lances)
         {
             if (toAdd <= 0 || lances.Count == 0)
@@ -100,11 +99,11 @@ namespace LanceSystem.Utils
             }
             if (toAdd > totalAvailable)
             {
-                LanceLogger.Logger.Warning(
-                    $"UpgradeTroopsRandomlyInLances requested {toAdd} upgrades but only {totalAvailable} '{from?.StringId}' troops available.");
+                //LanceLogger.Logger.Warning(
+                //    $"UpgradeTroopsRandomlyInLances requested {toAdd} upgrades but only {totalAvailable} '{from?.StringId}' troops available.");
             }
             toAdd = Math.Min(toAdd, totalAvailable);
-
+            if (toAdd == 0) return;
             for (int i = 0; i < lances.Count; i++)
             {
                 counts[i] = lances[i].LanceRoster.GetTroopCount(from);
@@ -143,9 +142,38 @@ namespace LanceSystem.Utils
                 }
             }
         }
-        public static void RemoveTroopsRandomlyFromLances(TroopRosterElement troop, int toRemove, List<LanceData> lances)
+
+        public static void NormalizeLanceTroopsToParty(TroopRoster partyRoster, List<LanceData> lances)
         {
-            var character = troop.Character;
+            var troopCounts = new Dictionary<CharacterObject, (int party, int lances)>();
+
+            foreach (var troop in partyRoster.GetTroopRoster())
+                troopCounts[troop.Character] = (troop.Number, 0);
+
+            foreach (var lance in lances)
+            {
+                foreach (var troop in lance.LanceRoster.GetTroopRoster())
+                {
+                    if (troopCounts.TryGetValue(troop.Character, out var counts))
+                        troopCounts[troop.Character] = (counts.party, counts.lances + troop.Number);
+                    else
+                        troopCounts[troop.Character] = (0, troop.Number);
+                }
+            }
+            foreach (var kvp in troopCounts)
+            {
+                var character = kvp.Key;
+                int partyCount = kvp.Value.party;
+                int lanceCount = kvp.Value.lances;
+                int excess = lanceCount - partyCount;
+                if (excess <= 0)
+                    continue;
+                RemoveTroopsRandomlyFromLances(character, excess, lances);
+            }
+        }
+
+        public static void RemoveTroopsRandomlyFromLances(CharacterObject character, int toRemove, List<LanceData> lances)
+        {
             if (toRemove <= 0 || lances.Count == 0)
                 return;
             var counts = new int[lances.Count];
@@ -183,6 +211,30 @@ namespace LanceSystem.Utils
                     lances[i].LanceRoster.AddToCounts(character, -removeCounts[i]);
             }
         }
-    }
+        public static void RemoveLowestTierTroops(TroopRoster roster, int amount)
+        {
+            if (roster == null || amount <= 0)
+                return;
+            var troops = roster.GetTroopRoster()
+                .Where(t => t.Number > 0)
+                .Select(t => new
+                {
+                    t.Character,
+                    Count = t.Number,
+                    Tier = t.Character?.Tier ?? int.MaxValue
+                })
+                .OrderBy(t => t.Tier)
+                .ToList();
+            int remaining = amount;
 
+            foreach (var troop in troops)
+            {
+                if (remaining <= 0)
+                    break;
+                int remove = Math.Min(remaining, troop.Count);
+                roster.AddToCounts(troop.Character, -remove);
+                remaining -= remove;
+            }
+        }
+    }
 }

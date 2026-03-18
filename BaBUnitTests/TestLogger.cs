@@ -13,6 +13,12 @@ namespace BaBUnitTests
 
         public string? LastMessage { get; private set; }
 
+        public void Error(string message)
+        {
+            WarningCalls++;
+            LastMessage = message;
+        }
+
         public void Warning(string message)
         {
             WarningCalls++;

@@ -23,6 +23,7 @@ namespace LanceSystem
                 campaignGameStarter.AddBehavior(new AskForVolunteersCampaignBehavior());
                 campaignGameStarter.AddBehavior(new MercenaryLancesInTavernsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new NotablesInCastlesBehavior());
+                campaignGameStarter.AddBehavior(new DisbandedLanceAI());
                 campaignGameStarter.RemoveBehavior(campaignGameStarter.CampaignBehaviors.First(b => b is RecruitmentCampaignBehavior));
                 campaignGameStarter.AddBehavior(new AILanceRecruitment());
                 campaignGameStarter.AddModel(new LancePartySizeLimitModel(gameStarterObject.GetExistingModel<PartySizeLimitModel>()));

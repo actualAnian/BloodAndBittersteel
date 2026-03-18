@@ -24,7 +24,20 @@ namespace LanceSystem.LanceDataClasses
         public string? PartyLanceBelongsTo { get; set; }
         [SaveableField(5)]
         private string _lanceTemplateId= null!;
-        public ExplainedNumber CachedMaxLanceTroops { get; set; }
+        private ExplainedNumber _cachedMaxLanceTroops;
+        public ExplainedNumber CachedMaxLanceTroops 
+        { 
+            get
+            {
+                if (_cachedMaxLanceTroops.ResultNumber == 0)
+                {
+                    var notable = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject;
+                    CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
+                }
+                return _cachedMaxLanceTroops;
+            }
+            set { _cachedMaxLanceTroops = value; }
+        }
         public List<float> CachedMaxTroopPerTier;
         private Lance? _cachedLance;
         public Lance CurrentLance 
