@@ -3102,6 +3102,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -3149,12 +3155,7 @@
 					point="0.04, 0.05, 0.05" />
 				<hair_color_gradient_point
 					point="0.01, 0.015, 0.035" />
-				<hair_color_gradient_point
-					point="1.00, 1.00, 1.00" />
-				<hair_color_gradient_point
-					point="0.00, 0.00, 1.00" />
-				<hair_color_gradient_point
-					point="0.00, 1.00, 0.00" />
+
 				<!--	
 		
 
@@ -3240,6 +3241,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+					point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+					point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -5803,6 +5810,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -5902,6 +5915,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -8970,6 +8989,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -9069,6 +9094,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -11558,6 +11589,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -11657,6 +11694,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -14542,6 +14585,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -14641,6 +14690,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -17135,6 +17190,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -17234,6 +17295,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -20264,6 +20331,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -20363,6 +20436,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -22816,6 +22895,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -22915,6 +23000,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -25522,6 +25613,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -25621,6 +25718,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
@@ -27758,6 +27861,12 @@
 			</tattoo_color_gradient_points>
 			<hair_color_gradient_points>
 				<hair_color_gradient_point
+					point="1.00, 1.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 0.00, 1.00" />
+				<hair_color_gradient_point
+					point="0.00, 1.00, 0.00" />
+				<hair_color_gradient_point
 					point="0.89, 0.89, 0.69" />
 				<hair_color_gradient_point
 					point="0.92, 0.71, 0.43" />
@@ -27857,6 +27966,12 @@
 					point="0.09, 0.08, 0.04" />
 			</skin_color_gradient_points>
 			<eye_color_gradient_points>
+				<!--Purple-->
+				<eye_color_gradient_point
+								point="0.66, 0.01, 1.00" />
+				<!--Red-->
+				<eye_color_gradient_point
+								point="1.00, 0.00, 0.00" />
 				<!--Bright
 				Blue-->
 				<eye_color_gradient_point
