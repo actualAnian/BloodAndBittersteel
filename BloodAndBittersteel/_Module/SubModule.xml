@@ -50,6 +50,53 @@
 	  </SubModule>
 	    </SubModules>
   <Xmls>
+	  <XmlNode>
+		  <XmlName
+			id="Settlements"
+			path="settlements" />
+		  <IncludedGameTypes>
+			  <GameType
+				value="Campaign" />
+			  <GameType
+				value="CampaignStoryMode" />
+		  </IncludedGameTypes>
+	  </XmlNode>
+	  <XmlNode>
+		  <XmlName id="NPCCharacters" path="lords_BAB"/>
+		  <IncludedGameTypes>
+			  <GameType value = "Campaign"/>
+			  <GameType value = "CampaignStoryMode"/>
+			  <GameType value = "CustomGame"/>
+			  <GameType value = "EditorGame"/>
+		  </IncludedGameTypes>
+	  </XmlNode>
+	  <XmlNode>
+		  <XmlName id="Heroes" path="heroes_BAB"/>
+		  <IncludedGameTypes>
+			  <GameType value = "Campaign"/>
+			  <GameType value = "CampaignStoryMode"/>
+			  <GameType value = "CustomGame"/>
+			  <GameType value = "EditorGame"/>
+		  </IncludedGameTypes>
+	  </XmlNode>
+	  <XmlNode>
+		  <XmlName id="Factions" path="spclans_BAB"/>
+		  <IncludedGameTypes>
+			  <GameType value = "Campaign"/>
+			  <GameType value = "CampaignStoryMode"/>
+			  <GameType value = "CustomGame"/>
+			  <GameType value = "EditorGame"/>
+		  </IncludedGameTypes>
+	  </XmlNode>
+	  <XmlNode>
+		  <XmlName id="Kingdoms" path="spkingdoms_BAB"/>
+		  <IncludedGameTypes>
+			  <GameType value = "Campaign"/>
+			  <GameType value = "CampaignStoryMode"/>
+			  <GameType value = "CustomGame"/>
+			  <GameType value = "EditorGame"/>
+		  </IncludedGameTypes>
+	  </XmlNode>
 	  <!-- Strings -->
 	  <XmlNode>
 		  <XmlName id="GameText" path="module_strings" />
