@@ -25,10 +25,26 @@ namespace LanceSystem.CampaignBehaviors
 {
     public class LancesCampaignBehavior : CampaignBehaviorBase
     {
+        static readonly Random _random = new();
         [SaveableField(1)]
         Dictionary<string, List<LanceData>> _activeLancesForParties = new();
         [SaveableField(2)]
         Dictionary<string, SettlementNotableLanceInfo> _notablesLance = new();
+        [SaveableField(3)]
+        CampaignTime _mercRecruitTimeSpan = CampaignTime.Zero;
+        public bool CanRecruitDisbandedLanceAsMercenaries()
+        {
+            if (_mercRecruitTimeSpan > CampaignTime.Now) return false;
+            float chance = Clan.PlayerClan.Tier switch
+            {
+                0 or 1 => 0.2f,
+                2 => 0.5f,
+                _ => 0.8f,
+            };
+            var canRecruit = _random.NextDouble() < chance;
+            _mercRecruitTimeSpan = CampaignTime.HoursFromNow(6);
+            return canRecruit;
+        }
         public override void RegisterEvents()
         {
             CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, AddDialogs);
@@ -440,6 +456,7 @@ namespace LanceSystem.CampaignBehaviors
         {
             dataStore.SyncData("activeLancesForParties", ref _activeLancesForParties);
             dataStore.SyncData("notablesLance", ref _notablesLance);
+            dataStore.SyncData("mercRecruitTimeSpan", ref _mercRecruitTimeSpan);
         }
     }
 }

@@ -16,16 +16,6 @@ using TaleWorlds.Localization;
 
 namespace LanceSystem.Dialogues
 {
-    /*
-    "{=lancel_player_ask}You are free men now. Take service with me — for fair pay.",
-    "{=lance_player_ask_devious}You’ve been cast loose. Better to profit than wander — serve me instead."
-    "{=lance_accept_low}We’ve marched under worse. Pay us, and we’re yours."
-    "{=lance_accept_mid}We’ve heard of you. For coin, we’ll follow your banner."
-    "{=lance_accept_high}Gladly. We will serve under your command."
-    "{=lance_refuse_low}Find other fools. We’ll not follow you."
-    "{=lance_refuse_mid}Not a banner we care to follow."
-    "{=lance_refuse_high}you honour us my {?PLAYER.GENDER}lady{?}lord{\\?}, but we are weary after an arduous campaign, we must refuse."
-     */
     public class DisbandedLanceDialogs
     {
         static readonly Random _random = new();
@@ -57,107 +47,111 @@ namespace LanceSystem.Dialogues
                 },
                 null
             );
+            starter.AddPlayerLine(
+                "lance_recruit_merc_player",
+                "disbanded_lance_response",
+                "lance_recruit_merc_player",
+                "{RECRUIT_MERC_PLAYER}",
+                static () =>
+                {
+                    var isCruel = Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) < 0;
+                    var text = isCruel ? "{=lance_player_ask_cruel}You’ve been cast loose. Better to profit than wander — serve me instead."
+                    : "{=lancel_player_ask}You are free men now. Take service with me — for fair pay.";
+                    GameTexts.SetVariable("RECRUIT_MERC_PLAYER", text);
+                    return !Clan.PlayerClan.MapFaction.IsAtWarWith(PlayerEncounter.EncounteredMobileParty.MapFaction);
+                },
+                null);
+
             starter.AddDialogLine(
                 "lance_recruit_agree",
-                "lance_test",
-                "close_window",
-                "ok, sure",
-                null,
+                "lance_recruit_merc_player",
+                "lance_recruit_agree",
+                "{RECRUIT_MERC_RESPONSE}",
                 static () =>
+                {
+                    string text = Clan.PlayerClan.Tier switch
+                    {
+                        0 or 1 => "{=lance_merc_accept_low}We’ve marched under worse. Pay us, and we’re yours.",
+                        2 => "{=lance_merc_accept_mid}We’ve heard of you. For coin, we’ll follow your banner.",
+                        _ => "{=lance_merc_accept_high}Gladly. We will serve under your command.",
+                    };
+                    GameTexts.SetVariable("RECRUIT_MERC_RESPONSE", text);
+                    return Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().CanRecruitDisbandedLanceAsMercenaries();
+                },
+                null);
+            starter.AddDialogLine(
+                "lance_recruit_refuse",
+                "lance_recruit_merc_player",
+                "close_window",
+                "{RECRUIT_MERC_RESPONSE}",
+                static () =>
+                {
+                    string text = Clan.PlayerClan.Tier switch
+                    {
+                        0 or 1 => "{=lance_merc_refuse_low}Find other fools. We’ll not follow you.",
+                        2 => "{=lance_merc_refuse_mid}Not a banner we care to follow.",
+                        _ => "{=lance_merc_refuse_high}you honour us my {?PLAYER.GENDER}lady{?}lord{\\?}, but we are weary after an arduous campaign, we must refuse.",
+                    };
+                    GameTexts.SetVariable("RECRUIT_MERC_RESPONSE", text);
+                    var willRefuse = !Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().CanRecruitDisbandedLanceAsMercenaries();
+                    if (willRefuse)
+                        PlayerEncounter.LeaveEncounter = true;
+                    return willRefuse;
+                }, null);
+
+
+            starter.AddPlayerLine(
+                "lance_recruit_agree_confirm",
+                "lance_recruit_agree",
+                "close_window",
+                "{=lance_player_merc_accept}Good. Keep your discipline, and you’ll not regret this.",
+                null, static () =>
                 {
                     PartyState partyState = Game.Current.GameStateManager.CreateState<PartyState>();
                     partyState.PartyScreenMode = PartyScreenHelper.PartyScreenMode.Normal;
                     var partyScreenLogic = new PartyScreenLogic();
                     var otherParty = PlayerEncounter.EncounteredMobileParty;
-                    int num = Math.Max(otherParty.Party.PartySizeLimit - otherParty.Party.NumberOfAllMembers, 0);
                     TroopRoster leftMemberRoster = TroopRoster.CreateDummyTroopRoster();
                     leftMemberRoster.Add(PlayerEncounter.EncounteredMobileParty.MemberRoster);
-                    TroopRoster leftPrisonerRoster = TroopRoster.CreateDummyTroopRoster();
-                    PartyScreenLogic.TransferState memberTransferState = PartyScreenLogic.TransferState.Transferable;
-                    PartyScreenLogic.TransferState prisonerTransferState = PartyScreenLogic.TransferState.NotTransferable;
-                    PartyScreenLogic.TransferState accompanyingTransferState = PartyScreenLogic.TransferState.Transferable;
-                    IsTroopTransferableDelegate troopTransferableDelegate = new IsTroopTransferableDelegate(PartyScreenHelper.TroopTransferableDelegate);
-                    PartyScreenHelper.PartyScreenMode partyScreenMode = partyState.PartyScreenMode;
-                    PartyBase leftOwnerParty = null;
-                    TextObject name = otherParty.Name;
-                    int leftPartyMembersSizeLimit = num;
+                    PartyBase? leftOwnerParty = PlayerEncounter.EncounteredMobileParty.Party;
+                    int leftPartyMembersSizeLimit = Math.Max(otherParty.Party.PartySizeLimit - otherParty.Party.NumberOfAllMembers, 0);
                     PartyPresentationDoneButtonDelegate OnDone =
-                        (TroopRoster leftMemberRoster,
-                            TroopRoster leftPrisonRoster,
-                            TroopRoster rightMemberRoster,
-                            TroopRoster rightPrisonRoster,
-                            FlattenedTroopRoster takenPrisonerRoster,
-                            FlattenedTroopRoster releasedPrisonerRoster,
-                            bool isForced,
-                            PartyBase leftParty,
-                            PartyBase rightParty) =>
-                        {
-                            return true;
-                        };
-                    PartyScreenLogicInitializationData initializationData = PartyScreenLogicInitializationData.CreateBasicInitDataWithMainParty(leftMemberRoster, leftPrisonerRoster, memberTransferState, prisonerTransferState, accompanyingTransferState, troopTransferableDelegate, partyScreenMode, leftOwnerParty, name, new TextObject("{=uQgNPJnc}Manage Troops", null), null, leftPartyMembersSizeLimit, 0, OnDone, null, null, null, null, false, false, false, false, 0);
+                    (leftMemberRoster,
+                        leftPrisonRoster,
+                        rightMemberRoster,
+                        rightPrisonRoster,
+                        takenPrisonerRoster,
+                        releasedPrisonerRoster,
+                        isForced,
+                        leftParty,
+                        rightParty) =>
+                    {
+                        MercenaryTroopsBuyLogic.Instance.OnDone(leftParty);
+                        return true;
+                    };
+
+                    PartyScreenLogicInitializationData initializationData = PartyScreenLogicInitializationData.CreateBasicInitDataWithMainParty(
+                        leftMemberRoster,
+                        TroopRoster.CreateDummyTroopRoster(),
+                        PartyScreenLogic.TransferState.Transferable,
+                        PartyScreenLogic.TransferState.NotTransferable,
+                        PartyScreenLogic.TransferState.Transferable,
+                        new IsTroopTransferableDelegate(PartyScreenHelper.TroopTransferableDelegate),
+                        partyState.PartyScreenMode,
+                        leftOwnerParty,
+                        otherParty.Name,
+                        new TextObject("{=uQgNPJnc}Manage Troops", null),
+                        null,
+                        leftPartyMembersSizeLimit,
+                        0, OnDone, null, null, null, null, false, false, false, false, 0);
                     partyScreenLogic.Initialize(initializationData);
                     partyState.PartyScreenLogic = partyScreenLogic;
                     _logic = partyScreenLogic;
                     Game.Current.GameStateManager.PushState(partyState, 0);
                     MercenaryTroopsBuyLogic.Instance.Init(otherParty.MemberRoster, partyScreenLogic);
-                    PartyCharacterVM.OnTransfer += (troop, index, amount, fromSide) =>
-                    {
-                        MercenaryTroopsBuyLogic.Instance.OnTroopTransfer(troop.Character, amount, fromSide);
-                        //var test = AccessTools.Method("PartyScreenLogic:SetPartyGoldChangeAmount");
-                        //test.Invoke(_logic, new object[1] {-5});
-                    };
-                    partyScreenLogic.AfterReset += (logic, fromCancel) => { MercenaryTroopsBuyLogic.Instance.Reset(); };
-                });
-            starter.AddPlayerLine(
-                "lance_test",
-                "disbanded_lance_response",
-                "lance_test",
-                "you are mine",
-                null,
-                static () =>
-                {
-                    //PartyState partyState = Game.Current.GameStateManager.CreateState<PartyState>();
-                    //partyState.PartyScreenMode = PartyScreenHelper.PartyScreenMode.Normal;
-                    //var partyScreenLogic = new PartyScreenLogic();
-                    //var otherParty = PlayerEncounter.EncounteredMobileParty;
-                    //int num = Math.Max(otherParty.Party.PartySizeLimit - otherParty.Party.NumberOfAllMembers, 0);
-                    //TroopRoster leftMemberRoster = TroopRoster.CreateDummyTroopRoster();
-                    //leftMemberRoster.Add(PlayerEncounter.EncounteredMobileParty.MemberRoster);
-                    //TroopRoster leftPrisonerRoster = TroopRoster.CreateDummyTroopRoster();
-                    //PartyScreenLogic.TransferState memberTransferState = PartyScreenLogic.TransferState.Transferable;
-                    //PartyScreenLogic.TransferState prisonerTransferState = PartyScreenLogic.TransferState.NotTransferable;
-                    //PartyScreenLogic.TransferState accompanyingTransferState = PartyScreenLogic.TransferState.Transferable;
-                    //IsTroopTransferableDelegate troopTransferableDelegate = new IsTroopTransferableDelegate(PartyScreenHelper.TroopTransferableDelegate);
-                    //PartyScreenHelper.PartyScreenMode partyScreenMode = partyState.PartyScreenMode;
-                    //PartyBase leftOwnerParty = null;
-                    //TextObject name = otherParty.Name;
-                    //int leftPartyMembersSizeLimit = num;
-                    //PartyPresentationDoneButtonDelegate OnDone =
-                    //    (TroopRoster leftMemberRoster,
-                    //     TroopRoster leftPrisonRoster,
-                    //     TroopRoster rightMemberRoster,
-                    //     TroopRoster rightPrisonRoster,
-                    //     FlattenedTroopRoster takenPrisonerRoster,
-                    //     FlattenedTroopRoster releasedPrisonerRoster,
-                    //     bool isForced,
-                    //     PartyBase leftParty,
-                    //     PartyBase rightParty) =>
-                    //    {
-                    //        return true;
-                    //    };
-                    //PartyScreenLogicInitializationData initializationData = PartyScreenLogicInitializationData.CreateBasicInitDataWithMainParty(leftMemberRoster, leftPrisonerRoster, memberTransferState, prisonerTransferState, accompanyingTransferState, troopTransferableDelegate, partyScreenMode, leftOwnerParty, name, new TextObject("{=uQgNPJnc}Manage Troops", null), null, leftPartyMembersSizeLimit, 0, OnDone, null, null, null, null, false, false, false, false, 0);
-                    //partyScreenLogic.Initialize(initializationData);
-                    //partyState.PartyScreenLogic = partyScreenLogic;
-                    //_logic = partyScreenLogic;
-                    //Game.Current.GameStateManager.PushState(partyState, 0);
-                    //MercenaryTroopsBuyLogic.Instance.Init(otherParty.MemberRoster, partyScreenLogic);
-                    //PartyCharacterVM.OnTransfer += (troop, index, amount, fromSide) =>
-                    //{
-                    //    MercenaryTroopsBuyLogic.Instance.OnTroopTransfer(troop.Character, amount, fromSide);
-                    //    //var test = AccessTools.Method("PartyScreenLogic:SetPartyGoldChangeAmount");
-                    //    //test.Invoke(_logic, new object[1] {-5});
-                    //};
-                    //partyScreenLogic.AfterReset += (logic, fromCancel) => { MercenaryTroopsBuyLogic.Instance.Reset(); };
+                    PartyCharacterVM.OnTransfer += (troop, index, amount, fromSide) => MercenaryTroopsBuyLogic.Instance.OnTroopTransfer(troop.Character, amount, fromSide);
+                    partyScreenLogic.AfterReset += (logic, fromCancel) => MercenaryTroopsBuyLogic.Instance.Reset();
+                    PlayerEncounter.LeaveEncounter = true;
                 });
 
             starter.AddPlayerLine(

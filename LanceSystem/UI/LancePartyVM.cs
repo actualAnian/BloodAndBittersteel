@@ -542,7 +542,7 @@ namespace LanceSystem.UI
                 }
             }
         }
-        int transfers = 0;
+        //int transfers = 0;
         private void InitializePartyCharacterVM(PartyCharacterVM vm, TroopRoster roster, int newAmount, bool leftSide)
         {
             var tradeData = vm.TradeData;
@@ -578,8 +578,8 @@ namespace LanceSystem.UI
         private void OnTransferTroop(PartyCharacterVM troop, int newIndex, int transferAmount, PartyRosterSide fromSide)
         {
             if (troop.IsPrisoner) return;
-            transfers++;
-            InformationManager.DisplayMessage(new($"{transferAmount} from {fromSide}. transfers: {transfers}"));
+            //transfers++;
+            //InformationManager.DisplayMessage(new($"{transferAmount} from {fromSide}. transfers: {transfers}"));
             if (fromSide == PartyRosterSide.Left)
             {
                 ExecuteTransferFromOtherToPlayerSide(troop, transferAmount);
