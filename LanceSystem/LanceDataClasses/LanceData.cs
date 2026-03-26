@@ -16,8 +16,8 @@ namespace LanceSystem.LanceDataClasses
         public string SettlementStringId;
         [SaveableField(3)]
         public string Name;
-
-        public abstract int TotalManCount { get; }
+        public abstract int MaxSize { get; }
+        public int TotalManCount => LanceRoster.TotalManCount;
         protected LanceData(TroopRoster lanceRoster, string settlementStringId, string name)
         {
             LanceRoster = lanceRoster;

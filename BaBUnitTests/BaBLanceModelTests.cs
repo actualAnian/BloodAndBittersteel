@@ -6,7 +6,7 @@ namespace BaBUnitTests
     [TestClass]
     public sealed class BaBLanceModelTests
     {
-        public TestContext TestContext { get; set; } // Add this property
+        public TestContext TestContext { get; set; }
 
         [TestMethod]
         public void GetTroopTypeDistribution_AggregatesCountsByType()

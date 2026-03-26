@@ -32,9 +32,9 @@ namespace LanceSystem.Deserialization
                 var normalized = NormalizeTroopLikelihoods(parsed);
                 var troops = new LanceTroopsTemplate(normalized);
                 var weight = (int?)lanceElem.Element("Weight") ?? 1;
-                var lance = new Lance(CleanString(lanceElem.Element("StringId").Value),
-                                      CleanString(lanceElem.Element("Name").Value),
-                                      CleanString(lanceElem.Element("CultureId").Value),
+                var lance = new Lance(CleanString(lanceElem.Element("StringId")),
+                                      CleanString(lanceElem.Element("Name")),
+                                      CleanString(lanceElem.Element("CultureId")),
                                       ParseLanceOrigin(lanceElem.Element("LanceOriginType").Value),
                                       troops, 
                                       weight
@@ -83,17 +83,18 @@ namespace LanceSystem.Deserialization
             return value switch
             {
                 "town" => LanceTemplateOriginType.Town,
-                "settlement" => LanceTemplateOriginType.Village,
+                "village" => LanceTemplateOriginType.Village,
                 "castle" => LanceTemplateOriginType.Castle,
+                "settlement" => LanceTemplateOriginType.Settlement,
                 "mercenary" => LanceTemplateOriginType.Mercenary,
                 "all" => LanceTemplateOriginType.All,
                 _ => LanceTemplateOriginType.All
             };
         }
-        private static string CleanString(string? value)
+        private static string CleanString(XElement? value)
         {
-            if (string.IsNullOrEmpty(value)) return string.Empty;
-            return value!.Trim().Trim('"');
+            if (value == null) return "";
+            return value.Value.Trim().Trim('"');
         }
     }
 }

@@ -50,19 +50,15 @@ namespace LanceSystem.Models
         {
             return _baseModel.GetNextClanTierPartySizeEffectChangeForHero(hero);
         }
-        private bool IsUsingLanceSystem(PartyBase party)
-        {
-            return party == PartyBase.MainParty;
-        }
         public override ExplainedNumber GetPartyMemberSizeLimit(PartyBase party, bool includeDescriptions = false)
         {
-            if (!IsUsingLanceSystem(party))
+            if (!Campaign.Current.Models.LanceModel().IsUsingLanceSystem(party))
                 return _baseModel.GetPartyMemberSizeLimit(party, includeDescriptions);
             ExplainedNumber number = new();
             number.Add(Campaign.Current.Models.LanceModel().GetRetinueSizeLimit(party).RoundedResultNumber, new("{=lance_retinue_size}Retinue size"));
             foreach (LanceData lance in party.Lances())
             {
-                number.Add(lance.TotalManCount, new("lance troops"));
+                number.Add(lance.MaxSize, new("lance troops"));
             }
             return number;
         }

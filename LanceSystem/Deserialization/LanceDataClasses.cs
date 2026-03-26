@@ -7,11 +7,12 @@ namespace LanceSystem.Deserialization
         Town,
         Village,
         Castle,
+        Settlement, //town + village + castle
         Mercenary,
         All
     }
 
-    public record Lance(string StringId, string Name, string CultureId, LanceTemplateOriginType LanceOriginType, LanceTroopsTemplate TroopsTemplate, int weight = 1);
+    public record Lance(string StringId, string Name, string? CultureId, LanceTemplateOriginType LanceOriginType, LanceTroopsTemplate TroopsTemplate, int weight = 1);
 
     public record LanceTroopsTemplate(List<TroopData> TroopTypes);
 

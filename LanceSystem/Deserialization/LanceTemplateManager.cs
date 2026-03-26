@@ -1,8 +1,8 @@
 ﻿using BloodAndBittersteel;
+using LanceSystem.Logger;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Settlements;
-using TaleWorlds.Library;
 
 namespace LanceSystem.Deserialization
 {
@@ -26,9 +26,12 @@ namespace LanceSystem.Deserialization
         public IEnumerable<Lance> GetLances(string cultureId, LanceTemplateOriginType originType)
         {
             var result = Lances.Values.Where(l =>
-                l.CultureId == cultureId &&
-                (l.LanceOriginType == originType ||
-                 l.LanceOriginType == LanceTemplateOriginType.All));
+                (l.CultureId == null 
+                || l.CultureId == cultureId)
+                &&
+                (l.LanceOriginType == originType 
+                || l.LanceOriginType == LanceTemplateOriginType.All)
+                || l.LanceOriginType == LanceTemplateOriginType.Settlement && (originType == LanceTemplateOriginType.Town || originType == LanceTemplateOriginType.Castle || originType == LanceTemplateOriginType.Village));
             return result.Any() ? result : new List<Lance> { FallBackLance };
         }
         public IEnumerable<Lance> GetLances(string cultureId, Settlement settlement)
@@ -43,7 +46,7 @@ namespace LanceSystem.Deserialization
         {
             Lances.TryGetValue(lanceId, out var lance);
             if (lance == null)
-                InformationManager.DisplayMessage(new($"Error, lance with id {lanceId} does not exist!"));
+                LanceLogger.Logger.Warning($"Warning, Lance with id {lanceId} does not exist!");
             return lance ?? FallBackLance;
         }
     }

@@ -17,5 +17,6 @@ namespace LanceSystem.Models
         public abstract int DailyTroopsGet(Hero notable);
         public abstract List<float> DefaultTroopQuality { get; }
         public abstract ExplainedNumber GetRetinueSizeLimit(PartyBase party);
+        public abstract bool IsUsingLanceSystem(PartyBase party);
     }
 }

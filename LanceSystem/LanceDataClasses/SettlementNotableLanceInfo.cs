@@ -1,5 +1,7 @@
 ﻿using LanceSystem.Deserialization;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -21,8 +23,21 @@ namespace LanceSystem.LanceDataClasses
         [SaveableProperty(4)]
         public string? PartyLanceBelongsTo { get; set; }
         [SaveableField(5)]
-        private string _lanceTemplateId;
-        public ExplainedNumber CachedMaxLanceTroops { get; set; }
+        private string _lanceTemplateId= null!;
+        private ExplainedNumber _cachedMaxLanceTroops;
+        public ExplainedNumber CachedMaxLanceTroops 
+        { 
+            get
+            {
+                if (_cachedMaxLanceTroops.ResultNumber == 0)
+                {
+                    var notable = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject;
+                    CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
+                }
+                return _cachedMaxLanceTroops;
+            }
+            set { _cachedMaxLanceTroops = value; }
+        }
         public List<float> CachedMaxTroopPerTier;
         private Lance? _cachedLance;
         public Lance CurrentLance 
@@ -40,6 +55,26 @@ namespace LanceSystem.LanceDataClasses
             var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject.HomeSettlement;
             return LanceTemplateManager.Instance.GetLances(settlement.Culture.StringId, settlement);
         }
+        static Random _random = new();
+        public void SetRandomLanceTemplateWeighted()
+        {
+            var possibleTemplates = GetPossibleTemplates();
+            if (possibleTemplates.Count() == 1) SetLanceTemplate(possibleTemplates.First());
+            int totalWeight = possibleTemplates.Sum(l => l.weight);
+
+            int roll = _random.Next(totalWeight);
+
+            foreach (var lance in possibleTemplates)
+            {
+                if (roll < lance.weight)
+                {
+                    SetLanceTemplate(lance);
+                    return;
+                }
+                roll -= lance.weight;
+            }
+            SetLanceTemplate(possibleTemplates.First());
+        }
         private static LanceTemplateOriginType GetLanceSettlementType(Settlement settlement)
         {
             if (settlement.IsTown) return LanceTemplateOriginType.Town;
@@ -55,7 +90,7 @@ namespace LanceSystem.LanceDataClasses
             IsTaken = isTaken;
             CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
             if (lanceTemplateId == null)
-                _lanceTemplateId = LanceTemplateManager.Instance.GetLances(notable.StringId, GetLanceSettlementType(notable.BornSettlement)).GetRandomElementInefficiently().StringId;
+                SetRandomLanceTemplateWeighted();//LanceTemplateManager.Instance.GetLances(notable.Culture.StringId, GetLanceSettlementType(notable.BornSettlement)).GetRandomElementInefficiently().StringId;
             else
                 _lanceTemplateId = lanceTemplateId;
             CachedMaxTroopPerTier = new(Campaign.Current.Models.LanceModel().DefaultTroopQuality);

@@ -410,7 +410,7 @@ namespace LanceSystem.CampaignBehaviors
                 "{=lance_mercenary_refill}My mercenary lance needs fresh men. Can you refill its ranks?",
                 () =>
                 {
-                    return PartyBase.MainParty.Lances().Any(l => l is MercenaryLanceData && l.LanceRoster.Count < l.TotalManCount);
+                    return PartyBase.MainParty.Lances().Any(l => l is MercenaryLanceData && l.LanceRoster.Count < l.MaxSize);
                 },
                 null
             );
@@ -502,7 +502,7 @@ namespace LanceSystem.CampaignBehaviors
                 "{=lance_mercenary_refill_yes}Coin for steel, steel for blood. pay {TOTAL_COST}{GOLD_ICON}, and I will send {AMOUNT} troops to your {TEMPLATE_NAME}",
                 () =>
                 {
-                    var lanceChosen = (MercenaryLanceData)PartyBase.MainParty.Lances().Where(l => l is MercenaryLanceData && l.LanceRoster.Count < l.TotalManCount).GetRandomElementInefficiently();
+                    var lanceChosen = (MercenaryLanceData)PartyBase.MainParty.Lances().Where(l => l is MercenaryLanceData && l.LanceRoster.Count < l.MaxSize).GetRandomElementInefficiently();
                     CalculateNewTroopsToRefill(lanceChosen);
                     
                     GameTexts.SetVariable("AMOUNT", _tempRefillData!.AmountToRefill);
@@ -536,7 +536,7 @@ namespace LanceSystem.CampaignBehaviors
         }
         public void CalculateNewTroopsToRefill(MercenaryLanceData data)
         {
-            var amountToRefill = data.TotalManCount - data.LanceRoster.TotalManCount;
+            var amountToRefill = data.MaxSize - data.LanceRoster.TotalManCount;
             TroopRoster refillTroopRoster = TroopRoster.CreateDummyTroopRoster();
             LanceModelUtils.RecruitNTroopsToRoster(amountToRefill, refillTroopRoster, data.TroopsTemplate.TroopsTemplate);
             int cost = 0;

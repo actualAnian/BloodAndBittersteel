@@ -1,5 +1,6 @@
 ﻿using LanceSystem.Deserialization;
 using LanceSystem.LanceDataClasses;
+using LanceSystem.Logger;
 using LanceSystem.Utils;
 using System;
 using System.Collections.Generic;
@@ -99,13 +100,19 @@ namespace LanceSystem.Models
         }
         public override void UpdateNotablesLanceTroops(Hero notable, SettlementNotableLanceInfo lanceData)
         {
+            var excess = lanceData.CurrentNotableLanceTroopRoster.TotalManCount - lanceData.CachedMaxLanceTroops.RoundedResultNumber;
+            if (excess > 0)
+                LanceUtils.RemoveLowestTierTroops(lanceData.CurrentNotableLanceTroopRoster, excess);
             RecruitNewNotableTroops(notable, lanceData);
             IncreaseNotableTroopsTier(notable, lanceData);
+            if (lanceData.CurrentNotableLanceTroopRoster.TotalManCount > lanceData.CachedMaxLanceTroops.RoundedResultNumber)
+                LanceLogger.Logger.Warning($"notable lance for notable with id {notable.StringId} is above max!");
         }
         private void RecruitNewNotableTroops(Hero notable, SettlementNotableLanceInfo lanceData)
         {
+            if (lanceData.CurrentNotableLanceTroopRoster.TotalManCount >= lanceData.CachedMaxLanceTroops.RoundedResultNumber) return;
             var availableLanceTroops = lanceData.CurrentNotableLanceTroopRoster;
-            int troopsToGet = Math.Min(lanceData.CachedMaxLanceTroops.RoundedResultNumber, DailyTroopsGet(notable));
+            int troopsToGet = Math.Min(lanceData.CachedMaxLanceTroops.RoundedResultNumber - lanceData.CurrentNotableLanceTroopRoster.TotalManCount, DailyTroopsGet(notable));
             LanceModelUtils.RecruitNTroopsToRoster(troopsToGet, availableLanceTroops, lanceData.CurrentLance.TroopsTemplate);
         }
         private void IncreaseNotableTroopsTier(Hero notable, SettlementNotableLanceInfo lanceData)
@@ -258,6 +265,10 @@ namespace LanceSystem.Models
                     result.Add(60f, DefaultPolicies.RoyalGuard.Name, null);
                 }
             }
+        }
+        public override bool IsUsingLanceSystem(PartyBase party)
+        {
+            return party == PartyBase.MainParty || party.LeaderHero != null && party.MapFaction.IsKingdomFaction;
         }
     }
 }

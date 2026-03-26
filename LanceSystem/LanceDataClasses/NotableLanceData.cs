@@ -14,7 +14,7 @@ namespace LanceSystem.LanceDataClasses
         {
             NotableId = notableId;
         }
-        public override int TotalManCount => GetSettlementNotableLanceInfo().CachedMaxLanceTroops.RoundedResultNumber;
+        public override int MaxSize => GetSettlementNotableLanceInfo().CachedMaxLanceTroops.RoundedResultNumber;
         public SettlementNotableLanceInfo GetSettlementNotableLanceInfo()
         {
             return Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().GetNotableData(NotableId);

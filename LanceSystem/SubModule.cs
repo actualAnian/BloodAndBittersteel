@@ -1,12 +1,14 @@
-﻿using HarmonyLib;
+﻿using BloodAndBittersteel;
+using HarmonyLib;
+using LanceSystem.CampaignBehaviors;
+using LanceSystem.Deserialization;
+using LanceSystem.Models;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
-using LanceSystem.Deserialization;
-using BloodAndBittersteel;
-using LanceSystem.Models;
-using LanceSystem.CampaignBehaviors;
 
 namespace LanceSystem
 {
@@ -21,7 +23,9 @@ namespace LanceSystem
                 campaignGameStarter.AddBehavior(new AskForVolunteersCampaignBehavior());
                 campaignGameStarter.AddBehavior(new MercenaryLancesInTavernsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new NotablesInCastlesBehavior());
-
+                campaignGameStarter.AddBehavior(new DisbandedLanceAI());
+                campaignGameStarter.RemoveBehavior(campaignGameStarter.CampaignBehaviors.First(b => b is RecruitmentCampaignBehavior));
+                campaignGameStarter.AddBehavior(new AILanceRecruitment());
                 campaignGameStarter.AddModel(new LancePartySizeLimitModel(gameStarterObject.GetExistingModel<PartySizeLimitModel>()));
                 campaignGameStarter.AddModel(new LanceTavernMercenaryTroopsModel());
             }
