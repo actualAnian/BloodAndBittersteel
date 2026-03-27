@@ -4010,7 +4010,7 @@
       <Area type="Bog" name="{=iXA5SttU}Bog" />
     </CommonAreas>
   </Settlement>
-  <Settlement id="castle_S4" name="{=Settlements.Settlement.name.castle_S4}Kranirog Castle" owner="Faction.clan_sturgia_9" posX="210.199" posY="703.154" culture="Culture.sturgia" gate_posX="209.812" gate_posY="701.4492">
+  <Settlement id="castle_S4" name="{=Settlements.Settlement.name.castle_S4}Seaskin Point" owner="Faction.IRON_6" posX="210.199" posY="703.154" culture="Culture.sturgia" gate_posX="209.812" gate_posY="701.4492">
     <Components>
       <Town id="castle_comp_S4" is_castle="true" background_crop_position="0.0" background_mesh="gui_bg_castle_sturgia" wait_mesh="wait_sturgia_town" gate_rotation="0.908" prosperity="1000">
         <Buildings>
