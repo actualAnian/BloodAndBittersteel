@@ -55,7 +55,6 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
             "Reach",
             "Stormlands",
             "Riverlands",
-            "Crownlands",
         };
         public static readonly List<string> LoyalistVassalsAtGameStart = new()
         {
