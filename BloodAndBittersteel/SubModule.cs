@@ -1,6 +1,7 @@
 ﻿using BloodAndBittersteel.Features.BaBIncidents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
+using BloodAndBittersteel.Features.HelmetTilting;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
@@ -39,6 +40,11 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
         }
+        public override void OnMissionBehaviorInitialize(Mission mission)
+        {
+            mission.AddMissionBehavior(new HelmetTiltingMissionLogic());
+        }
+
         private void RemoveChildGenerationAtGameStart(CampaignGameStarter campaignGameStarter)
         {
             var behavior = campaignGameStarter.CampaignBehaviors.First(b => b is InitialChildGenerationCampaignBehavior);
@@ -53,9 +59,7 @@ namespace BloodAndBittersteel
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
-        }
-        public override void OnGameInitializationFinished(Game game)
-        {
+            ItemSwapManager.Instance.LoadFromFile();
         }
         protected override void OnSubModuleUnloaded()
         {
