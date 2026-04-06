@@ -12,7 +12,7 @@ namespace BloodAndBittersteel.Features.HelmetTilting
         //ItemObject item2 = MBObjectManager.Instance.GetObject<ItemObject>("emirs_helmet");
         public override void OnMissionTick(float dt)
         {
-            if (Input.IsKeyPressed(InputKey.H))
+            if (Input.IsKeyPressed(BaBSettings.Instance.HelmetTilting.SelectedValue))
             {
                 if (Agent.Main == null) return;
                 foreach(EquipmentIndex eqIndex in Enum.GetValues(typeof(EquipmentIndex)))

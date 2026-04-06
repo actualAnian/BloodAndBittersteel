@@ -3,14 +3,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Xml.Serialization;
-
-    //[XmlRoot("ItemSwaps")]
-    //public record ItemSwaps
-    //{
-    //    [XmlElement("ItemSwap")]
-    //    public List<ItemSwap> Swaps { get; init; } = new();
-    //}
-
     public record ItemSwap
     {
         [XmlElement("ItemId")]
