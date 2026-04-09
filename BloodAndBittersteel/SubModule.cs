@@ -2,6 +2,7 @@
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
 using BloodAndBittersteel.Features.HelmetTilting;
+using BloodAndBittersteel.Features.IronbornWives;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
@@ -26,12 +27,15 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBIncidentsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
+                campaignGameStarter.AddBehavior(new IronbornWivesCampaignBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
                 campaignGameStarter.AddModel(new BaBKingdomDecisionPermissionModel(gameStarterObject.GetExistingModel<KingdomDecisionPermissionModel>()));
                 campaignGameStarter.AddModel(new BaBSettlementAccessModel(gameStarterObject.GetExistingModel<SettlementAccessModel>()));
                 campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
+                campaignGameStarter.AddModel(new BaBMarriageModel(gameStarterObject.GetExistingModel<MarriageModel>()));
+                
                 // lance system defines PartySizeLimitModel
 
                 RemoveChildGenerationAtGameStart(campaignGameStarter);
