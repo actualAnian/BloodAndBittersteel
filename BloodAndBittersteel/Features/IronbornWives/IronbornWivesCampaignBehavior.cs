@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
+using TaleWorlds.CampaignSystem.MapEvents;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
 using TaleWorlds.Core;
@@ -13,14 +15,39 @@ namespace BloodAndBittersteel.Features.IronbornWives
 {
     public class IronbornWivesCampaignBehavior : CampaignBehaviorBase
     {
+        const int MaxSpousesForAiLords = 2;
         const float BaseAcceptanceChance = 0.8f;
         readonly Random _random = new();
         [SaveableField(1)]
         private Dictionary<string, CampaignTime> _lastRefusalTimes = new();
         public override void RegisterEvents()
         {
-            CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, new Action<CampaignGameStarter>(this.OnSessionLaunched)); 
+            CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, OnSessionLaunched);
+            CampaignEvents.MapEventEnded.AddNonSerializedListener(this, OnMapEventEnded);
         }
+
+        private void OnMapEventEnded(MapEvent mapEvent)
+        {
+            var lolol = MobileParty.All.First(p => p.LeaderHero != null && p.LeaderHero.StringId == "IRON_22m_03");
+            foreach(var party in mapEvent.InvolvedParties)
+            {
+                if (party == PartyBase.MainParty) continue;
+                if (party.LeaderHero == null || party.LeaderHero.Culture.StringId != Globals.IronbornCultureId) return;
+                var hero = party.LeaderHero;
+                var validPrisoner = party.PrisonerHeroes.FirstOrDefault(p => CanTakeWife(hero, p.HeroObject));
+                if (validPrisoner != null)
+                {
+                    var spousesAmount = 0;
+                    if (hero.Spouse != null) spousesAmount++;
+                    foreach (var exSpouse in hero.ExSpouses)
+                        if (exSpouse.IsAlive) spousesAmount++;
+                    if (spousesAmount > MaxSpousesForAiLords) continue;
+                    var prisoner = validPrisoner.HeroObject;
+                        TakeWife(hero, prisoner);
+                }
+            }
+        }
+
         private void OnSessionLaunched(CampaignGameStarter campaignGameStarter)
         {
             AddDialogs(campaignGameStarter);
@@ -211,21 +238,26 @@ namespace BloodAndBittersteel.Features.IronbornWives
 
         private void TakeWife(Hero main, Hero prisoner)
         {
-            var lastSpouse = prisoner.Spouse;
             var previousClanLeader = prisoner.Clan.Leader;
             MarriageAction.Apply(main, prisoner, true);
             if (prisoner.Clan != main.Clan) return; // marriage was not successful
             ChangeRelationAction.ApplyRelationChangeBetweenHeroes(main, previousClanLeader, -100);
             EndCaptivityAction.ApplyByReleasedAfterBattle(prisoner);
         }
-        private bool ConditionToStartDialog()
+        private bool CanTakeWife(Hero capturer, Hero prisoner)
         {
-            if (Hero.MainHero.Culture.StringId != Globals.IronbornCultureId) return false;
-            var prisoner = Hero.OneToOneConversationHero;
+            if (capturer.Culture.StringId != Globals.IronbornCultureId) return false;
             if (prisoner == null) return false;
-            if (!prisoner.IsPrisoner) return false;
             if (!prisoner.IsFemale) return false;
             if (prisoner.Culture.StringId == Globals.IronbornCultureId) return false;
+            return true;
+        }
+        private bool ConditionToStartDialog()
+        {
+            var capturer = Hero.MainHero;
+            var prisoner = Hero.OneToOneConversationHero;
+            CanTakeWife(capturer, prisoner);
+            if (!prisoner.IsPrisoner) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.CapturedLord) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.FreeOrCapturePrisonerHero) return false;
             var belongsToPlayer = (prisoner.PartyBelongedToAsPrisoner != null && prisoner.PartyBelongedToAsPrisoner.Owner.Clan == Clan.PlayerClan)
