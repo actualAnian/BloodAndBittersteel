@@ -28,7 +28,6 @@ namespace BloodAndBittersteel.Features.IronbornWives
 
         private void OnMapEventEnded(MapEvent mapEvent)
         {
-            var lolol = MobileParty.All.First(p => p.LeaderHero != null && p.LeaderHero.StringId == "IRON_22m_03");
             foreach(var party in mapEvent.InvolvedParties)
             {
                 if (party == PartyBase.MainParty) continue;
