@@ -3,7 +3,6 @@ using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.ModifiableValues;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel
