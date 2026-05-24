@@ -7,11 +7,11 @@ namespace BloodAndBittersteel.Features.CharacterSelection.Helper;
 
 internal static class CharacterCreationStagesHelper
 {
-    public static CharacterCreationState CurrentState => ((TaleWorlds.CampaignSystem.CharacterCreationContent.CharacterCreationState)GameStateManager.Current.ActiveState);
+    public static CharacterCreationState CurrentState => (CharacterCreationState)GameStateManager.Current.ActiveState;
 
     public static MBList<CharacterCreationStageBase> GetStages()
     {
-        CharacterCreationManager manager = (GameStateManager.Current.ActiveState as CharacterCreationState).CharacterCreationManager;
+        CharacterCreationManager manager = (GameStateManager.Current.ActiveState as CharacterCreationState)!.CharacterCreationManager;
         return ReflectionHelper.GetFieldValue<CharacterCreationManager, MBList<CharacterCreationStageBase>>(manager, "_stages");
     }
 

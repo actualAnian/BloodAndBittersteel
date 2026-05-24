@@ -13,21 +13,18 @@ public static class CharacterCreationClanNamingStageVMPatch
     [HarmonyPatch(typeof(CharacterCreationClanNamingStageVM), nameof(CharacterCreationClanNamingStageVM.OnNextStage))]
     public static void Post_OnNextStage()
     {
-        if (CharacterSelectionViewModel.IsPreBuildHero)
-        {
+        if (CharacterSelectionViewModel.Instance.IsPreBuiltHero)
             CharacterCreationStagesHelper.GotoStage(typeof(CharacterCreationOptionsStage));
-        }
     }
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(CharacterCreationClanNamingStageVM), nameof(CharacterCreationClanNamingStageVM.OnPreviousStage))]
     public static void Post_OnPreviousStagee()
     {
-        if (CharacterSelectionViewModel.IsPreBuildHero)
+        if (CharacterSelectionViewModel.Instance.IsPreBuiltHero)
         {
-            CharacterSelectionViewModel.Reset();
+            CharacterSelectionViewModel.Instance.Reset();
             CharacterCreationStagesHelper.GotoStage(typeof(CharacterCreationFaceGeneratorStage));
         }
     }
-
 }

@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
 using TaleWorlds.Core;
@@ -11,49 +9,41 @@ namespace BloodAndBittersteel.Features.CharacterSelection.ViewModel;
 
 public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
 {
-    private MBBindingList<CharacterSelectionItemViewModel> _kingdomMembers;
-    private MBBindingList<CharacterSelectionItemViewModel> _clanMembers;
-    private MBBindingList<CharacterSelectionItemViewModel> _wanderers;
-    private BodyGeneratorView _generatorView;
-    private CharacterSelectionItemViewModel _lastSelectedItem;
-    private static Clan _defaultClan;
-    private static CultureObject _culture;
-    private static CharacterSelectionViewModel _currentInstance;
+    private MBBindingList<CharacterSelectionItemViewModel> _clanLeaders = new();
+    private MBBindingList<CharacterSelectionItemViewModel> _clanMembers = new();
+    private MBBindingList<CharacterSelectionItemViewModel> _wanderers = new();
+    private CharacterSelectionItemViewModel? _lastSelectedItem;
+    private readonly BodyGeneratorView _generatorView;
+    private readonly CultureObject _culture;
+    private static CharacterSelectionViewModel? _currentInstance;
+    public static CharacterSelectionViewModel Instance { get => _currentInstance!; }
 
-    public static bool IsPreBuildHero => PreBuildHero != null;
-    public static Hero PreBuildHero { get; private set; } = null;
-    public static CampaignTime OriginalHeroBirthday { get; private set; }
+    private static string StartWithNewHero => new TextObject("Create Original Character").ToString();
+    private static string StartWithExistingHero => new TextObject("Advance with Hero").ToString();
+
+
+    [DataSourceProperty]
+    public bool IsPreBuiltHero => PreBuildHero != null;
+    Hero? _preBuiltHero;
+    public Hero? PreBuildHero { get => _preBuiltHero; private set { _preBuiltHero = value; OnPropertyChanged(nameof(IsPreBuiltHero)); } }
+    public CampaignTime OriginalHeroBirthday { get; private set; }
 
     [DataSourceProperty]
     public bool HasSelectedItem => _lastSelectedItem != null;
 
     [DataSourceProperty]
-    public String StartWithCurrentText => "Advance with Hero";
+    public string CreateCharacterText => StartWithNewHero;
 
     [DataSourceProperty]
-    public string KingdomMembersText => new TextObject("Kingdom Members").ToString();
-
+    public string ClanMembersText => new TextObject("Clan Members").ToString();
     [DataSourceProperty]
-    public string ClanMembersText => new TextObject("Clan Leaders").ToString();
+    public string ClanLeadersText => new TextObject("Clan Leaders").ToString();
 
     [DataSourceProperty]
     public string CompanionsText => new TextObject("Companions").ToString();
 
     [DataSourceProperty]
-    public MBBindingList<CharacterSelectionItemViewModel> KingdomMembers
-    {
-        get => _kingdomMembers;
-        set
-        {
-            if (value == _kingdomMembers)
-                return;
-            _kingdomMembers = value;
-            OnPropertyChanged(nameof(KingdomMembers));
-        }
-    }
-
-    [DataSourceProperty]
-    public MBBindingList<CharacterSelectionItemViewModel> ClanLeaders
+    public MBBindingList<CharacterSelectionItemViewModel> ClanMembers
     {
         get => _clanMembers;
         set
@@ -61,6 +51,19 @@ public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
             if (value == _clanMembers)
                 return;
             _clanMembers = value;
+            OnPropertyChanged(nameof(ClanMembers));
+        }
+    }
+
+    [DataSourceProperty]
+    public MBBindingList<CharacterSelectionItemViewModel> ClanLeaders
+    {
+        get => _clanLeaders;
+        set
+        {
+            if (value == _clanLeaders)
+                return;
+            _clanLeaders = value;
             OnPropertyChanged(nameof(ClanLeaders));
         }
     }
@@ -85,11 +88,9 @@ public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
 
         PreBuildHero = null;
         OriginalHeroBirthday = Hero.MainHero.BirthDay;
-        _culture = (GameStateManager.Current.ActiveState as CharacterCreationState).CharacterCreationManager.CharacterCreationContent.SelectedCulture;
+        _culture = (GameStateManager.Current.ActiveState as CharacterCreationState)!.CharacterCreationManager.CharacterCreationContent.SelectedCulture;
 
-        _defaultClan = Campaign.Current.MainParty.LeaderHero.Clan;
-        _defaultClan.Culture = _culture;
-
+        _generatorView.DataSource.DoneBtnLbl = StartWithNewHero;
         InitializeLists();
         PopulateLists(_culture);
     }
@@ -104,78 +105,60 @@ public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
         _lastSelectedItem = item;
         PreBuildHero = _lastSelectedItem.OriginalHero;
 
-        CharacterSelectionService.Instance.UpdateBodyProperties(PreBuildHero, _generatorView);
+        PreMadeCharacterSelection.Instance.UpdateBodyProperties(PreBuildHero, _generatorView);
         OnPropertyChanged("HasSelectedItem");
+        _generatorView.DataSource.DoneBtnLbl = StartWithExistingHero;
     }
 
     private void InitializeLists()
     {
-        _kingdomMembers ??= new MBBindingList<CharacterSelectionItemViewModel>();
         _clanMembers ??= new MBBindingList<CharacterSelectionItemViewModel>();
+        _clanLeaders ??= new MBBindingList<CharacterSelectionItemViewModel>();
         _wanderers ??= new MBBindingList<CharacterSelectionItemViewModel>();
 
-        _kingdomMembers.Clear();
         _clanMembers.Clear();
+        _clanLeaders.Clear();
         _wanderers.Clear();
     }
 
     private void PopulateLists(CultureObject culture)
     {
-        var kingdomMembers = CharacterSelectionService.Instance.GetKingdomMembers(culture);
-        var clanLeaders = CharacterSelectionService.Instance.GetClanLeaders(culture, kingdomMembers);
-        var wanderers = CharacterSelectionService.Instance.GetWanderers(culture);
+        var clanLeaders = PreMadeCharacterSelection.Instance.GetClanLeaders(culture);
+        var clanMembers = PreMadeCharacterSelection.Instance.GetClanMembers(culture);
+        var wanderers = PreMadeCharacterSelection.Instance.GetWanderers(culture);
 
-        kingdomMembers.ForEach(h => _kingdomMembers.Add(new CharacterSelectionItemViewModel(h, OnSelectedItem)));
-
-        clanLeaders.ForEach(h => _clanMembers.Add(new CharacterSelectionItemViewModel(h, OnSelectedItem)));
-
+        clanLeaders.ForEach(h => _clanLeaders.Add(new CharacterSelectionItemViewModel(h, OnSelectedItem)));
+        clanMembers.ForEach(h => _clanMembers.Add(new CharacterSelectionItemViewModel(h, OnSelectedItem)));
         wanderers.ForEach(h => _wanderers.Add(new CharacterSelectionItemViewModel(h, OnSelectedItem)));
     }
 
     private void ResetInstance()
     {
         _lastSelectedItem = null;
-        if (_generatorView != null)
-            _generatorView.DataSource.CanChangeRace = true;
     }
 
-    public static void Reset()
+    public void Reset()
     {
         PreBuildHero = null;
-        if (_currentInstance != null)
-        {
-            _currentInstance.ResetInstance();
-            ClearHelperStatics();
-        }
+        Instance.ResetInstance();
     }
-
-    public static void ClearHelperStatics()
+    public static void RemoveInstance()
     {
         _currentInstance = null;
     }
-
-    public static void ExcuteActionForPrebuildHero()
+    public void ExcuteActionForPrebuildHero()
     {
         if (PreBuildHero != null)
         {
             OriginalHeroBirthday = PreBuildHero.BirthDay;
-            CharacterSelectionService.Instance.ApplyPrebuildHeroConfiguration(PreBuildHero, OriginalHeroBirthday, _culture);
+            PreMadeCharacterSelection.Instance.ApplyPrebuildHeroConfiguration(PreBuildHero, OriginalHeroBirthday, _culture);
         }
     }
-
-    public static void CheckSkillReset()
+    public void OnResetCharacter()
     {
-        var service = CharacterSelectionService.Instance;
-
-        InformationManager.ShowInquiry(new InquiryData(
-            new TextObject("Skill reset decision").ToString(),
-            "Do you wanna set your skills to default?",
-            true,
-            true,
-            GameTexts.FindText("str_ok").ToString(),
-            GameTexts.FindText("str_cancel").ToString(),
-            () => service.ResetHeroSkills(Hero.MainHero),
-            () => service.CheckHeroSkillIntegrity(Hero.MainHero)
-        ), true, true);
+        if (_lastSelectedItem != null)
+            _lastSelectedItem.IsSelected = false;
+        Reset();
+        _generatorView.DataSource.DoneBtnLbl = StartWithNewHero;
     }
 }
