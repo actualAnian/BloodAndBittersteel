@@ -12,7 +12,7 @@ namespace BloodAndBittersteel.Models
 {
     internal class BaBDiplomacyModel : DiplomacyModel
     {
-        DiplomacyModel _baseModel;
+        readonly DiplomacyModel _baseModel;
         public BaBDiplomacyModel(DiplomacyModel baseModel)
         {
             _baseModel = baseModel;
@@ -32,9 +32,7 @@ namespace BloodAndBittersteel.Models
 
         public override int GiftingCastleRelationshipBonus => _baseModel.GiftingCastleRelationshipBonus;
 
-        public override float WarDeclarationScorePenaltyAgainstAllies => _baseModel.WarDeclarationScorePenaltyAgainstAllies;
-
-        public override float WarDeclarationScoreBonusAgainstEnemiesOfAllies => _baseModel.WarDeclarationScoreBonusAgainstEnemiesOfAllies;
+        public override float WarDeclarationScorePenaltyAgainstTradePartners => _baseModel.WarDeclarationScorePenaltyAgainstTradePartners;
 
         public override bool CanSettlementBeGifted(Settlement settlement)
         {

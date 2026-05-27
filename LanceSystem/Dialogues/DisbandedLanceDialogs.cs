@@ -31,7 +31,7 @@ namespace LanceSystem.Dialogues
                 "{=lance_disbanded_not_owner}These men are no longer bound by the lance, my lord. Their service is done, and they now make their way home with what coin and honor they earned.",
                 () =>
                 {
-                    return PlayerEncounter.EncounteredParty.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner != Hero.MainHero
+                    return PlayerEncounter.EncounteredParty?.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner != Hero.MainHero
                     && PlayerEncounter.EncounteredParty.MobileParty.Owner.CharacterObject != CharacterObject.OneToOneConversationCharacter;
                 },
                 null
@@ -43,7 +43,7 @@ namespace LanceSystem.Dialogues
                 "{=lance_disbanded_owner}We stand ready, my lord. The lance was dismissed, but the men still look to you for command.",
                 () =>
                 {
-                    return PlayerEncounter.EncounteredParty.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner == Hero.MainHero;
+                    return PlayerEncounter.EncounteredParty?.MobileParty?.PartyComponent is DisbandedLancePartyComponent && PlayerEncounter.EncounteredParty.Owner == Hero.MainHero;
                 },
                 null
             );

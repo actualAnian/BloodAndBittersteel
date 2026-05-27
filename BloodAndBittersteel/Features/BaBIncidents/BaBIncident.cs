@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Incidents;
-using static TaleWorlds.CampaignSystem.CampaignBehaviors.IncidentsCampaignBehaviour;
 
 namespace BloodAndBittersteel.Features.BaBIncidents
 {

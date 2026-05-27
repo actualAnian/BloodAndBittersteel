@@ -26,6 +26,8 @@ namespace LanceSystem
                 campaignGameStarter.AddBehavior(new DisbandedLanceAI());
                 campaignGameStarter.RemoveBehavior(campaignGameStarter.CampaignBehaviors.First(b => b is RecruitmentCampaignBehavior));
                 campaignGameStarter.AddBehavior(new AILanceRecruitment());
+                campaignGameStarter.AddBehavior(new AIGoBuyFoodBehavior());
+                
                 campaignGameStarter.AddModel(new LancePartySizeLimitModel(gameStarterObject.GetExistingModel<PartySizeLimitModel>()));
                 campaignGameStarter.AddModel(new LanceTavernMercenaryTroopsModel());
             }

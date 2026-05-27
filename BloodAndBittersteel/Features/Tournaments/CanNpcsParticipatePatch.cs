@@ -1,9 +1,6 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.TournamentGames;
-using TaleWorlds.Core;
 
 namespace BloodAndBittersteel.Features.Tournaments
 {
