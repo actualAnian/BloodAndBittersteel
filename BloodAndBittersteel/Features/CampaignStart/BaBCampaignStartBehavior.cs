@@ -1,5 +1,5 @@
-﻿using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.CharacterDevelopment;
+﻿using BloodAndBittersteel.Features.CharacterSelection.ViewModel;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -33,6 +33,7 @@ namespace BloodAndBittersteel.Features.CampaignStart
         }
         private void OnCreationOver()
         {
+            if (CharacterSelectionViewModel.Instance?.PreBuildHero != null) return;
             TeleportPlayerToStartLocation();
         }
         public override void SyncData(IDataStore dataStore) { }
