@@ -4,7 +4,6 @@ using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade.GauntletUI.BodyGenerator;
-using TaleWorlds.TwoDimension;
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
 using TaleWorlds.Core;
 using BloodAndBittersteel.Features.CharacterSelection.ViewModel;
@@ -52,13 +51,6 @@ internal class BodyGeneratorViewPatch
         {
             //_logger?.LogError($"BodyGeneratorViewPatch.Post_Constructor failed: {ex.Message}\n{ex.StackTrace}");
         }
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(BodyGeneratorView), "OnFinalize")]
-    public static void Post_OnFinalize()
-    {
-        //CharacterSelectionViewModel.ClearHelperStatics();
     }
 
     [HarmonyPostfix]

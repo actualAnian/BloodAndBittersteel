@@ -18,8 +18,8 @@ public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
     private static CharacterSelectionViewModel? _currentInstance;
     public static CharacterSelectionViewModel Instance { get => _currentInstance!; }
 
-    private static string StartWithNewHero => new TextObject("Create Original Character").ToString();
-    private static string StartWithExistingHero => new TextObject("Advance with Hero").ToString();
+    private static string StartWithNewHero => new TextObject("{=bab_original_hero}Create Original Hero").ToString();
+    private static string StartWithExistingHero => new TextObject("{=bab_existing_hero}Advance with Hero").ToString();
 
 
     [DataSourceProperty]
@@ -35,12 +35,12 @@ public class CharacterSelectionViewModel : TaleWorlds.Library.ViewModel
     public string CreateCharacterText => StartWithNewHero;
 
     [DataSourceProperty]
-    public string ClanMembersText => new TextObject("Clan Members").ToString();
+    public string ClanLeadersText => new TextObject("{=bab_clan_leaders}Clan Leaders").ToString();
     [DataSourceProperty]
-    public string ClanLeadersText => new TextObject("Clan Leaders").ToString();
+    public string ClanMembersText => new TextObject("{=bab_clan_members}Clan Members").ToString();
 
     [DataSourceProperty]
-    public string CompanionsText => new TextObject("Companions").ToString();
+    public string CompanionsText => new TextObject("{=bab_companions}Companions").ToString();
 
     [DataSourceProperty]
     public MBBindingList<CharacterSelectionItemViewModel> ClanMembers

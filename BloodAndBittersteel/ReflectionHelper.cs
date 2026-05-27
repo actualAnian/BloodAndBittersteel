@@ -30,12 +30,8 @@ namespace BloodAndBittersteel
         public static void SetPropertyValue<TOwner>(TOwner owner, string name, dynamic value)
             where TOwner : class
         {
-            var property = typeof(TOwner).GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if (property == null)
-            {
-                //_logger?.LogError($"ReflectionService: Property '{name}' not found on type '{typeof(TOwner).Name}'");
-                throw new InvalidOperationException($"Property '{name}' not found on type '{typeof(TOwner).Name}'");
-            }
+            //_logger?.LogError($"ReflectionService: Property '{name}' not found on type '{typeof(TOwner).Name}'");
+            var property = typeof(TOwner).GetProperty(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"Property '{name}' not found on type '{typeof(TOwner).Name}'");
             if (!property.CanWrite)
             {
                 //_logger?.LogError($"ReflectionService: Property '{name}' on type '{typeof(TOwner).Name}' is read-only");
@@ -44,23 +40,17 @@ namespace BloodAndBittersteel
             property.SetValue(owner, value);
         }
 
-        public static dynamic CallPrivateMethod<TType>(TType owner, string name, object[] values) where TType : class
+        public static dynamic? CallPrivateMethod<TType>(TType owner, string name, object[] values) where TType : class
         {
             try
             {
                 var typeToSearch = typeof(TType) == typeof(object) ? owner.GetType() : typeof(TType);
 
-                var method = typeToSearch.GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-
-                if (method == null)
-                {
-                    //_logger?.LogError($"ReflectionService: Method '{name}' not found on type '{typeToSearch.Name}'");
-                    throw new InvalidOperationException($"Method '{name}' not found on type '{typeToSearch.Name}'");
-                }
-
+                //_logger?.LogError($"ReflectionService: Method '{name}' not found on type '{typeToSearch.Name}'");
+                var method = typeToSearch.GetMethod(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static) ?? throw new InvalidOperationException($"Method '{name}' not found on type '{typeToSearch.Name}'");
                 return method.Invoke(owner, values);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //if (_logger != null)
                 //{

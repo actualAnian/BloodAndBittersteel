@@ -11,7 +11,7 @@ public class CharacterSelectionItemViewModel: ClanPartyMemberItemVM
 
     public readonly Action<CharacterSelectionItemViewModel> _onItemSelectedEvent;
 
-    public Hero OriginalHero { get; private set; } = null;
+    public Hero? OriginalHero { get; private set; } = null;
 
     public CharacterSelectionItemViewModel(Hero hero, Action<CharacterSelectionItemViewModel> itemnselected) : base(hero, Campaign.Current.MainParty)
     {
@@ -21,11 +21,11 @@ public class CharacterSelectionItemViewModel: ClanPartyMemberItemVM
 
     public void OnPreBuildCharacterSelected()
     {
-        bool flag = !this.IsSelected;
+        bool flag = !IsSelected;
         if (flag)
         {
-            this.IsSelected = true;
-            this._onItemSelectedEvent(this);
+            IsSelected = true;
+            _onItemSelectedEvent(this);
         }
     }
 
@@ -34,14 +34,14 @@ public class CharacterSelectionItemViewModel: ClanPartyMemberItemVM
     {
         get
         {
-            return this._isSelected;
+            return _isSelected;
         }
         set
         {
-            bool flag = value != this._isSelected;
+            bool flag = value != _isSelected;
             if (flag)
             {
-                this._isSelected = value;
+                _isSelected = value;
                 base.OnPropertyChanged("IsSelected");
             }
         }

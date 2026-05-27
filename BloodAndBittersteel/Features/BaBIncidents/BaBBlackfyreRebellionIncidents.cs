@@ -51,7 +51,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
         public static BaBIncident CreateStartRebellionIncident()
         {
             BaBIncident incident = new("start_rebellion", BaBIncidentTypes.OnDailyTick, 1);
-            incident.Initialize("The Black Dragon Rises",
+            incident.Initialize("{=bab_black_dragon_rises}The Black Dragon Rises",
                                 "",
                                 IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
                                 IncidentsCampaignBehaviour.IncidentType.Siege,

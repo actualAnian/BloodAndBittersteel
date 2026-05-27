@@ -22,7 +22,7 @@ public static class CharacterCreationOptionsStageVMPatch
         var charSel = PreMadeCharacterSelection.Instance;
 
         InformationManager.ShowInquiry(new InquiryData(
-            new TextObject("Skill reset decision").ToString(),
+            new TextObject("{=bab_skill_reset}Skill reset decision").ToString(),
             "Do you wanna set your skills to default?",
             true,
             true,
@@ -36,12 +36,15 @@ public static class CharacterCreationOptionsStageVMPatch
     [HarmonyPatch(typeof (CharacterCreationOptionsStageVM), "OnNextStage")]
     public static void Post_OnNextStage()
     {
-        Kingdom kingdom = Campaign.Current.Kingdoms.FirstOrDefault(item => item.Culture?.StringId == Hero.MainHero.Culture?.StringId);
         if (CharacterSelectionViewModel.Instance.PreBuildHero != null)
         {
-            CheckSkillReset();
+            Kingdom kingdom;
             Hero hero = CharacterSelectionViewModel.Instance.PreBuildHero;
-            kingdom = Campaign.Current.Kingdoms.FirstOrDefault(item => item.Culture?.StringId == hero.Culture?.StringId);
+            if (hero.MapFaction?.IsKingdomFaction == true)
+                kingdom = (Kingdom)hero.MapFaction!;
+            else kingdom = Campaign.Current.Kingdoms.FirstOrDefault(item => item.Culture?.StringId == hero.Culture?.StringId);
+
+            CheckSkillReset();
 
             Hero originalMainHero = Hero.MainHero;
             Clan originalClan = originalMainHero.Clan;
