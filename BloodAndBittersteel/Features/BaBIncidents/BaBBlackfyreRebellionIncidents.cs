@@ -37,15 +37,17 @@ namespace BloodAndBittersteel.Features.BaBIncidents
                 ChangeKingdomAction.ApplyByJoinToKingdom(clan, rebelKingdom, default, false);
             var loyalistKingdoms = Kingdom.All.Where(k => k.IsMapFaction && RebellionConfig.LoyalistFactions.Contains(k.StringId));
             var behavior = Campaign.Current.GetCampaignBehavior<AllianceCampaignBehavior>();
-            foreach (var kindom in loyalistKingdoms)
+            foreach (var kingdom in loyalistKingdoms)
             {
-                FactionManager.DeclareWar(rebelKingdom, kindom);
+                FactionManager.DeclareWar(rebelKingdom, kingdom);
                 foreach (var kindom2 in loyalistKingdoms)
                 {
-                    if (kindom == kindom2) continue;
-                    behavior.StartAlliance(kindom, kindom2);
+                    if (kingdom == kindom2) continue;
+                    behavior.StartAlliance(kingdom, kindom2);
                 }
             }
+            var crownlands = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
+            FactionManager.DeclareWar(rebelKingdom, crownlands);
             Campaign.Current.GetCampaignBehavior<RebellionCampaignBehavior>().OnRebellionStart();
         }
         public static BaBIncident CreateStartRebellionIncident()
@@ -56,7 +58,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
                                 IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
                                 IncidentsCampaignBehaviour.IncidentType.Siege,
                                 CampaignTime.Never, 
-                                (TextObject description) => { return CampaignTime.Now > RebellionConfig.RebellionStartTime; });
+                                description => { return true; });
             List<IncidentEffect> joinRebellion = new()
             {
                 StartTheRebellionEffect(),
@@ -74,7 +76,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             var joinRebellionText = "{=bab_join_rebellion}You gather your men and march to the Blackwater Rush to join the rebellion. The time is nigh, now is the time for sword not quill";
             var fightRebellionText = "{=bab_fight_rebellion}Convinced by your captains and sergeants, you order the men to pack up camp to aid the Crown against the rabble of pretenders at their doorsteps.";
             var stayNeutralText = "{=bab_stay_neutral}Unsure of what to make of these news, you heed advice from both camps that have sprung up amongst your men, some shouted that the rebel cause was just while others half-drew their swords from their sheaths at the mention of the name Daemon. Not seeking a full out mutiny, you inform your men that your host shall not partake for the time being in this royal squabble. That your intent is to see which one promises more for fighting men.";
-            incident.AddOption(joinRebellionText, joinRebellion, null, null);
+            incident.AddOption(joinRebellionText, joinRebellion, (text) => { return Clan.PlayerClan != Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId).RulingClan; }, null);
             incident.AddOption(fightRebellionText, fightRebellion, null, null);
             incident.AddOption(stayNeutralText, stayNeutral, null, null);
             return incident;
@@ -84,7 +86,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             return CreateCustomIncidentEffect(
                 null!,
                 () => { CreateRebellionKingdom(); return new List<TextObject> { TextObject.GetEmpty() }; },
-                (IncidentEffect effect) =>
+                effect =>
                 {
                     TextObject textObject = new("The civil war engulfs the empire");
                     return new List<TextObject> { textObject };
@@ -95,7 +97,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             return CreateCustomIncidentEffect(
                 null!,
                 () => { JoinRebellion(); return new List<TextObject> { TextObject.GetEmpty() }; },
-                (IncidentEffect effect) =>
+                effect =>
                 {
                     TextObject textObject = new("{=bab_join_rebellion}You will join the rebels!");
                     return new List<TextObject> { textObject };
@@ -112,7 +114,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             return CreateCustomIncidentEffect(
                 null!,
                 () => { FightRebellion(); return new List<TextObject> { TextObject.GetEmpty() }; },
-                (IncidentEffect effect) =>
+                effect =>
                 {
                     TextObject textObject = new("{=bab_join_rebellion}You will join the loyalists!");
                     return new List<TextObject> { textObject };

@@ -74,6 +74,7 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         public const string RebellionFactionEncyclopediaTitle = "{=bab_bf_rebellion_title}The Blackfyre Rebellion";
         public const string RebellionFactionEncyclopediaRulerTitle = "{=bab_bf_ruler_name}Pretender King Daemon Blackfyre";
         public const int RelationGainOnJoinKingdom = 50;
+        public const string CrownlandsKingdomStringId = "Crownlands";
         public static CampaignTime RebellionStartTime => Campaign.Current.Models.CampaignTimeModel.CampaignStartTime+ CampaignTime.Weeks(Campaign.Current.Models.CampaignTimeModel.WeeksInSeason * 6);
     }
 }

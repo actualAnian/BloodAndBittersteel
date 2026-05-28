@@ -24,7 +24,7 @@ public class PreMadeCharacterSelection
         var clanMembers = kingdoms
             .SelectMany(kingdom => kingdom.Clans)
             .SelectMany(clan => clan.Heroes)
-            .Where(hero => !hero.IsClanLeader && !hero.IsChild)
+            .Where(hero => !hero.IsClanLeader && !hero.IsChild && !hero.IsDead)
             .Distinct()
             .ToList();
         return clanMembers;
@@ -43,16 +43,11 @@ public class PreMadeCharacterSelection
     public List<Hero> GetWanderers(CultureObject culture)
     {
         var activeWanderers = Campaign.Current.AliveHeroes
-            .Where(h => h.Culture.StringId == culture?.StringId && h.IsWanderer && !h.IsChild)
+            .Where(h => h.Culture.StringId == culture?.StringId && h.IsWanderer && !h.IsChild && !h.IsDead)
             .Distinct()
             .ToList();
 
-        var inactiveWanderers = Campaign.Current.DeadOrDisabledHeroes
-            .Where(h => h.Culture.StringId == culture?.StringId && h.IsWanderer && !h.IsChild)
-            .Distinct()
-            .ToList();
-
-        return activeWanderers.Union(inactiveWanderers).ToList();
+        return activeWanderers;
     }
 
     public void UpdateBodyProperties(Hero selectedHero, object generatorView)
