@@ -23,7 +23,8 @@ namespace LanceSystem.CampaignBehaviors
 
         private void CanHaveEvents(Hero hero, ref bool result)
         {
-            result = false;
+            if (hero.IsNotable && hero.CurrentSettlement != null && hero.CurrentSettlement.IsCastle)
+                result = false;
         }
 
         private void DailyTickSettlement(Settlement settlement)
