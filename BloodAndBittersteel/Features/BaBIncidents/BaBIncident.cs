@@ -18,14 +18,14 @@ namespace BloodAndBittersteel.Features.BaBIncidents
         {
             Trigger = trigger;
             if (chance < 0 || chance > 1)
-                throw new Exception("BaBIncident chance shpuld be between 0 and 1");
+                throw new Exception("BaBIncident chance should be between 0 and 1");
             Chance = chance;
         }
         public BaBIncident(string id, BaBIncidentTypes trigger, float chance, string customImageName) : base(id)
         {
             Trigger = trigger;
             if (chance < 0 || chance > 1)
-                throw new Exception("BaBIncident chance shpuld be between 0 and 1");
+                throw new Exception("BaBIncident chance should be between 0 and 1");
             Chance = chance;
             UsesCustomImage = true;
             CustomImageName = customImageName;
