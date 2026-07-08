@@ -12,9 +12,7 @@ namespace LanceSystem.UI.UIPatches
         [HarmonyPatch(typeof(PartyTradeVM), nameof(PartyTradeVM.UpdateTroopData))]
         public static bool Prefix(PartyTradeVM __instance, TroopRosterElement troopRoster, PartyRosterSide side, bool forceUpdate = true)
         {
-            if (LancePartyVM.Instance != null
-                || (bool)isPrisoner.GetValue(__instance)) return false;
-            return true;
+            return (bool)isPrisoner.GetValue(__instance) || LancePartyVM.Instance == null;
             //if ((bool)method.GetValue(__instance)) return true;
             //if (side == PartyRosterSide.Right)
             //{

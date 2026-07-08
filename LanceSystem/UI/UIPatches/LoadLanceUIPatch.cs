@@ -5,7 +5,7 @@ using TaleWorlds.Engine.GauntletUI;
 
 namespace LanceSystem.UI.UIPatches
 {
-    internal class TempPatch
+    internal class LoadLanceUIPatch
     {
         [HarmonyPatch(typeof(GauntletLayer), "LoadMovie", new Type[] { typeof(GauntletMovieIdentifier)})]
         public static class ReplaceUIPatch

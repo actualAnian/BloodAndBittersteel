@@ -10,7 +10,7 @@ using TaleWorlds.CampaignSystem.ViewModelCollection.Party;
 namespace LanceSystem.UI
 {
     [HarmonyPatch(typeof(GauntletPartyScreen), "TaleWorlds.Core.IGameStateListener.OnActivate")]
-    public class UITranspiler
+    public class LoadLanceUITranspiler
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -20,7 +20,7 @@ namespace LanceSystem.UI
                     && instruction.operand is ConstructorInfo constructorInfo && 
                     constructorInfo.DeclaringType == typeof(PartyVM))
                 {
-                    // Replace with BaBPartyVM constructor
+                    // Replace with LancePartyVM constructor
                     var babConstructor = typeof(LancePartyVM).GetConstructor(new Type[] { typeof(PartyScreenLogic) });
                     yield return new CodeInstruction(OpCodes.Newobj, babConstructor);
                 }

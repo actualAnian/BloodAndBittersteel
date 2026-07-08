@@ -255,7 +255,7 @@ namespace BloodAndBittersteel.Features.IronbornWives
         {
             var capturer = Hero.MainHero;
             var prisoner = Hero.OneToOneConversationHero;
-            CanTakeWife(capturer, prisoner);
+            if (!CanTakeWife(capturer, prisoner)) return false;
             if (!prisoner.IsPrisoner) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.CapturedLord) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.FreeOrCapturePrisonerHero) return false;

@@ -13,6 +13,17 @@ using static TaleWorlds.CampaignSystem.Party.PartyScreenLogic;
 
 namespace LanceSystem.UI
 {
+    /* warning, this class is spaghetti code, especially the transfer part, probably best to rewrite it if someone new (not actualAnian) wants to change it
+     * there are 4 transfer types
+     * from left side to right side using PartyCharacterVM on the left side
+     * from left side to right side using PartyCharacterVM on the right side
+     * from right side to left side using PartyCharacterVM on the left side
+     * from right side to left side using PartyCharacterVM on the right side
+     * some of the transfer process is handled through vanilla code, some through code in this class
+     * EACH CASE HAS TO BE HANDLED DIFFERENTLY, RESULTING IN MASSIVE SPAGHETTI CODE
+     * to remake it, I would recommend nuking first all vanilla methods, so only your code handles changes in the UI
+    */
+
     public class LancePartyVM : PartyVM
     {
         public static LancePartyVM? Instance { get; private set; }
@@ -187,10 +198,10 @@ namespace LanceSystem.UI
         {
             _lanceUpgradePopUp.OnTroopUpgraded();
 
-            this.UpgradableTroopCount = 0;
+            UpgradableTroopCount = 0;
             MainPartyTroops.ApplyActionOnAllItems(delegate (PartyCharacterVM x)
             {
-                this.UpgradableTroopCount += x.NumOfUpgradeableTroops;
+                UpgradableTroopCount += x.NumOfUpgradeableTroops;
             });
             var upgradeableTroops = new Dictionary<string, int>();
             foreach (var lance in PartyLances)
@@ -204,20 +215,18 @@ namespace LanceSystem.UI
                     }
                 }
             UpgradableTroopCount = upgradeableTroops.Values.Sum();
-            this.IsUpgradePopUpDisabled = (!this.AreMembersRelevantOnCurrentMode 
-                || this.UpgradableTroopCount == 0 
-                || this.PartyScreenLogic.IsTroopUpgradesDisabled);
-            this.UpgradePopUp.UpdateOpenButtonHint(this.IsUpgradePopUpDisabled, 
-                !this.AreMembersRelevantOnCurrentMode, 
-                this.PartyScreenLogic.IsTroopUpgradesDisabled);
+            IsUpgradePopUpDisabled = (!AreMembersRelevantOnCurrentMode 
+                || UpgradableTroopCount == 0 
+                || PartyScreenLogic.IsTroopUpgradesDisabled);
+            UpgradePopUp.UpdateOpenButtonHint(IsUpgradePopUpDisabled, 
+                !AreMembersRelevantOnCurrentMode, 
+                PartyScreenLogic.IsTroopUpgradesDisabled);
         }
         public new void ExecuteTransferAllOtherTroops()
         {
-            //var savedRoster = PartyScreenLogic.MemberRosters[0].CloneRosterData();
             foreach (var troop in OtherPartyTroops)
-                ExecuteTransferFromOtherToPlayerSide(troop, troop.Number);
+                ExecuteTransferFromOtherToPlayerSide(troop, troop.Number, troop.WoundedCount, true);
             base.ExecuteTransferAllOtherTroops();
-            //UpdateOtherTroop(troop.Character, _lancesTroopRosters[0], PartyLances[0].LanceTroops, troop.Number, true);
         }
 
         private void InitializePartyList(MBBindingList<PartyCharacterVM> partyList, TroopRoster currentTroopRoster, PartyScreenLogic.TroopType type, int side)
@@ -233,7 +242,7 @@ namespace LanceSystem.UI
                 }
                 else
                 {
-                    PartyCharacterVM partyCharacterVM = new(this.PartyScreenLogic, this, currentTroopRoster, currentTroopRoster.FindIndexOfTroop(troopRosterElement.Character), type, (PartyScreenLogic.PartyRosterSide)side, this.PartyScreenLogic.IsTroopTransferable(type, troopRosterElement.Character, side));
+                    PartyCharacterVM partyCharacterVM = new(PartyScreenLogic, this, currentTroopRoster, currentTroopRoster.FindIndexOfTroop(troopRosterElement.Character), type, (PartyScreenLogic.PartyRosterSide)side, PartyScreenLogic.IsTroopTransferable(type, troopRosterElement.Character, side));
                     partyList.Add(partyCharacterVM);
                     partyCharacterVM.ThrowOnPropertyChanged();
                     partyCharacterVM.IsLocked = false;
@@ -322,10 +331,12 @@ namespace LanceSystem.UI
             //}
         }
         readonly FieldInfo _thisStock = AccessTools.Field("PartyTradeVM:_thisStock");
-        private void RefreshPartyCharacter(PartyCharacterVM troop, TroopRoster rosterBelongedTo)
+        private void RefreshPartyCharacter(PartyCharacterVM troop, TroopRoster rosterBelongedTo, int totalAmount, int woundedAmount)
         {
             var tradeData = troop.TradeData;
-            rosterBelongedTo.SetElementNumber(rosterBelongedTo.FindIndexOfTroop(troop.Character), troop.TradeData.ThisStock);
+            rosterBelongedTo.SetElementNumber(rosterBelongedTo.FindIndexOfTroop(troop.Character), totalAmount);
+            //rosterBelongedTo.SetElementWoundedNumber(rosterBelongedTo.FindIndexOfTroop(troop.Character), woundedAmount);
+            //troop.Troop.WoundedNumber = woundedAmount;
             troop.OnPropertyChanged("TroopNum");
             tradeData.OnPropertyChanged("InitialThisStock");
             tradeData.OnPropertyChanged("ThisStock");
@@ -352,7 +363,7 @@ namespace LanceSystem.UI
                 _thisStock.SetValue(tradeData, newAmount);
                 tradeData.InitialThisStock = tradeData.ThisStock;
                 tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                RefreshPartyCharacter(troopVM, roster);
+                RefreshPartyCharacter(troopVM, roster, tradeData.ThisStock, troopVM.Troop.WoundedNumber);
             }
         }
         private void RemovePlayerSideTroops(CharacterObject troop, TroopRoster roster, MBBindingList<PartyCharacterVM> characterVMs, int removedAmount)
@@ -370,66 +381,77 @@ namespace LanceSystem.UI
                 var newAmount = tradeData.ThisStock - removedAmount;
                 var rosterElement = troopVM.Troop;
                 rosterElement.Number = newAmount;
+                rosterElement.WoundedNumber = Math.Max(0, rosterElement.WoundedNumber - removedAmount);
                 troopVM.Troop = rosterElement;
                 _thisStock.SetValue(tradeData, newAmount);
                 tradeData.InitialThisStock = tradeData.ThisStock;
                 tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                RefreshPartyCharacter(troopVM, roster);
+                RefreshPartyCharacter(troopVM, roster, tradeData.ThisStock, troopVM.Troop.WoundedNumber);
             }
         }
-        private void UpdateOtherTroop(CharacterObject troop, TroopRoster roster, MBBindingList<PartyCharacterVM> characterVMs, int transferAmount, bool isAddition)
+        private void UpdateOtherTroop(CharacterObject troop, TroopRoster roster, MBBindingList<PartyCharacterVM> characterVMs, int transferAmount, int woundedTransfer, bool isAddition)
         {
             var index = roster.FindIndexOfTroop(troop);
             if (isAddition)
             {
-                PartyCharacterVM? vm = characterVMs.FirstOrDefault(p => p.Character == troop);
-                if (vm == null)
+                PartyCharacterVM? troopVM = characterVMs.FirstOrDefault(p => p.Character == troop);
+                if (troopVM == null)
                 {
-                    vm = new(PartyScreenLogic, this, roster, roster.FindIndexOfTroop(troop), TroopType.Member, PartyRosterSide.Right, true);
-                    characterVMs.Add(vm);
+                    troopVM = new(PartyScreenLogic, this, roster, roster.FindIndexOfTroop(troop), TroopType.Member, PartyRosterSide.Right, true);
+                    characterVMs.Add(troopVM);
                 }
-                var tradeData = vm.TradeData;
+                var tradeData = troopVM.TradeData;
+                if (woundedTransfer != 0)
+                {
+                    var troopData = troopVM.Troop;
+                    troopData.WoundedNumber += woundedTransfer;
+                    troopVM.Troop = troopData;
+                    PartyScreenLogic.MemberRosters[0].WoundTroop(troop, woundedTransfer);
+                }
                 if (tradeData.ThisStock == -1)
                 {
-                    InitializePartyCharacterVM(vm, roster, transferAmount, true);
+                    InitializePartyCharacterVM(troopVM, roster, transferAmount, true);
                 }
                 else
                 {
                     if (tradeData.ThisStock != roster.GetElementNumber(index))
                     {
                         var newAmount = tradeData.ThisStock + transferAmount;
-                        var rosterData = vm.Troop;
+                        var rosterData = troopVM.Troop;
                         rosterData.Number = newAmount;
-                        vm.Troop = rosterData;
+                        troopVM.Troop = rosterData;
                         _thisStock.SetValue(tradeData, newAmount);
                     }
                     tradeData.InitialThisStock = tradeData.ThisStock;
                     tradeData.InitialOtherStock -= transferAmount;
                     tradeData.OtherStock = tradeData.InitialOtherStock;
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                    RefreshPartyCharacter(vm, roster);
+                    RefreshPartyCharacter(troopVM, roster, tradeData.ThisStock, troopVM.Troop.WoundedNumber);
                 }
             }
             else
             {
-                PartyCharacterVM? vm = characterVMs.FirstOrDefault(p => p.Character == troop);
-                if (vm != null)
+                PartyCharacterVM? troopVM = characterVMs.FirstOrDefault(p => p.Character == troop);
+                if (troopVM != null)
                 {
-                    var tradeData = vm.TradeData;
+                    var tradeData = troopVM.TradeData;
                     var newAmount = tradeData.InitialThisStock - transferAmount;
-                    var rosterData = vm.Troop;
+                    var rosterData = troopVM.Troop;
+                    if (newAmount < 0)
+                        return;
                     rosterData.Number = newAmount;
-                    vm.Troop = rosterData;
+                    troopVM.Troop = rosterData;
                     _thisStock.SetValue(tradeData, newAmount);
                     tradeData.InitialThisStock = tradeData.ThisStock;
                     tradeData.InitialOtherStock += transferAmount;
                     tradeData.OtherStock = tradeData.InitialOtherStock;
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                    RefreshPartyCharacter(vm, roster);
+
+                    RefreshPartyCharacter(troopVM, roster, tradeData.ThisStock, troopVM.Troop.WoundedNumber);
                 }
             }
         }
-        private void ExecuteTransferFromPlayerToOtherSide(PartyCharacterVM troop, int transferAmount)
+        private void ExecuteTransferFromPlayerToOtherSide(PartyCharacterVM troop, int transferAmount, int rightSideWounded)
         {
             bool clickedTroopIconFromPartyTroops = false;
             for (int lanceIndex = 0; lanceIndex < PartyLances.Count; lanceIndex++)
@@ -454,21 +476,30 @@ namespace LanceSystem.UI
                                 var newAmount = tradeData.InitialThisStock - transferAmount;
                                 var rosterData = lanceTroop.Troop;
                                 rosterData.Number = newAmount;
+                                if (troop == lanceTroop)
+                                    rosterData.WoundedNumber -= Math.Min(troop.Troop.WoundedNumber, transferAmount);
                                 lanceTroop.Troop = rosterData;
                                 _thisStock.SetValue(tradeData, newAmount);
                                 tradeData.InitialThisStock = tradeData.ThisStock;
                                 tradeData.InitialOtherStock += transferAmount;
                                 tradeData.OtherStock = tradeData.InitialOtherStock;
                                 tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                                RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex]);
+
+                                RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex], tradeData.ThisStock, lanceTroop.Troop.WoundedNumber);
                             }
                         }
                         else
                         {
+                            //var rosterData = lanceTroop.Troop;
+                            //rosterData.Number -= transferAmount;
+                            //rosterData.WoundedNumber -= Math.Min(rosterData.WoundedNumber, transferAmount);
+                            //lanceTroop.Troop = rosterData;
+
                             tradeData.InitialOtherStock += transferAmount;
                             tradeData.OtherStock = tradeData.InitialOtherStock;
                             tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                            RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex]);
+                            RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[lanceIndex], tradeData.ThisStock, Math.Max(0, lanceTroop.Troop.WoundedNumber - transferAmount));
+
                         }
                     }
                 }
@@ -489,7 +520,7 @@ namespace LanceSystem.UI
                 }
             }
         }
-        private void ExecuteTransferFromOtherToPlayerSide(PartyCharacterVM troop, int transferAmount)
+        private void ExecuteTransferFromOtherToPlayerSide(PartyCharacterVM troop, int transferAmount, int rightSideWounded, bool afterTransferAll = false)
         {
             bool retinueContainsTroop = false;
             for (int i = PartyLances[0].LanceTroops.Count - 1; i >= 0; i--)
@@ -500,6 +531,8 @@ namespace LanceSystem.UI
                     var tradeData = retinueTroop.TradeData; 
                     var rosterData = retinueTroop.Troop;
                     rosterData.Number += transferAmount;
+                    if (rosterData.WoundedNumber + rightSideWounded >= 0) //failsafe to prevent crashes
+                        rosterData.WoundedNumber += rightSideWounded;
                     retinueTroop.Troop = rosterData;
                     if (troop != retinueTroop)
                     {
@@ -512,14 +545,14 @@ namespace LanceSystem.UI
                     tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
 
                     retinueContainsTroop = true;
-                    RefreshPartyCharacter(retinueTroop, _lancesTroopRosters[0]);
+                    RefreshPartyCharacter(retinueTroop, _lancesTroopRosters[0], tradeData.ThisStock, retinueTroop.Troop.WoundedNumber);
                 }
             }
             if (!retinueContainsTroop)
             {
-                var iindex = _lancesTroopRosters[0].AddToCounts(troop.Character, transferAmount);
+                var iindex = _lancesTroopRosters[0].AddToCounts(troop.Character, transferAmount, false, rightSideWounded);
                 var newVM = new PartyCharacterVM(PartyScreenLogic, this, _lancesTroopRosters[0], iindex, PartyScreenLogic.TroopType.Member, PartyRosterSide.Right, true);
-                InitializePartyCharacterVM(newVM, _lancesTroopRosters[0], transferAmount, false);
+                InitializePartyCharacterVM(newVM, _lancesTroopRosters[0], transferAmount, false, afterTransferAll);
                 PartyLances[0].LanceTroops.Insert(PartyLances[0].LanceTroops.Count, newVM);
             }
             for (int i = 1; i < PartyLances.Count; i++)
@@ -537,13 +570,13 @@ namespace LanceSystem.UI
                         tradeData.InitialOtherStock -= transferAmount;
                         tradeData.OtherStock = tradeData.InitialOtherStock;
                         tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-                        RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[i]);
+                        RefreshPartyCharacter(lanceTroop, _lancesTroopRosters[i], tradeData.ThisStock, lanceTroop.Troop.WoundedNumber);
                     }
                 }
             }
         }
         //int transfers = 0;
-        private void InitializePartyCharacterVM(PartyCharacterVM vm, TroopRoster roster, int newAmount, bool leftSide)
+        private void InitializePartyCharacterVM(PartyCharacterVM vm, TroopRoster roster, int newAmount, bool leftSide, bool afterTransferAll = false)
         {
             var tradeData = vm.TradeData;
             if (leftSide)
@@ -565,33 +598,107 @@ namespace LanceSystem.UI
             }
             else
             {
-                var otherTroop = OtherPartyTroops?.FirstOrDefault(c => c.Character == vm.Character);
-                var otherNumber = otherTroop == null? 0 : otherTroop.Number;
-                tradeData.InitialOtherStock = otherNumber;
-                tradeData.OtherStock = otherNumber;
+                if (afterTransferAll)
+                {
+                    tradeData.InitialOtherStock = 0;
+                    tradeData.OtherStock = 0;
+                }
+                else
+                {
+                    var otherTroop = OtherPartyTroops?.FirstOrDefault(c => c.Character == vm.Character);
+                    var otherNumber = otherTroop == null ? 0 : otherTroop.Number;
+                    tradeData.InitialOtherStock = otherNumber;
+                    tradeData.OtherStock = otherNumber;
+                }
             }
             _thisStock.SetValue(tradeData, newAmount);
             tradeData.InitialThisStock = newAmount;
             tradeData.TotalStock = tradeData.InitialOtherStock + tradeData.ThisStock;
-            RefreshPartyCharacter(vm, roster);
+            RefreshPartyCharacter(vm, roster, tradeData.ThisStock, vm.Troop.WoundedNumber);
+        }
+        private int GetRightSideWoundedChange(PartyCharacterVM troop, PartyRosterSide fromSide, int transferAmount)
+        {
+            //if (fromSide == PartyRosterSide.Left)
+            //{
+                int totalWounded = 0;
+                foreach (var mainPartyTroop in _originalPlayerSideTroopRoster.GetTroopRoster())
+                {
+                    if (mainPartyTroop.Character == troop.Character)
+                        totalWounded = mainPartyTroop.WoundedNumber;
+                }
+                foreach (var mainPartyTroop in _originalOtherSideTroopRoster.GetTroopRoster())
+                {
+                    if (mainPartyTroop.Character == troop.Character)
+                        totalWounded += mainPartyTroop.WoundedNumber;
+                }
+
+                int preTransferWoundedInLances = 0;
+                foreach (var lance in PartyLances)
+                    foreach (var lanceTroop in lance.LanceTroops)
+                        if (lanceTroop.Character == troop.Character)
+                            preTransferWoundedInLances += lanceTroop.WoundedCount;
+            var otherPartyWounded = OtherPartyTroops
+                    .FirstOrDefault(p => p.Character == troop.Character)
+                    ?.WoundedCount ?? 0;
+            var change = totalWounded - preTransferWoundedInLances - otherPartyWounded;
+            if (fromSide == PartyRosterSide.Right)
+            {
+                foreach (var lance in PartyLances)
+                    foreach (var lanceTroop in lance.LanceTroops)
+                        if (lanceTroop == troop)
+                            return change + Math.Min(transferAmount, troop.WoundedCount);
+                // from right side to left side by clicking on character on the left
+
+                foreach (var lance in PartyLances)
+                    foreach (var lanceTroop in lance.LanceTroops)
+                        if (lanceTroop.Character == troop.Character)
+                            return Math.Min(transferAmount, lanceTroop.WoundedCount) + change;
+            }
+
+            return change;
         }
         private void OnTransferTroop(PartyCharacterVM troop, int newIndex, int transferAmount, PartyRosterSide fromSide)
         {
             if (troop.IsPrisoner) return;
-            //transfers++;
-            //InformationManager.DisplayMessage(new($"{transferAmount} from {fromSide}. transfers: {transfers}"));
+            var woundedChange = GetRightSideWoundedChange(troop, fromSide, transferAmount);
             if (fromSide == PartyRosterSide.Left)
             {
-                ExecuteTransferFromOtherToPlayerSide(troop, transferAmount);
-                UpdateOtherTroop(troop.Character, PartyScreenLogic.MemberRosters[0], OtherPartyTroops, transferAmount, false);
+                ExecuteTransferFromOtherToPlayerSide(troop, transferAmount, woundedChange);
+                UpdateOtherTroop(troop.Character, PartyScreenLogic.MemberRosters[0], OtherPartyTroops, transferAmount, woundedChange, false);
             }
             else
             {
-                ExecuteTransferFromPlayerToOtherSide(troop, transferAmount);
-                UpdateOtherTroop(troop.Character, PartyScreenLogic.MemberRosters[0], OtherPartyTroops, transferAmount, true);
+                ExecuteTransferFromPlayerToOtherSide(troop, transferAmount, woundedChange);
+                UpdateOtherTroop(troop.Character, PartyScreenLogic.MemberRosters[0], OtherPartyTroops, transferAmount, woundedChange, true);
             }
             foreach (var lance in PartyLances)
                 lance.OnPropertyChanged("Text");
+            CheckForBrokenState(troop.Character);
+        }
+        private void CheckForBrokenState(CharacterObject changedTroop)
+        {
+            var sumRoster = _originalOtherSideTroopRoster.CloneRosterData();
+            sumRoster.Add(_originalPlayerSideTroopRoster);
+            var originalIndex = sumRoster.FindIndexOfTroop(changedTroop);
+            var originalNumber = sumRoster.GetElementNumber(originalIndex);
+            var originalWounded = sumRoster.GetElementWoundedNumber(originalIndex);
+            int afterChangeNumber = 0;
+            int afterChangeWounded = 0;
+            foreach (var lance in PartyLances)
+                foreach(var troop in lance.LanceTroops)
+                    if (changedTroop == troop.Character)
+                    {
+                        afterChangeNumber += troop.Number;
+                        afterChangeWounded += troop.WoundedCount;
+                    }
+            var otherPartyTroop = OtherPartyTroops.FirstOrDefault(t => t.Character == changedTroop);
+            if (otherPartyTroop != null)
+            {
+                afterChangeNumber += otherPartyTroop.Number;
+                afterChangeWounded += otherPartyTroop.WoundedCount;
+            }
+            if (afterChangeNumber != originalNumber || afterChangeWounded != originalWounded)
+                InformationManager.DisplayMessage(new("WARNING, the party UI is in a BROKEN state, reset now or suffer a CRASH", new Color(1, 0, 0)));
         }
         private Dictionary<int, TroopRoster> _disbandedRosters = new();
         public void OnLanceDisbanded(LanceVM lanceVM)
