@@ -7,6 +7,7 @@ using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
 using static BloodAndBittersteel.Features.BaBIncidents.BaBIncidentsBase;
+
 namespace BloodAndBittersteel.Features.BaBIncidents
 {
     public class BaBBlackfyreRebellionIncidents : IIncidentProvider
@@ -124,7 +125,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
         }
         private static void FightRebellion()
         {
-            var kingdom = Kingdom.All.First(k => k.StringId == "empire");
+            var kingdom = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
             ChangeKingdomAction.ApplyByJoinToKingdom(Clan.PlayerClan, kingdom);
             ChangeRelationAction.ApplyPlayerRelation(kingdom.Leader, RebellionConfig.RelationGainOnJoinKingdom);
         }

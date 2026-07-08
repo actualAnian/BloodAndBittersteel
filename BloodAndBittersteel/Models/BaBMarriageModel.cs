@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BloodAndBittersteel.Features.KingsGuard;
+using BloodAndBittersteel.Features.NightsWatch;
+using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 
@@ -43,6 +45,9 @@ namespace BloodAndBittersteel.Models
                 && secondHero.IsPrisoner
                 && secondHero.PartyBelongedToAsPrisoner.MapFaction == firstHero.MapFaction)
                 return true;
+            if (firstHero.MapFaction != null && firstHero.MapFaction == NightsWatchConfig.NightsWatchKingdom) return false;
+            if (secondHero.MapFaction != null && secondHero.MapFaction == NightsWatchConfig.NightsWatchKingdom) return false;
+            if (firstHero.BelongsToKingsguard() || secondHero.BelongsToKingsguard()) return false;
             return _baseModel.IsCoupleSuitableForMarriage(firstHero, secondHero);
         }
 

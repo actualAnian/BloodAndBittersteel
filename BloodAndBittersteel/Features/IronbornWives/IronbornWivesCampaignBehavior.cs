@@ -4,6 +4,7 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
+using TaleWorlds.CampaignSystem.LogEntries;
 using TaleWorlds.CampaignSystem.MapEvents;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
@@ -237,6 +238,9 @@ namespace BloodAndBittersteel.Features.IronbornWives
 
         private void TakeWife(Hero main, Hero prisoner)
         {
+            var becomeSaltWifeLogEntry = new BecomeSaltWifeLogEntry(prisoner, main);
+            LogEntry.AddLogEntry(becomeSaltWifeLogEntry);
+
             var previousClanLeader = prisoner.Clan.Leader;
             MarriageAction.Apply(main, prisoner, true);
             if (prisoner.Clan != main.Clan) return; // marriage was not successful
