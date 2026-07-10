@@ -1,4 +1,5 @@
-﻿using LanceSystem.LanceDataClasses;
+﻿using LanceSystem.CampaignBehaviors;
+using LanceSystem.LanceDataClasses;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;
@@ -15,6 +16,7 @@ namespace LanceSystem
             AddClassDefinition(typeof(MercenaryLanceData), 3);
             AddClassDefinition(typeof(SettlementNotableLanceInfo), 4);
             AddClassDefinition(typeof(DisbandedLancePartyComponent), 5);
+            AddClassDefinition(typeof(NotableDeathRecord), 6);
         }
         protected override void DefineContainerDefinitions()
         {
@@ -23,6 +25,7 @@ namespace LanceSystem
             ConstructContainerDefinition(typeof(Dictionary<string, List<LanceData>>));
             ConstructContainerDefinition(typeof(Dictionary<string, SettlementNotableLanceInfo>));     
             ConstructContainerDefinition(typeof(Dictionary<string, CampaignTime>));
+            ConstructContainerDefinition(typeof(Dictionary<string, NotableDeathRecord>));
         }
     }
 }
