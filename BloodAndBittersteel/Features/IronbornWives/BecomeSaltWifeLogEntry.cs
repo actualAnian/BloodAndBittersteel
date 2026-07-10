@@ -1,6 +1,7 @@
 ﻿using Helpers;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.LogEntries;
+using TaleWorlds.Core;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 
@@ -28,8 +29,9 @@ namespace BloodAndBittersteel.Features.IronbornWives
         public TextObject GetNotificationText()
         {
             var text = new TextObject(NotificationText);
-            StringHelpers.SetCharacterProperties("HAPPENED_TO", _happenedTo.CharacterObject, text, false);
-            StringHelpers.SetCharacterProperties("FORCED_BY", _forcedBy.CharacterObject, text, false);
+            GameTexts.SetVariable("HAPPENED_TO", _happenedTo.CharacterObject.Name);
+            GameTexts.SetVariable("FORCED_BY", _forcedBy.CharacterObject.Name);
+
             return text;
         }
 

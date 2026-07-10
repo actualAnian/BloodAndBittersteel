@@ -7,14 +7,15 @@ using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.LogEntries;
 using TaleWorlds.CampaignSystem.MapEvents;
 using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
+using TaleWorlds.Core;
+using TaleWorlds.Localization;
 using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.NightsWatch
 {
     public class NightsWatchCampaignBehavior : CampaignBehaviorBase
     {
-        const int MaxSpousesForAiLords = 2;
-        const float BaseAcceptanceChance = 0.5f;
         readonly Random _random = new();
         [SaveableField(1)]
         private Dictionary<string, CampaignTime> _lastRefusalTimes = new();
@@ -23,24 +24,28 @@ namespace BloodAndBittersteel.Features.NightsWatch
             CampaignEvents.OnSessionLaunchedEvent.AddNonSerializedListener(this, OnSessionLaunched);
             CampaignEvents.MapEventEnded.AddNonSerializedListener(this, OnMapEventEnded);
         }
-
+        private float GetChanceForAIToSendToNightsWatch(Hero ruler, Hero prisoner)
+        {
+            var chance = NightsWatchConfig.BaseChanceForAIToSendToNightsWatch;
+            chance += NightsWatchConfig.ChanceForRulerPerRelationPoint * ruler.GetBaseHeroRelation(prisoner);
+            return chance;
+        }
         private void OnMapEventEnded(MapEvent mapEvent)
         {
             foreach(var party in mapEvent.InvolvedParties)
             {
                 if (party == PartyBase.MainParty) continue;
-                if (party.LeaderHero == null || party.LeaderHero.Culture.StringId != Globals.IronbornCultureId) return;
                 var hero = party.LeaderHero;
-                var validPrisoner = party.PrisonerHeroes.FirstOrDefault(p => CanForceToJoinNightsWatch(hero, p.HeroObject));
-                if (validPrisoner != null)
+                if (hero == null) continue;
+                var validPrisoners = party.PrisonerHeroes.Where(p => CanAIForceToJoinNightsWatch(hero, p.HeroObject));
+                foreach(var validPrisoner  in validPrisoners)
                 {
-                    var spousesAmount = 0;
-                    if (hero.Spouse != null) spousesAmount++;
-                    foreach (var exSpouse in hero.ExSpouses)
-                        if (exSpouse.IsAlive) spousesAmount++;
-                    if (spousesAmount > MaxSpousesForAiLords) continue;
-                    var prisoner = validPrisoner.HeroObject;
-                        JoinNightsWatch(hero, prisoner);
+                    if (validPrisoner != null)
+                    {
+                        if (GetChanceForAIToSendToNightsWatch(hero, validPrisoner.HeroObject) > _random.NextDouble())
+                            JoinNightsWatch(hero, validPrisoner.HeroObject);
+                    }
+
                 }
             }
         }
@@ -56,186 +61,140 @@ namespace BloodAndBittersteel.Features.NightsWatch
         }
         float GetChanceToJoinNightsWatch(Hero prisoner)
         {
-            var chance = BaseAcceptanceChance;
+            var chance = NightsWatchConfig.BaseChanceForAIToAcceptPlayerOfferToJoinNightsWatch;
             chance += 0.2f * prisoner.GetTraitLevel(DefaultTraits.Honor);
             return chance;
         }
         public void AddDialogs(CampaignGameStarter starter)
         {
-            //    starter.AddPlayerLine(
-            //        "ironborn_wife_start",
-            //        "hero_main_options",
-            //        "ironborn_wife_response",
-            //        "{IRONBORN_WIFE_START}",
-            //        () =>
-            //        {
-            //            bool isValidDialog = ConditionToStartDialog();
-            //            if (!isValidDialog) return false;
+            starter.AddPlayerLine(
+                "send_to_nights_watch_start",
+                "hero_main_options",
+                "send_to_nights_watch_response",
+                "{SEND_TO_NIGHTS_WATCH_START}",
+                () =>
+                {
+                    bool isValidDialog = ConditionToStartDialog();
+                    if (!isValidDialog) return false;
 
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) < 0
-            //                && Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogSadistic);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogMerciful);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Calculating) > 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogCalculating);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogDevious);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Calculating) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogImpulsive);
-            //            else
-            //                GameTexts.SetVariable("IRONBORN_WIFE_START", IronbornWivesDialogs.StartDialogNeutral);
-            //            return true;
-            //        },
-            //        null
-            //    );
-            //    starter.AddDialogLine(
-            //        "ironborn_wife_response_accept",
-            //        "ironborn_wife_response",
-            //        "ironborn_wife_finalize",
-            //        "{IRONBORN_WIFE_OFFER}",
-            //        () =>
-            //        {
-            //            var prisoner = Hero.OneToOneConversationHero;
-            //            if (prisoner == null) return false;
-            //            if (!WillJoinNightsWatch(prisoner)) return false;
-            //            string text = "";
-            //            if (IsFighter(prisoner)) text = IronbornWivesDialogs.NobleFighterAgree;
-            //            else text = prisoner.Clan.Tier switch
-            //            {
-            //                0 or 1 or 2 or 3 => IronbornWivesDialogs.LowNobleNonFighterAgree,
-            //                _ => IronbornWivesDialogs.HighNobleNonFighterAgree
-            //            };
-            //            GameTexts.SetVariable("IRONBORN_WIFE_OFFER", text);
-            //            return true;
-            //        },
-            //        null
-            //    );
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
+                        GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_START", NightsWatchDialogs.SendToNightWatchDevious);
+                    else 
+                        GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_START", NightsWatchDialogs.SendToNightWatchNormal);
+                    return true;
+                },
+                null
+            );
+            starter.AddDialogLine(
+                "send_to_nights_watch_response_accept",
+                "send_to_nights_watch_response",
+                "close_window",
+                "{SEND_TO_NIGHTS_WATCH_RESPONSE}",
+                () =>
+                {
+                    var prisoner = Hero.OneToOneConversationHero;
+                    if (prisoner == null) return false;
+                    if (!WillJoinNightsWatch(prisoner)) return false;
+                    string text = "";
+                    if (prisoner.GetTraitLevel(DefaultTraits.Honor) < 0)
+                        text = NightsWatchDialogs.PrisonerAgreesDevious;
+                    else if (prisoner.GetTraitLevel(DefaultTraits.Honor) > 0)
+                        text = NightsWatchDialogs.PrisonerAgreesHonourable;
+                    else
+                        text = NightsWatchDialogs.PrisonerAgreesNormal;
+                    GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_RESPONSE", text);
+                    return true;
+                },
+                () => { JoinNightsWatch(Hero.MainHero, Hero.OneToOneConversationHero); } 
+            );
 
-            //    starter.AddDialogLine(
-            //        "ironborn_wife_response_refuse",
-            //        "ironborn_wife_response",
-            //        "ironborn_wife_after_refuse",
-            //        "{IRONBORN_WIFE_OFFER}",
-            //        () =>
-            //        {
-            //            var prisoner = Hero.OneToOneConversationHero;
-            //            string text = "";
-            //            if (IsFighter(prisoner)) text = IronbornWivesDialogs.NobleFighterRefuse;
-            //            else text = prisoner.Clan.Tier switch
-            //            {
-            //                0 or 1 or 2 or 3 => IronbornWivesDialogs.LowNobleNonFighterRefuse,
-            //                _ => IronbornWivesDialogs.HighNobleNonFighterRefuse
-            //            };
-            //            GameTexts.SetVariable("IRONBORN_WIFE_OFFER", text);
-            //            _lastRefusalTimes[prisoner.StringId] = CampaignTime.Now;
-            //            return true;
-            //        },
-            //        null
-            //    );
-            //    starter.AddPlayerLine(
-            //        "ironborn_wife_execute",
-            //        "ironborn_wife_after_refuse",
-            //        "close_window",
-            //        "{IRONBORN_WIFE_EXECUTE}",
-            //        () =>
-            //        {
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) < 0
-            //                && Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_EXECUTE", IronbornWivesDialogs.ExecutionSadistic);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_EXECUTE", IronbornWivesDialogs.ExecutionDevious);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Calculating) < 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_EXECUTE", IronbornWivesDialogs.ExecutionImpulsive);
-            //            else
-            //                GameTexts.SetVariable("IRONBORN_WIFE_EXECUTE", IronbornWivesDialogs.ExecutionNeutral);
-            //            return true;
-            //        },
-            //        () => 
-            //        {
-            //            MBInformationManager.ShowSceneNotification(HeroExecutionSceneNotificationData.CreateForPlayerExecutingHero(Hero.OneToOneConversationHero, delegate { }, SceneNotificationData.RelevantContextType.Any, false));
-            //            if (MobileParty.MainParty.MapEvent != null)
-            //                KillCharacterAction.ApplyByExecutionAfterMapEvent(Hero.OneToOneConversationHero, Hero.MainHero);
-            //            else  KillCharacterAction.ApplyByExecution(Hero.OneToOneConversationHero, Hero.MainHero);
-            //        }, 100,
-            //        (out TextObject exp) =>
-            //        {
-            //            exp = new TextObject("");
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0)
-            //            {
-            //                exp = new TextObject("{=bab_ironborn_wife_merciful}You are merciful");
-            //                return false;
-            //            }
-            //            return true;
-            //        });
-            //    starter.AddPlayerLine(
-            //        "ironborn_wife_spare",
-            //        "ironborn_wife_after_refuse",
-            //        "close_window",
-            //        "{IRONBORN_WIFE_SPARE}",
-            //        () =>
-            //        {
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_SPARE", IronbornWivesDialogs.SpareMerciful);
-            //            else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Calculating) > 0)
-            //                GameTexts.SetVariable("IRONBORN_WIFE_SPARE", IronbornWivesDialogs.SpareCalculating);
-            //            else
-            //                GameTexts.SetVariable("IRONBORN_WIFE_SPARE", IronbornWivesDialogs.SpareNeutral);
-            //            return true;
-            //        },
-            //        null, 100,
-            //        (out TextObject exp) =>
-            //        {
-            //            exp = new TextObject("");
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0) return true;
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) >= 0
-            //                && Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) >= 0)
-            //                return true;
-            //            exp = new TextObject("{=bab_ironborn_wife_not_neutral_merciful}You need to be neutral or merciful");
-            //            return false;
-            //        });
+            starter.AddDialogLine(
+                "send_to_nights_watch_response_refuse",
+                "send_to_nights_watch_response",
+                "send_to_nights_watch_after_refuse",
+                "{SEND_TO_NIGHTS_WATCH_RESPONSE}",
+                () =>
+                {
+                    var prisoner = Hero.OneToOneConversationHero;
+                    string text = "";
+                    if (prisoner.GetTraitLevel(DefaultTraits.Honor) < 0)
+                        text = NightsWatchDialogs.PrisonerRefusesDevious;
+                    else if (prisoner.GetTraitLevel(DefaultTraits.Honor) > 0)
+                        text = NightsWatchDialogs.PrisonerRefusesHonourable;
+                    else
+                        text = NightsWatchDialogs.PrisonerRefusesNormal;
+                    GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_RESPONSE", text);
 
-            //    starter.AddPlayerLine(
-            //        "ironborn_wife_finalize_confirm",
-            //        "ironborn_wife_finalize",
-            //        "close_window",
-            //        "{IRONBORN_WIFE_CONFIRM}",
-            //        () =>
-            //        {
-            //            if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) < 0
-            //                || Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
-            //            {
-            //                if (IsFighter(Hero.OneToOneConversationHero) || Hero.OneToOneConversationHero.Clan.Tier > 3)
-            //                    GameTexts.SetVariable("IRONBORN_WIFE_CONFIRM", IronbornWivesDialogs.ConfirmationDevious);
-            //            }
-            //            else
-            //                GameTexts.SetVariable("IRONBORN_WIFE_CONFIRM", IronbornWivesDialogs.ConfirmationNeutral);
-            //            return true;
-            //        },
-            //        () => { TakeWife(Hero.MainHero, Hero.OneToOneConversationHero); }
-            //    );
-            //    starter.AddPlayerLine(
-            //        "ironborn_wife_finalize_retract",
-            //        "ironborn_wife_finalize",
-            //        "close_window",
-            //        "{IRONBORN_WIFE_RETRACT}",
-            //        () =>
-            //        {
-            //            GameTexts.SetVariable("IRONBORN_WIFE_RETRACT", IronbornWivesDialogs.RetractionNeutral);
-            //            return true;
-            //        },
-            //        null
-            //    );
+                    _lastRefusalTimes[prisoner.StringId] = CampaignTime.Now;
+                    return true;
+                },
+                null
+            );
+            starter.AddPlayerLine(
+                "send_to_nights_watch_execute",
+                "send_to_nights_watch_after_refuse",
+                "close_window",
+                "{SEND_TO_NIGHTS_WATCH_EXECUTE}",
+                () =>
+                {
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) < 0)
+                        GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_EXECUTE", NightsWatchDialogs.ExecuteAfterRefusalDevious);
+                    else if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) > 0)
+                        GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_EXECUTE", NightsWatchDialogs.ExecuteAfterRefusalHonourable);
+                    else
+                        GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_EXECUTE", NightsWatchDialogs.ExecuteAfterRefusalNormal);
+                    return true;
+                },
+                () =>
+                {
+                    MBInformationManager.ShowSceneNotification(HeroExecutionSceneNotificationData.CreateForPlayerExecutingHero(Hero.OneToOneConversationHero, delegate { }, SceneNotificationData.RelevantContextType.Any, false));
+                    if (MobileParty.MainParty.MapEvent != null)
+                        KillCharacterAction.ApplyByExecutionAfterMapEvent(Hero.OneToOneConversationHero, Hero.MainHero);
+                    else KillCharacterAction.ApplyByExecution(Hero.OneToOneConversationHero, Hero.MainHero);
+                }, 100,
+                (out TextObject exp) =>
+                {
+                    exp = new TextObject("");
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0)
+                    {
+                        exp = new TextObject("{=bab_ironborn_wife_merciful}You are merciful");
+                        return false;
+                    }
+                    return true;
+                });
+            starter.AddPlayerLine(
+                "nights_watch_spare",
+                "nights_watch_after_refuse",
+                "close_window",
+                "{NIGHTS_WATCH_SPARE}",
+                () =>
+                {
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) > 0
+                    || Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0)
+                        GameTexts.SetVariable("NIGHTS_WATCH_SPARE", NightsWatchDialogs.SpareHonourable);
+                    else
+                        GameTexts.SetVariable("NIGHTS_WATCH_SPARE", NightsWatchDialogs.SpareNormal);
+                    return true;
+                },
+                null, 100,
+                (out TextObject exp) =>
+                {
+                    exp = new TextObject("");
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Mercy) > 0) return true;
+                    if (Hero.MainHero.GetTraitLevel(DefaultTraits.Honor) > 0)
+                        return true;
+                    exp = new TextObject("{=bab_nightwatch_not_honourable_merciful}You need to be honourable or merciful");
+                    return false;
+                }
+            );
         }
 
         private void JoinNightsWatch(Hero main, Hero prisoner)
         {
+            ChangeRelationAction.ApplyRelationChangeBetweenHeroes(main, prisoner.Clan.Leader, -100);
             var joinedNightsWatchLogEntry = new JoinedNightsWatchLogEntry(prisoner, main);
             LogEntry.AddLogEntry(joinedNightsWatchLogEntry);
-            var previousClanLeader = prisoner.Clan.Leader;
-            // @TODO 
-            //prisoner.Clan = NightsWatchConfig.NightsWatchClan;
-            ChangeRelationAction.ApplyRelationChangeBetweenHeroes(main, previousClanLeader, -100);
+            prisoner.Clan = NightsWatchConfig.NightsWatchClanToJoin;
             EndCaptivityAction.ApplyByReleasedAfterBattle(prisoner);
         }
 
@@ -243,19 +202,22 @@ namespace BloodAndBittersteel.Features.NightsWatch
         {
             return hero.MapFaction != null && NightsWatchConfig.KingdomsWhoCanForceToNightsWatch.Contains(hero.MapFaction.StringId) && hero.IsKingdomLeader;
         }
-        private bool CanForceToJoinNightsWatch(Hero capturer, Hero prisoner)
+        private bool CanAIForceToJoinNightsWatch(Hero capturer, Hero prisoner)
         {
-            if (prisoner == null) return false;
             if (prisoner.IsFemale) return false;
             if (!IsRulerOfRegion(capturer)) return false;
             return true;
         }
+        private bool CanPlayerForceToJoinNightsWatch(Hero prisoner)
+        {
+            if (prisoner.IsFemale) return false;
+            return Hero.MainHero.Clan.Fiefs.Count > 0;
+        }
         private bool ConditionToStartDialog()
         {
-            var capturer = Hero.MainHero;
             var prisoner = Hero.OneToOneConversationHero;
-            if (!CanForceToJoinNightsWatch(capturer, prisoner)) return false;
             if (!prisoner.IsPrisoner) return false;
+            if (!CanPlayerForceToJoinNightsWatch(prisoner)) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.CapturedLord) return false;
             if (Campaign.Current.CurrentConversationContext == ConversationContext.FreeOrCapturePrisonerHero) return false;
             var belongsToPlayer = (prisoner.PartyBelongedToAsPrisoner != null && prisoner.PartyBelongedToAsPrisoner.Owner.Clan == Clan.PlayerClan)
