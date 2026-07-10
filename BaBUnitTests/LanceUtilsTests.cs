@@ -24,7 +24,30 @@ namespace BaBUnitTests
                 sum += lances[i].LanceRoster.GetTroopCount(character);
             return sum;
         }
-       
+        [TestMethod]
+        public void NormalizeLanceTroopsToParty_TroopOnlyInLances_Remove_One()
+        {
+            var troop = new CharacterObject();
+
+            var r1 = TroopRoster.CreateDummyTroopRoster();
+            r1.AddToCounts(troop, 6);
+
+            var l1 = TroopRoster.CreateDummyTroopRoster();
+            l1.AddToCounts(troop, 3);
+            var l2 = TroopRoster.CreateDummyTroopRoster();
+            l2.AddToCounts(troop, 4);
+
+            var lances = new List<LanceData>
+            {
+                new NotableLanceData(l1,"","",""),
+                new NotableLanceData(l2,"","","")
+            };
+
+            LanceUtils.NormalizeLanceTroopsToParty(r1, lances);
+
+            Assert.AreEqual(6, SumLanceCounts(lances, troop));
+        }
+
         [TestMethod]
         public void NormalizeLanceTroopsToParty_DoesNotCreateNegativeCounts()
         {

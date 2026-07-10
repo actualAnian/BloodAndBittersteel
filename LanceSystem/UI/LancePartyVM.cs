@@ -111,7 +111,11 @@ namespace LanceSystem.UI
             }
             return lancesTroopRoster;
         }
+        public new void ExecuteCancel(bool showCancelInquiry = false)
+        {
+            ExecuteReset();
 
+        }
         public new void ExecuteReset()
         {
             base.ExecuteReset();
