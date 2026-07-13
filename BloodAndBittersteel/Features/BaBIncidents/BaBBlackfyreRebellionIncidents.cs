@@ -17,7 +17,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             yield return CreateStartRebellionIncident();
         }
 
-        public static void CreateRebellionKingdom()
+        public static void CreateRebellionKingdom(RebellionSide sideChosen)
         {
             var rebellionClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
             Kingdom rebelKingdom = Kingdom.CreateKingdom(RebellionConfig.RebellionFactionStringId);
@@ -49,7 +49,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             }
             var crownlands = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
             FactionManager.DeclareWar(rebelKingdom, crownlands);
-            Campaign.Current.GetCampaignBehavior<RebellionCampaignBehavior>().OnRebellionStart();
+            Campaign.Current.GetCampaignBehavior<RebellionCampaignBehavior>().OnRebellionStart(sideChosen);
         }
         public static BaBIncident CreateStartRebellionIncident()
         {
@@ -64,17 +64,17 @@ namespace BloodAndBittersteel.Features.BaBIncidents
                                     return true; });
             List<IncidentEffect> joinRebellion = new()
             {
-                StartTheRebellionEffect(),
+                StartTheRebellionEffect(RebellionSide.Rebel),
                 JoinTheRebellionEffect(),
             };
             List<IncidentEffect> fightRebellion = new()
             {
-                StartTheRebellionEffect(),
+                StartTheRebellionEffect(RebellionSide.Loyalist),
                 FightTheRebellionEffect(),
             };
             List<IncidentEffect> stayNeutral = new()
             {
-                StartTheRebellionEffect(),
+                StartTheRebellionEffect(RebellionSide.Neutral),
             };
             var joinRebellionText = "{=bab_join_rebellion}You gather your men and march to the Blackwater Rush to join the rebellion. The time is nigh, now is the time for sword not quill";
             var fightRebellionText = "{=bab_fight_rebellion}Convinced by your captains and sergeants, you order the men to pack up camp to aid the Crown against the rabble of pretenders at their doorsteps.";
@@ -84,11 +84,11 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             incident.AddOption(stayNeutralText, stayNeutral, null, null);
             return incident;
         }
-        public static IncidentEffect StartTheRebellionEffect()
+        public static IncidentEffect StartTheRebellionEffect(RebellionSide sideChosen)
         {
             return CreateCustomIncidentEffect(
                 null!,
-                () => { CreateRebellionKingdom(); return new List<TextObject> { TextObject.GetEmpty() }; },
+                () => { CreateRebellionKingdom(sideChosen); return new List<TextObject> { TextObject.GetEmpty() }; },
                 effect =>
                 {
                     TextObject textObject = new("The civil war engulfs the empire");

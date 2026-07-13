@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BloodAndBittersteel.Features.BlackfyreRebellion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
@@ -117,7 +118,23 @@ namespace BloodAndBittersteel.Features.NightsWatch
                 {
                     var prisoner = Hero.OneToOneConversationHero;
                     string text = "";
-                    if (prisoner.GetTraitLevel(DefaultTraits.Honor) < 0)
+                    if (RebellionCampaignBehavior.Instance.RebellionData.PlayerSide == RebellionSide.Rebel
+                        && prisoner.GetRelation(Hero.MainHero) < -10
+                        && prisoner.GetTraitLevel(DefaultTraits.Honor) > 0)
+                            text = NightsWatchDialogs.PrisonerRefusesPlayerRebellionRelationNegativeLordHonourable;
+                    else if (RebellionCampaignBehavior.Instance.RebellionData.PlayerSide == RebellionSide.Rebel
+                        && prisoner.GetRelation(Hero.MainHero) < -10)
+                            text = NightsWatchDialogs.PrisonerRefusesPlayerRebellionRelationNegative;
+                    else if (RebellionCampaignBehavior.Instance.RebellionData.PlayerSide == RebellionSide.Rebel)
+                        text = NightsWatchDialogs.PrisonerRefusesPlayerRebellion;
+                    else if (RebellionCampaignBehavior.Instance.RebellionData.PlayerSide == RebellionSide.Loyalist
+                        && prisoner.GetRelation(Hero.MainHero) < -10
+                        && prisoner.GetTraitLevel(DefaultTraits.Honor) > 0)
+                        text = NightsWatchDialogs.PrisonerRefusesPlayerLoyalistRelationNegativeLordHonourable;
+                    else if (RebellionCampaignBehavior.Instance.RebellionData.PlayerSide == RebellionSide.Loyalist
+                        && prisoner.GetTraitLevel(DefaultTraits.Honor) < 0)
+                        text = NightsWatchDialogs.PrisonerRefusesPlayerLoyalistLordDevious;
+                    else if (prisoner.GetTraitLevel(DefaultTraits.Honor) < 0)
                         text = NightsWatchDialogs.PrisonerRefusesDevious;
                     else if (prisoner.GetTraitLevel(DefaultTraits.Honor) > 0)
                         text = NightsWatchDialogs.PrisonerRefusesHonourable;

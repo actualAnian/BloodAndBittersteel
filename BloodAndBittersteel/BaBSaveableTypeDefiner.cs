@@ -22,6 +22,7 @@ namespace BloodAndBittersteel
             AddClassDefinition(typeof(BaBIncident), 4);
             AddClassDefinition(typeof(BecomeSaltWifeLogEntry), 5);
             AddClassDefinition(typeof(JoinedNightsWatchLogEntry), 6);
+            AddEnumDefinition(typeof(RebellionSide), 7);
         }
         protected override void DefineContainerDefinitions()
         {
