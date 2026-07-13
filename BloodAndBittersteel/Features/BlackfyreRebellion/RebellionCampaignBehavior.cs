@@ -1,16 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BlackfyreRebellion
 {
-    // UNUSED FOR NOW, I AM ASSUMING IT WILL BE USEFUL IN THE FUTURE
     public class BlackfyreRebellionData
     {
         [SaveableProperty(1)]
         public bool IsRebellionActive { get; set; } = false;
         [SaveableProperty(2)]
         public List<string> LoyalistVassals { get; set; } = new();
+        [SaveableProperty(3)]
+        public RebellionSide PlayerSide { get; set; } = RebellionSide.Neutral;
+    }
+    public enum RebellionSide
+    {
+        Loyalist,
+        Rebel,
+        Neutral
     }
     public class RebellionCampaignBehavior : CampaignBehaviorBase
     {
@@ -24,14 +32,15 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
             };
         }
 
-
+        public static RebellionCampaignBehavior Instance => Campaign.Current.GetCampaignBehavior<RebellionCampaignBehavior>();
         public override void RegisterEvents()
         {
             //CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
         }
-        public void OnRebellionStart()
+        public void OnRebellionStart(RebellionSide sideChosen)
         {
             _rebellionData.IsRebellionActive = true;
+            _rebellionData.PlayerSide = sideChosen;
         }
 
         public override void SyncData(IDataStore dataStore)

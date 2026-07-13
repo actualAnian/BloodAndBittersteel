@@ -7,7 +7,6 @@ namespace LanceSystem.UI.UIPatches
     internal class PartyCharacterVMPatch
     {
         static readonly FieldInfo _partyVM = AccessTools.Field("PartyCharacterVM:_partyVm");
-        //[HarmonyPatch(typeof(PartyCharacterVM), nameof(PartyCharacterVM.Upgrade))]
         public static bool Prefix(PartyCharacterVM __instance, int upgradeIndex, int maxUpgradeCount)
         {
             var partyVM = _partyVM.GetValue(__instance);

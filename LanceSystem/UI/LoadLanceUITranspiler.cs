@@ -2,6 +2,7 @@
 using SandBox.GauntletUI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using TaleWorlds.CampaignSystem.Party;
@@ -9,17 +10,19 @@ using TaleWorlds.CampaignSystem.ViewModelCollection.Party;
 
 namespace LanceSystem.UI
 {
-    [HarmonyPatch(typeof(GauntletPartyScreen), "TaleWorlds.Core.IGameStateListener.OnActivate")]
+    //[HarmonyPatch(typeof(GauntletPartyScreen), "SandBox.GauntletUI.GauntletPartyScreen.OnReady")]
     public class LoadLanceUITranspiler
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            bool patchHappened = false;
             foreach (var instruction in instructions) 
             {
                 if (instruction.opcode == OpCodes.Newobj 
                     && instruction.operand is ConstructorInfo constructorInfo && 
                     constructorInfo.DeclaringType == typeof(PartyVM))
                 {
+                    patchHappened = true;
                     // Replace with LancePartyVM constructor
                     var babConstructor = typeof(LancePartyVM).GetConstructor(new Type[] { typeof(PartyScreenLogic) });
                     yield return new CodeInstruction(OpCodes.Newobj, babConstructor);
@@ -29,6 +32,7 @@ namespace LanceSystem.UI
                     yield return instruction;
                 }
             }
+            if (!patchHappened) throw new Exception("error in patching LanceSystem.UI.LoadLanceUITranspiler, the base method must have been changed");
         }
 
     }

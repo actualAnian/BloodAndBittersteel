@@ -23,7 +23,10 @@ namespace LanceSystem.LanceDataClasses
         [SaveableProperty(4)]
         public string? PartyLanceBelongsTo { get; set; }
         [SaveableField(5)]
-        private string _lanceTemplateId= null!;
+        private string _lanceTemplateId = null!;
+        [SaveableProperty(6)]
+        public bool IsValid { get; set; } = true;
+
         private ExplainedNumber _cachedMaxLanceTroops;
         public ExplainedNumber CachedMaxLanceTroops 
         { 
@@ -31,8 +34,11 @@ namespace LanceSystem.LanceDataClasses
             {
                 if (_cachedMaxLanceTroops.ResultNumber == 0)
                 {
-                    var notable = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject;
-                    CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
+                    var notable = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId);
+                    if (notable == null) 
+                        CachedMaxLanceTroops = new(0);
+                    else
+                        CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable.HeroObject);
                 }
                 return _cachedMaxLanceTroops;
             }
@@ -55,7 +61,7 @@ namespace LanceSystem.LanceDataClasses
             var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject.HomeSettlement;
             return LanceTemplateManager.Instance.GetLances(settlement.Culture.StringId, settlement);
         }
-        static Random _random = new();
+        static readonly Random _random = new();
         public void SetRandomLanceTemplateWeighted()
         {
             var possibleTemplates = GetPossibleTemplates();

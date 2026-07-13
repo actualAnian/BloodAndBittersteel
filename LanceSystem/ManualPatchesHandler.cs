@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LanceSystem.Patches;
+using LanceSystem.UI;
 using LanceSystem.UI.UIPatches;
 using System.Reflection;
 
@@ -25,6 +26,8 @@ namespace LanceSystem
         }
         public static void RunUIPatches(Harmony harmony)
         {
+            MethodInfo partyScreenLoad = AccessTools.Method("SandBox.GauntletUI.GauntletPartyScreen:OnReady");
+            harmony.Patch(partyScreenLoad, transpiler: new HarmonyMethod(typeof(LoadLanceUITranspiler), nameof(LoadLanceUITranspiler.Transpiler)));
             MethodInfo updateTroop = AccessTools.Method("PartyTradeVM:UpdateTroopData");
             harmony.Patch(updateTroop, prefix: new HarmonyMethod(typeof(PartyTradeVMPatch), nameof(PartyTradeVMPatch.Prefix)));
             MethodInfo upgradeTroop = AccessTools.Method("PartyCharacterVM:Upgrade");

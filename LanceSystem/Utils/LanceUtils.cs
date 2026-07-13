@@ -1,8 +1,10 @@
-﻿using LanceSystem.LanceDataClasses;
+﻿using HarmonyLib;
+using LanceSystem.LanceDataClasses;
 using LanceSystem.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Roster;
@@ -143,17 +145,23 @@ namespace LanceSystem.Utils
             }
         }
 
+        public static FieldInfo troopRosterData = AccessTools.Field("TaleWorlds.CampaignSystem.Roster.TroopRoster:data");
         public static void NormalizeLanceTroopsToParty(TroopRoster partyRoster, List<LanceData> lances)
         {
             var troopCounts = new Dictionary<CharacterObject, (int party, int lances)>();
 
-            foreach (var troop in partyRoster.GetTroopRoster())
+            foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(partyRoster))
+            {
+                if (troop.Character == null) break;
                 troopCounts[troop.Character] = (troop.Number, 0);
+            }
 
             foreach (var lance in lances)
             {
-                foreach (var troop in lance.LanceRoster.GetTroopRoster())
+                foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(lance.LanceRoster))
                 {
+                    if (troop.Character == null) break;
+
                     if (troopCounts.TryGetValue(troop.Character, out var counts))
                         troopCounts[troop.Character] = (counts.party, counts.lances + troop.Number);
                     else
