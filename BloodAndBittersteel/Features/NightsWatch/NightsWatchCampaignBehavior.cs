@@ -84,7 +84,16 @@ namespace BloodAndBittersteel.Features.NightsWatch
                         GameTexts.SetVariable("SEND_TO_NIGHTS_WATCH_START", NightsWatchDialogs.SendToNightWatchNormal);
                     return true;
                 },
-                null
+                null, 100,
+                (out TextObject text) => 
+                {
+                    text = new TextObject("{=bab_nightswatch_cant_send_king}You need to be a faction leader to send a king to the night's watch");
+                    if (Hero.OneToOneConversationHero.IsFactionLeader && !Hero.MainHero.IsFactionLeader)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
             );
             starter.AddDialogLine(
                 "send_to_nights_watch_response_accept",
@@ -219,14 +228,21 @@ namespace BloodAndBittersteel.Features.NightsWatch
         {
             return hero.MapFaction != null && NightsWatchConfig.KingdomsWhoCanForceToNightsWatch.Contains(hero.MapFaction.StringId) && hero.IsKingdomLeader;
         }
-        private bool CanAIForceToJoinNightsWatch(Hero capturer, Hero prisoner)
+        private bool CanAnyoneSendToJoinNightsWatch(Hero capturer, Hero prisoner)
         {
             if (prisoner.IsFemale) return false;
+            if (prisoner.MapFaction.StringId == NightsWatchConfig.NightsWatchFactionStringId) return false;
+            return true;
+        }
+        private bool CanAIForceToJoinNightsWatch(Hero capturer, Hero prisoner)
+        {
+            if (!CanAnyoneSendToJoinNightsWatch(capturer, prisoner)) return false;
             if (!IsRulerOfRegion(capturer)) return false;
             return true;
         }
         private bool CanPlayerForceToJoinNightsWatch(Hero prisoner)
         {
+            if (!CanAnyoneSendToJoinNightsWatch(Hero.MainHero, prisoner)) return false;
             if (prisoner.IsFemale) return false;
             return Hero.MainHero.Clan.Fiefs.Count > 0;
         }
