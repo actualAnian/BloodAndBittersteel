@@ -1,4 +1,4 @@
-﻿using BloodAndBittersteel.Features.BaBIncidents;
+﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
 using BloodAndBittersteel.Features.HelmetTilting;
@@ -25,7 +25,7 @@ namespace BloodAndBittersteel
             if (gameStarterObject is CampaignGameStarter campaignGameStarter)
             {
                 // behaviors
-                campaignGameStarter.AddBehavior(new BaBIncidentsCampaignBehavior());
+                campaignGameStarter.AddBehavior(new BaBEventsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new RebellionCampaignBehavior());
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
                 campaignGameStarter.AddBehavior(new IronbornWivesCampaignBehavior());

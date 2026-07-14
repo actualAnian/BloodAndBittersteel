@@ -6,13 +6,13 @@ using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
-using static BloodAndBittersteel.Features.BaBIncidents.BaBIncidentsBase;
+using static BloodAndBittersteel.Features.BaBEvents.BaBIncidentsBase;
 
-namespace BloodAndBittersteel.Features.BaBIncidents
+namespace BloodAndBittersteel.Features.BaBEvents.Incidents
 {
-    public class BaBBlackfyreRebellionIncidents : IIncidentProvider
+    public class BaBBlackfyreRebellionIncidents : IEventProvider
     {
-        public IEnumerable<BaBIncident> InitializeEvents()
+        public IEnumerable<IBaBEvent> InitializeEvents()
         {
             yield return CreateStartRebellionIncident();
         }
@@ -53,7 +53,7 @@ namespace BloodAndBittersteel.Features.BaBIncidents
         }
         public static BaBIncident CreateStartRebellionIncident()
         {
-            BaBIncident incident = new("start_rebellion", BaBIncidentTypes.OnDailyTick, 1);
+            BaBIncident incident = new("start_rebellion", BaBEventTypes.OnDailyTick, 1);
             incident.Initialize("{=bab_black_dragon_rises}The Black Dragon Rises",
                                 "",
                                 IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,

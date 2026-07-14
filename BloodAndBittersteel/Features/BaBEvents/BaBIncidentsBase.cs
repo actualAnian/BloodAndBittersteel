@@ -5,7 +5,7 @@ using System.Reflection;
 using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
 
-namespace BloodAndBittersteel.Features.BaBIncidents
+namespace BloodAndBittersteel.Features.BaBEvents
 {
     public static class BaBIncidentsBase
     {
