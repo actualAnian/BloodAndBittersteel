@@ -190,7 +190,7 @@ namespace BloodAndBittersteel.Features.NightsWatch
                 });
             starter.AddPlayerLine(
                 "nights_watch_spare",
-                "nights_watch_after_refuse",
+                "send_to_nights_watch_after_refuse",
                 "close_window",
                 "{NIGHTS_WATCH_SPARE}",
                 () =>
