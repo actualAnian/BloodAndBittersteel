@@ -12,7 +12,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
         OnDailyTick,
         OnWeeklyTick,
     }
-    public class BaBEventsCampaignBehavior : CampaignBehaviorBase
+    public class BaBEventsCampaignBehavior : CampaignBehaviorBase, INonReadyObjectHandler
     {
         readonly Random _random = new();
         readonly Dictionary<BaBEventTypes, List<IBaBEvent>> _eventsByType = new();
@@ -37,11 +37,22 @@ namespace BloodAndBittersteel.Features.BaBEvents
             foreach (var evt in BaBEventRegister.Instance.AllEvents)
                 AddEvent(evt);
         }
+        public void OnBeforeNonReadyObjectsDeleted()
+        {
+            InitializeEvents();
+        }
+
         public override void RegisterEvents()
         {
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
             CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
-            //CampaignEvents.OnGameEarlyLoadedEvent(this, InitializeEvents);
+            CampaignEvents.OnGameEarlyLoadedEvent.AddNonSerializedListener(this, InitializeEvents);
+        }
+
+        private void InitializeEvents(CampaignGameStarter starter)
+        {
+            //foreach (var evt in BaBEventRegister.Instance.AllEvents)
+            //    AddEvent(evt);
         }
 
         private bool CanEventFire(IBaBEvent evt)
@@ -79,7 +90,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
 
             var chosen = fireableEvents.GetRandomElementInefficiently();
             FireEvent(chosen, mapState);
-            _eventsOnCooldown.Add(chosen.StringId, CampaignTime.Days(24));
+            _eventsOnCooldown.Add(chosen.StringId, chosen.Cooldown);
         }
         private void FireEvent(IBaBEvent evt, MapState mapState)
         {
@@ -97,5 +108,6 @@ namespace BloodAndBittersteel.Features.BaBEvents
         {
             dataStore.SyncData("bab_eventsOnCooldown", ref _eventsOnCooldown);
         }
+
     }
 }

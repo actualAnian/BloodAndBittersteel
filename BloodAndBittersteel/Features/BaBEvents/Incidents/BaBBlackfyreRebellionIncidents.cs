@@ -58,7 +58,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents
                                 "",
                                 IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
                                 IncidentsCampaignBehaviour.IncidentType.Siege,
-                                CampaignTime.Never, 
+                                CampaignTime.Never,
                                 condition: description => {
                                     //return CampaignTime.Now >= RebellionConfig.RebellionStartTime;
                                     return true; });

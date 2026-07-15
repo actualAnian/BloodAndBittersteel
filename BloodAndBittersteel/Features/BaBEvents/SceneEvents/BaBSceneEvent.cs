@@ -1,8 +1,9 @@
 using System;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Core;
 
-namespace BloodAndBittersteel.Features.BaBEvents
+namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents
 {
     public class BaBSceneEvent : BaBImmediateEvent
     {
@@ -14,10 +15,11 @@ namespace BloodAndBittersteel.Features.BaBEvents
             string stringId,
             BaBEventTypes eventType,
             SceneNotificationData notificationData,
+            CampaignTime cooldown,
             Action onFire,
             Func<bool>? condition = null,
             float chance = 1f)
-            : base(stringId, eventType, chance, onFire)
+            : base(stringId, eventType, chance, onFire, cooldown)
         {
             NotificationData = notificationData;
             _condition = condition ?? (() => true);

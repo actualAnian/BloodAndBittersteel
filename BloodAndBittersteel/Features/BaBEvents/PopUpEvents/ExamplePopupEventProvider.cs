@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
@@ -11,10 +12,11 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
             yield return new BaBPopupEvent(
                 "popup_ghost_sighting",
                 BaBEventTypes.OnDailyTick,
-                0.15f,
-                "ModuleData/images/ghost.png",
-                new TextObject("{=bab_ghost_sight}A Ghostly Sighting"),
-                new List<TextObject> { new TextObject("{=bab_ghost_desc}You have heard tales of a ghostly figure wandering the moors...") },
+                1f,
+                "test.png",
+                new TextObject("A Ghostly Sighting"),
+                new TextObject("You have heard tales of a ghostly figure wandering the moors"),
+                CampaignTime.Days(24),
                 () => { },
                 () => { return true; }
             );

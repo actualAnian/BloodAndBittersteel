@@ -1,4 +1,5 @@
 using System;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameState;
 
 namespace BloodAndBittersteel.Features.BaBEvents
@@ -10,12 +11,15 @@ namespace BloodAndBittersteel.Features.BaBEvents
         public float Chance { get; }
         public Action OnFire { get; }
 
-        protected BaBImmediateEvent(string stringId, BaBEventTypes eventType, float chance, Action onFire)
+        public CampaignTime Cooldown { get; private set; }
+
+        protected BaBImmediateEvent(string stringId, BaBEventTypes eventType, float chance, Action onFire, CampaignTime cooldown)
         {
             StringId = stringId;
             EventType = eventType;
             Chance = chance;
             OnFire = onFire;
+            Cooldown = cooldown;
         }
 
         public abstract bool CheckCondition();
