@@ -46,6 +46,7 @@ namespace LanceSystem.UI
             UpgradePopUp = _lanceUpgradePopUp;
             _lancePartyRecruitTroopVM = new LancePartyRecruitTroopVM(this);
             RecruitPopUp = _lancePartyRecruitTroopVM;
+            LancesCampaignBehavior.Instance.LockParty(PartyBase.MainParty);
         }
         private void ResetRosterData(TroopRoster cloneTo, TroopRoster clonefrom)
         {
@@ -326,6 +327,7 @@ namespace LanceSystem.UI
         }
         public override void OnFinalize()
         {
+            LancesCampaignBehavior.Instance.UnlockParty(PartyBase.MainParty);
             Instance = null;
             base.OnFinalize();
             //foreach (var lance in PartyBase.MainParty.Lances())
