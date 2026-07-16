@@ -159,7 +159,7 @@ namespace LanceSystem.CampaignBehaviors
 
         private void OnPartySizeChanged(PartyBase party)
         {
-            if (party == PartyBase.MainParty) return;
+            //if (party == PartyBase.MainParty) return;
             UpdateLanceTroops(party);
         }
 
@@ -484,6 +484,20 @@ namespace LanceSystem.CampaignBehaviors
                 party.MemberRoster.RemoveTroop(troop.Character, troop.Number);
             }
             LockedParties.Remove(party.Id);
+        }
+        /*
+         * WARNING, potentially unsafe. needed for LanceParty VM
+         * only use in extreme cases, otherwise use RemoveTroopsFromLancesSafely
+         */
+        public void LockParty(PartyBase party)
+        {
+            if (!LockedParties.Contains(party.Id))
+                LockedParties.Add(party.Id);
+        }
+        public void UnlockParty(PartyBase party)
+        {
+            if (LockedParties.Contains(party.Id))
+                LockedParties.Remove(party.Id);
         }
         public void RemoveTroopsFromLancesSafely(TroopRoster removeFrom, TroopRoster troopsToRemove)
         {
