@@ -352,8 +352,7 @@ namespace LanceSystem.CampaignBehaviors
         private bool IsMutinyStrongEnough(MercenaryLanceData lance)
         {
             var partyWithoutLance = PartyBase.MainParty.MemberRoster.CloneRosterData();
-            foreach (var troop in lance.LanceRoster.GetTroopRoster())
-                partyWithoutLance.RemoveTroop(troop.Character, troop.Number);
+            LancesCampaignBehavior.Instance.RemoveTroopsFromLancesSafely(partyWithoutLance, lance.LanceRoster);
             PowerCalculationContext context = Campaign.Current.Models.MilitaryPowerModel.GetContextForPosition(MobileParty.MainParty.Position);
             var playerStrength = TroopRosterExtensions.CalculateTroopRosterStrength(partyWithoutLance, BattleSideEnum.Defender, context);
             var mutinyStrength = TroopRosterExtensions.CalculateTroopRosterStrength(lance.LanceRoster, BattleSideEnum.Attacker, context);
