@@ -4,6 +4,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Core;
+using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BaBEvents
 {
@@ -16,12 +17,12 @@ namespace BloodAndBittersteel.Features.BaBEvents
     {
         readonly Random _random = new();
         readonly Dictionary<BaBEventTypes, List<IBaBEvent>> _eventsByType = new();
+        [SaveableField(1)]
         private Dictionary<string, CampaignTime> _eventsOnCooldown;
         public BaBEventsCampaignBehavior()
         {
             _eventsOnCooldown = new();
         }
-
         public void AddEvent(IBaBEvent evt)
         {
             if (!_eventsByType.TryGetValue(evt.EventType, out var list))
@@ -46,15 +47,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
         {
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
             CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
-            CampaignEvents.OnGameEarlyLoadedEvent.AddNonSerializedListener(this, InitializeEvents);
         }
-
-        private void InitializeEvents(CampaignGameStarter starter)
-        {
-            //foreach (var evt in BaBEventRegister.Instance.AllEvents)
-            //    AddEvent(evt);
-        }
-
         private bool CanEventFire(IBaBEvent evt)
         {
             if (_eventsOnCooldown.TryGetValue(evt.StringId, out var result))
@@ -97,7 +90,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
             switch (evt)
             {
                 case BaBImmediateEvent immediate:
-                    immediate.Fire(mapState);
+                    immediate.Fire();
                     break;
                 case BaBIncident incident:
                     mapState.NextIncident = incident;
@@ -108,6 +101,5 @@ namespace BloodAndBittersteel.Features.BaBEvents
         {
             dataStore.SyncData("bab_eventsOnCooldown", ref _eventsOnCooldown);
         }
-
     }
 }

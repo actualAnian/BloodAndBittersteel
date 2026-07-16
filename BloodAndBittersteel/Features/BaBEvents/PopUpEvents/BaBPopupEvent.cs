@@ -1,8 +1,7 @@
-using BloodAndBittersteel.Features.BaBEvents.PopUpVM;
+using SandBox.View.Map;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameState;
-using TaleWorlds.Core;
 using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
@@ -34,10 +33,16 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
 
         public override bool CheckCondition() => _condition();
 
-        protected override void FireInternal(MapState mapState)
+        protected override void FireInternal()
         {
-            GameStateManager.Current.PushState(GameStateManager.Current.CreateState<BaBEventState>(TitleText, Description, "test"));
+            if (!BaBEventMapScreenExtensions.CanShowBaBEventPopup()) return;
 
+            var mapScreen = MapScreen.Instance;
+            if (mapScreen == null) return;
+            mapScreen.AddMapView<BaBEventPopupView>(
+                TitleText.ToString(),
+                Description.ToString(),
+                "test");
         }
     }
 }

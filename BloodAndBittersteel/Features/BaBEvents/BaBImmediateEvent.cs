@@ -24,12 +24,12 @@ namespace BloodAndBittersteel.Features.BaBEvents
 
         public abstract bool CheckCondition();
 
-        public void Fire(MapState mapState)
+        public void Fire()
         {
             OnFire?.Invoke();
-            FireInternal(mapState);
+            FireInternal();
         }
 
-        protected abstract void FireInternal(MapState mapState);
+        protected abstract void FireInternal();
     }
 }

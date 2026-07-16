@@ -27,7 +27,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents
 
         public override bool CheckCondition() => _condition();
 
-        protected override void FireInternal(MapState mapState)
+        protected override void FireInternal()
         {
             MBInformationManager.ShowSceneNotification(NotificationData);
         }

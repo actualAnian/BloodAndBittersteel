@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
 {
-    public class ExamplePopupEventProvider : IEventProvider
+    public class BaBDefaultPopupEventProvider : IEventProvider
     {
         public IEnumerable<IBaBEvent> InitializeEvents()
         {
@@ -13,7 +12,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
                 "popup_ghost_sighting",
                 BaBEventTypes.OnDailyTick,
                 1f,
-                "test.png",
+                "test",
                 new TextObject("A Ghostly Sighting"),
                 new TextObject("You have heard tales of a ghostly figure wandering the moors"),
                 CampaignTime.Days(24),

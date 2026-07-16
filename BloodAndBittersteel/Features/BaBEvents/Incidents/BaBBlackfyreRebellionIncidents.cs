@@ -6,7 +6,7 @@ using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
-using static BloodAndBittersteel.Features.BaBEvents.BaBIncidentsBase;
+using static BloodAndBittersteel.Features.BaBEvents.Incidents.BaBIncidentsBase;
 
 namespace BloodAndBittersteel.Features.BaBEvents.Incidents
 {
