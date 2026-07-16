@@ -46,6 +46,7 @@ namespace LanceSystem.CampaignBehaviors
     }
     public class LancesCampaignBehavior : CampaignBehaviorBase
     {
+        public static LancesCampaignBehavior Instance => Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
         static readonly Random _random = new();
         [SaveableField(1)]
         Dictionary<string, List<LanceData>> _activeLancesForParties = new();
@@ -55,6 +56,8 @@ namespace LanceSystem.CampaignBehaviors
         CampaignTime _mercRecruitTimeSpan = CampaignTime.Zero;
         [SaveableField(4)]
         Dictionary<string, NotableDeathRecord> _pendingNotableDeaths = new();
+        List<string> LockedParties = new();
+
         public bool CanRecruitDisbandedLanceAsMercenaries()
         {
             if (_mercRecruitTimeSpan > CampaignTime.Now) return false;
@@ -285,8 +288,7 @@ namespace LanceSystem.CampaignBehaviors
                 if (party.MemberRoster.GetTroopCount(troop.Character) < tempRoster.GetTroopCount(troop.Character))
                 {
                     LanceUtils.NormalizeLanceTroopsToParty(party.MemberRoster, party.Lances());
-                    MobileParty.MainParty.Position = party.Position;
-                    LanceLogger.Logger.Warning($"Lance inconsitency for party {party.LeaderHero?.StringId}. and troop {troop.Character.Name}");
+                    LanceLogger.Logger.Warning($"Lance inconsistency for party {party.LeaderHero?.StringId}. and troop {troop.Character.Name}");
                 }
             }
         }
@@ -295,6 +297,7 @@ namespace LanceSystem.CampaignBehaviors
             var lances = GetOrCreateLances(party);
             if (lances.Count == 0)
                 return;
+            if (LockedParties.Contains(party.Id)) return;
             LanceUtils.NormalizeLanceTroopsToParty(party.MemberRoster, party.Lances());
             RemoveLancesIfEmpty(party);
             CheckLanceConsistency(party);
@@ -468,22 +471,39 @@ namespace LanceSystem.CampaignBehaviors
             if (!HasLances(party))
                 return;
             var lances = GetOrCreateLances(party);
-            foreach (var troop in lance.LanceRoster.GetTroopRoster())
-                party.MemberRoster.RemoveTroop(troop.Character, troop.Number);
+            RemoveTroopsFromLancesSafely(party, lance.LanceRoster);
             RemoveLance(lances, lance);
         }
         public static FieldInfo troopRosterData = AccessTools.Field("TaleWorlds.CampaignSystem.Roster.TroopRoster:data");
+        public void RemoveTroopsFromLancesSafely(PartyBase party, TroopRoster troopsToRemove)
+        {
+            LockedParties.Add(party.Id);
+            foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(troopsToRemove))
+            {
+                if (troop.Character == null) break;
+                party.MemberRoster.RemoveTroop(troop.Character, troop.Number);
+            }
+            LockedParties.Remove(party.Id);
+        }
+        public void RemoveTroopsFromLancesSafely(TroopRoster removeFrom, TroopRoster troopsToRemove)
+        {
+            var ownerParty = AccessTools.Property("TaleWorlds.CampaignSystem.Roster.TroopRoster:OwnerParty").GetGetMethod(true);
+            var party = (PartyBase)ownerParty.Invoke(removeFrom, null);
+            LockedParties.Add(party.Id);
+            foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(troopsToRemove))
+            {
+                if (troop.Character == null) break;
+                removeFrom.RemoveTroop(troop.Character, troop.Number);
+            }
+            LockedParties.Remove(party.Id);
+        }
         public void DisbandLanceInParty(PartyBase party, LanceData lanceToDisband, bool removeTroops)
         {
             CheckLanceConsistency(party);
             try
             {
                 if (removeTroops)
-                    foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(lanceToDisband.LanceRoster))
-                    {
-                        if (troop.Character == null) break;
-                        party.MemberRoster.RemoveTroop(troop.Character, troop.Number);
-                    }
+                    RemoveTroopsFromLancesSafely(party, lanceToDisband.LanceRoster);
                 RemoveLance(party.Lances(), lanceToDisband);
                 if (lanceToDisband is NotableLanceData nl && removeTroops)
                     DisbandedLancePartyComponent.CreateDisbandedLanceParty(nl, party);
