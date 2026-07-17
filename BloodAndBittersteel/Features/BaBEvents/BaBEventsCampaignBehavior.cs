@@ -4,6 +4,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Core;
+using TaleWorlds.Library;
 using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BaBEvents
@@ -85,16 +86,25 @@ namespace BloodAndBittersteel.Features.BaBEvents
             FireEvent(chosen, mapState);
             _eventsOnCooldown.Add(chosen.StringId, chosen.Cooldown);
         }
-        private void FireEvent(IBaBEvent evt, MapState mapState)
-        {
-            switch (evt)
-            {
-                case BaBImmediateEvent immediate:
-                    immediate.Fire();
-                    break;
-                case BaBIncident incident:
-                    mapState.NextIncident = incident;
-                    break;
+        public static void FireEvent(IBaBEvent evt, MapState mapState)
+        {   
+           try
+           {
+                switch (evt)
+                {
+                    case BaBImmediateEvent immediate:
+                        immediate.Fire();
+                        break;
+                    case BaBIncident incident:
+                        mapState.NextIncident = incident;
+                        break;
+                }
+
+            }
+            catch(Exception e)
+            { 
+                InformationManager.DisplayMessage(new($"ERROR firing an event with id {evt.StringId}", new Color(1, 0, 0)));
+                InformationManager.DisplayMessage(new($"DEBUG MESSAGE: {e.Message}", new Color(1, 0, 0)));
             }
         }
         public override void SyncData(IDataStore dataStore) 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.SaveSystem;
 
 namespace BloodAndBittersteel.Features.BlackfyreRebellion
@@ -13,6 +14,8 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         public List<string> LoyalistVassals { get; set; } = new();
         [SaveableProperty(3)]
         public RebellionSide PlayerSide { get; set; } = RebellionSide.Neutral;
+        [SaveableProperty(4)]
+        public string KingOfTheIronThrone { get; set; }
     }
     public enum RebellionSide
     {
@@ -41,6 +44,7 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         {
             _rebellionData.IsRebellionActive = true;
             _rebellionData.PlayerSide = sideChosen;
+            _rebellionData.KingOfTheIronThrone = Settlement.All.FirstOrDefault(s => s.StringId == "town_EN1").Owner.StringId;
         }
 
         public override void SyncData(IDataStore dataStore)
