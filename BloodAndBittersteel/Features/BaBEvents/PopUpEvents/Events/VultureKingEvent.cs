@@ -14,16 +14,13 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
     {
         public const string StringId = "vulture_king";
         public const string ImageStringId = "test";
-
         public static readonly TextObject TitleText = new("{=bab_vulture_king_title}The Vulture King");
-        
         public static readonly TextObject Description = new(
             "{=bab_vulture_king_desc}" +
             "{DORNE_KING} With the failure to curb the Blackfyre Rebellion, seeing the Prince of Dorne as a weak ruler, " +
             "having submitted fully to the Iron Throne and putting the interests of the Iron Throne over the people of Dorne " +
             "have declared a new Vulture King and have rose in open rebellion against the Prince's forces " +
             "putting aside their petty differences aside for the future of Dorne.");
-
         public static readonly List<string> ClansJoiningNewDornishKingdom = new()
         {
             "DORNE_12",
@@ -40,25 +37,8 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             DorneKingdomId,
             "Crownlands",
         };
-        private static Random _random = new();
-        public static BaBPopupEvent Instance => _instance ??= CreateInstance();
-        private static BaBPopupEvent? _instance;
-
-        private static BaBPopupEvent CreateInstance()
-        {
-            return new BaBPopupEvent(
-                StringId,
-                OnDailyTick,
-                1f,
-                ImageStringId,
-                TitleText,
-                Description,
-                CampaignTime.Never,
-                Fire,
-                CheckCondition);
-        }
-
-        public static bool CheckCondition()
+        private static readonly Random _random = new();
+        public static bool Condition()
         {
             var daemonClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
             if (daemonClan == null || daemonClan.Leader?.IsDead == true)
@@ -76,7 +56,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             return false;
         }
 
-        public static void Fire()
+        public static void Consequence()
         {
             var dorneKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == DorneKingdomId);
             var dorneLeader = dorneKingdom.Leader.Name;
@@ -113,6 +93,20 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
                 if (kingdom != null && !kingdom.IsEliminated)
                     FactionManager.DeclareWar(newKingdom, kingdom);
             }
+        }
+        [BaBEvent]
+        private static BaBPopupEvent CreateEvent()
+        {
+            return new BaBPopupEvent(
+                StringId,
+                OnDailyTick,
+                1f,
+                ImageStringId,
+                TitleText,
+                Description,
+                CampaignTime.Never,
+                Condition,
+                Consequence);
         }
     }
 }

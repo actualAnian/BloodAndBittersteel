@@ -9,11 +9,11 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
         private static bool _isBaBEventPopupActive;
         public static bool IsBaBEventPopupActive => _isBaBEventPopupActive;
 
-        public static void SetIsBaBEventPopupActive(this MapScreen screen, bool value)
+        public static void SetIsBaBEventPopupActive(bool value)
         {
             _isBaBEventPopupActive = value;
         }
-        public static void CloseBaBEventPopup(this MapScreen screen)
+        public static void CloseBaBEventPopup()
         {
             if (_isBaBEventPopupActive)
             {

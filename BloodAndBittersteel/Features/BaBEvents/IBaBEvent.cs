@@ -7,7 +7,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
         string StringId { get; }
         BaBEventTypes EventType { get; }
         float Chance { get; }
-        bool CheckCondition();
+        bool Condition();
         CampaignTime Cooldown { get; }
     }
 }

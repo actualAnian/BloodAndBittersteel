@@ -10,7 +10,7 @@ public class IncidentPatches
 {
     public static void Postfix(MapIncidentVM __instance, Incident ____incident)
     {
-        BaBIncident? babIncident = BaBEventRegister.Instance.AllEvents.OfType<BaBIncident>().FirstOrDefault(i => i.StringId == ____incident.StringId);
+        BaBIncident? babIncident = BaBEventLoader.Instance.AllEvents.OfType<BaBIncident>().FirstOrDefault(i => i.StringId == ____incident.StringId);
         if (babIncident != null && babIncident.UsesCustomImage)
             __instance.IncidentType = babIncident.CustomImageName;
     }

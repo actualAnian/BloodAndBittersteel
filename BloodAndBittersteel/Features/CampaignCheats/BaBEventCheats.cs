@@ -19,7 +19,7 @@ namespace BloodAndBittersteel.Features.CampaignCheats
                 return "Usage: bab.events.fire_event [eventStringId]";
 
             var eventId = args[0];
-            var baBEvent = BaBEventRegister.Instance.AllEvents.FirstOrDefault(e => e.StringId == eventId);
+            var baBEvent = BaBEventLoader.Instance.AllEvents.FirstOrDefault(e => e.StringId == eventId);
 
             if (baBEvent is null)
                 return $"Event '{eventId}' not found.";
@@ -42,7 +42,7 @@ namespace BloodAndBittersteel.Features.CampaignCheats
         {
             var grouped = new Dictionary<string, List<IBaBEvent>>();
 
-            foreach (var evt in BaBEventRegister.Instance.AllEvents.OrderBy(e => e.StringId))
+            foreach (var evt in BaBEventLoader.Instance.AllEvents.OrderBy(e => e.StringId))
             {
                 var category = GetCategoryName(evt);
                 if (!grouped.ContainsKey(category))

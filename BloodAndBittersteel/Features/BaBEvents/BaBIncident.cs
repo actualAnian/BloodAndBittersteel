@@ -29,9 +29,9 @@ namespace BloodAndBittersteel.Features.BaBEvents
             CustomImageName = customImageName;
         }
 
-        bool IBaBEvent.CheckCondition()
+        bool IBaBEvent.Condition()
         {
-            var field = AccessTools.Field(typeof(Incident), "_condition");
+            var field = AccessTools.Field("TaleWorlds.CampaignSystem.Incidents.Incident:_condition");
             if (field == null) return true;
             var func = (Func<TextObject, bool>)field.GetValue(this);
             return func?.Invoke(Description) ?? true;

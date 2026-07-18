@@ -16,7 +16,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
         public const string ImageStringId = "test";
         public static readonly TextObject TitleText = new("{=bab_rebel_phase2_title}The King who Bore the Sword");
 
-    public static readonly TextObject Description = new TextObject(
+    public static readonly TextObject Description = new(
         "{=bab_rebel_phase2_desc}" +
         "Some conflicts have the courtesy of ending quickly. This is not one of those times. The rebellion has raged for years, with devastation and brutality trailing its ever-changing front lines" +
         "As instability breeds more instability, many once-staunch loyalists have begun to question their allegiances. Surely being the one to tip the scales would vastly increase their houses's standing in the new order." +
@@ -45,25 +45,8 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             "Reach",
             "Riverlands",
         };
-        public static BaBPopupEvent Instance => _instance ??= CreateInstance();
-        private static BaBPopupEvent? _instance;
-        private static Random _random = new();
-
-        private static BaBPopupEvent CreateInstance()
-        {
-            return new BaBPopupEvent(
-                StringId,
-                OnDailyTick,
-                1f,
-                ImageStringId,
-                TitleText,
-                Description,
-                CampaignTime.Never,
-                Fire,
-                CheckCondition);
-        }
-
-        public static bool CheckCondition()
+        private static readonly Random _random = new();
+        public static bool Condition()
         {
             var daemonClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
             if (daemonClan == null || daemonClan.Leader?.IsDead == true)
@@ -80,7 +63,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             return false;
         }
 
-        public static void Fire()
+        public static void Consequence()
         {
             var daemonKingdom = Kingdom.All.First(k => k.StringId == RebellionConfig.RebellionFactionStringId);
             var crownlands = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
@@ -109,6 +92,20 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
                     Campaign.Current.GetCampaignBehavior<AllianceCampaignBehavior>().StartAlliance(kingdom, crownlands);
                 }
             }
+        }
+        [BaBEvent]
+        private static BaBPopupEvent CreateEvent()
+        {
+            return new BaBPopupEvent(
+                StringId,
+                OnDailyTick,
+                1f,
+                ImageStringId,
+                TitleText,
+                Description,
+                CampaignTime.Never,
+                Condition,
+                Consequence);
         }
     }
 }

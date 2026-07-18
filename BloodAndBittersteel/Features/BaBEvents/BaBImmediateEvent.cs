@@ -10,19 +10,19 @@ namespace BloodAndBittersteel.Features.BaBEvents
         public BaBEventTypes EventType { get; }
         public float Chance { get; }
         public Action OnFire { get; }
-
+        public Func<bool> ConditionFunc { get; }
         public CampaignTime Cooldown { get; private set; }
 
-        protected BaBImmediateEvent(string stringId, BaBEventTypes eventType, float chance, Action onFire, CampaignTime cooldown)
+        protected BaBImmediateEvent(string stringId, BaBEventTypes eventType, float chance, Func<bool> condition, Action onFire, CampaignTime cooldown)
         {
             StringId = stringId;
             EventType = eventType;
             Chance = chance;
             OnFire = onFire;
+            ConditionFunc = condition;
             Cooldown = cooldown;
         }
-
-        public abstract bool CheckCondition();
+        public bool Condition() => ConditionFunc.Invoke();
 
         public void Fire()
         {

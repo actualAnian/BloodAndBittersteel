@@ -36,7 +36,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
         }
         private void InitializeEvents()
         {
-            foreach (var evt in BaBEventRegister.Instance.AllEvents)
+            foreach (var evt in BaBEventLoader.Instance.AllEvents)
                 AddEvent(evt);
         }
         public void OnBeforeNonReadyObjectsDeleted()
@@ -56,7 +56,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
                 if (result.IsPast) _eventsOnCooldown.Remove(evt.StringId);
                 else return false;
             }
-            return evt.CheckCondition();
+            return evt.Condition();
         }
         private void OnDailyTick()
         {

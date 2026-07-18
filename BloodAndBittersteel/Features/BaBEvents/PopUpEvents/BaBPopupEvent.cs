@@ -1,7 +1,6 @@
 using SandBox.View.Map;
 using System;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
@@ -11,8 +10,6 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
         public string ImageStringId { get; }
         public TextObject TitleText { get; }
         public TextObject Description { get; }
-        private readonly Func<bool> _condition;
-
         public BaBPopupEvent(
             string stringId,
             BaBEventTypes eventType,
@@ -21,17 +18,14 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
             TextObject titleText,
             TextObject description,
             CampaignTime cooldown,
-            Action onFire,
-            Func<bool>? condition = null)
-            : base(stringId, eventType, chance, onFire, cooldown)
+            Func<bool> condition,
+            Action consequence)
+            : base(stringId, eventType, chance, condition, consequence, cooldown)
         {
             ImageStringId = imageStringId;
             TitleText = titleText;
             Description = description;
-            _condition = condition ?? (() => true);
         }
-
-        public override bool CheckCondition() => _condition();
 
         protected override void FireInternal()
         {
@@ -42,7 +36,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
             mapScreen.AddMapView<BaBEventPopupView>(
                 TitleText.ToString(),
                 Description.ToString(),
-                "test");
+                ImageStringId);
         }
     }
 }

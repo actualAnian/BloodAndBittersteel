@@ -10,11 +10,12 @@ using RebellionConfig = BloodAndBittersteel.Features.BlackfyreRebellion.Rebellio
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 {
-    public class KingBeyondTheWallEvent
+    
+    public static class KingBeyondTheWallEvent
     {
         public const string StringId = "king_beyond_wall";
         public const string ImageStringId = "test";
-        public static readonly TextObject TitleText = new TextObject("{=bab_king_beyond_title}King-Beyond-the-Wall");
+        public static readonly TextObject TitleText = new("{=bab_king_beyond_title}King-Beyond-the-Wall");
 
         public static readonly TextObject Description = new("{=bab_king_beyond_description}" +
             "The woes of one kingdom are the fortune of another. " +
@@ -42,25 +43,9 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             Globals.SkagosKingdomId
         };
 
-        public static BaBPopupEvent Instance => _instance ??= CreateInstance();
-        private static BaBPopupEvent? _instance;
-        private static Random _random = new();
+        private static readonly Random _random = new();
 
-        private static BaBPopupEvent CreateInstance()
-        {
-            return new BaBPopupEvent(
-                StringId,
-                OnDailyTick,
-                1f,
-                ImageStringId,
-                TitleText,
-                Description,
-                CampaignTime.Days(24),
-                Fire,
-                CheckCondition);
-        }
-
-        public static bool CheckCondition()
+        public static bool Condition()
         {
             var daemonClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
             if (daemonClan == null || daemonClan.Leader?.IsDead == true)
@@ -78,7 +63,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             return false;
         }
 
-        public static void Fire()
+        public static void Consequence()
         {
             var leaderClan = Clan.FindFirst(c => c.StringId == "FREEFOLK_1");
             if (leaderClan == null)
@@ -119,6 +104,20 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
                 if (kingdom != null && !kingdom.IsEliminated)
                     Campaign.Current.GetCampaignBehavior<AllianceCampaignBehavior>().StartAlliance(kingdom, freeFolkKingdom);
             }
+        }
+        [BaBEvent]
+        private static BaBPopupEvent CreateEvent()
+        {
+            return new BaBPopupEvent(
+                StringId,
+                OnDailyTick,
+                1f,
+                ImageStringId,
+                TitleText,
+                Description,
+                CampaignTime.Days(24),
+                Condition,
+                Consequence);
         }
     }
 }
