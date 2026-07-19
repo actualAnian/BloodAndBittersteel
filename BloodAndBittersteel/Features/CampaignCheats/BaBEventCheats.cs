@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.GameState;
+using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 
@@ -23,7 +24,8 @@ namespace BloodAndBittersteel.Features.CampaignCheats
 
             if (baBEvent is null)
                 return $"Event '{eventId}' not found.";
-
+            if (baBEvent is Incident)
+                BaBEventsCampaignBehavior.Instance.ForceInvokeIncidentNextTick = true;
 
             var mapState = GameStateManager.Current.LastOrDefault<MapState>();
 

@@ -32,6 +32,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             "DORNE_20",
         };
         public const string DorneKingdomId = "Dorne";
+        public const string NewDornishKingdomId = "bab_dornish_rebels";
         public static readonly List<string> KingdomsAtWarWithNewKingdom = new()
         {
             DorneKingdomId,
@@ -65,7 +66,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             if (leaderClan == null)
                 return;
 
-            Kingdom newKingdom = Kingdom.CreateKingdom("bab_dornish_rebels");
+            Kingdom newKingdom = Kingdom.CreateKingdom(NewDornishKingdomId);
             newKingdom.InitializeKingdom(
                 new TextObject("{=bab_dorne_king_name}Vulture King's Realm"),
                 new TextObject("{=bab_dorne_king_informal}Dornish Rebels"),
@@ -93,6 +94,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
                 if (kingdom != null && !kingdom.IsEliminated)
                     FactionManager.DeclareWar(newKingdom, kingdom);
             }
+            BaBEventsCampaignBehavior.Instance.CheckTickEvent = true;
         }
         [BaBEvent]
         private static BaBPopupEvent CreateEvent()

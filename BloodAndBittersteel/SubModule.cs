@@ -37,7 +37,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddModel(new BaBSettlementAccessModel(gameStarterObject.GetExistingModel<SettlementAccessModel>()));
                 campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
                 campaignGameStarter.AddModel(new BaBMarriageModel(gameStarterObject.GetExistingModel<MarriageModel>()));
-                
+                campaignGameStarter.AddModel(new BaBAgeModel(gameStarterObject.GetExistingModel<AgeModel>()));
                 // lance system defines PartySizeLimitModel
 
                 RemoveChildGenerationAtGameStart(campaignGameStarter);

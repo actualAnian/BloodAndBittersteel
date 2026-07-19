@@ -13,13 +13,20 @@ namespace BloodAndBittersteel.Features.BaBEvents
     {
         OnDailyTick,
         OnWeeklyTick,
+        OnTick,
     }
     public class BaBEventsCampaignBehavior : CampaignBehaviorBase, INonReadyObjectHandler
     {
+        public static BaBEventsCampaignBehavior Instance => Campaign.Current.GetCampaignBehavior<BaBEventsCampaignBehavior>();
         readonly Random _random = new();
         readonly Dictionary<BaBEventTypes, List<IBaBEvent>> _eventsByType = new();
         [SaveableField(1)]
         private Dictionary<string, CampaignTime> _eventsOnCooldown;
+        [SaveableField(2)]
+        private bool _checkTickEvent;
+        public bool CheckTickEvent { get => _checkTickEvent; set => _checkTickEvent = value; }
+        public bool ForceInvokeIncidentNextTick { get; set; } = false;
+
         public BaBEventsCampaignBehavior()
         {
             _eventsOnCooldown = new();
@@ -48,7 +55,22 @@ namespace BloodAndBittersteel.Features.BaBEvents
         {
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
             CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
+            CampaignEvents.TickEvent.AddNonSerializedListener(this, CheckTickEvents);
         }
+
+        private void CheckTickEvents(float obj)
+        {
+            if (ForceInvokeIncidentNextTick)
+            {
+                    ForceInvokeIncidentNextTick = false;
+            }
+            if (CheckTickEvent)
+            {
+                ProcessEventsForType(BaBEventTypes.OnTick);
+                CheckTickEvent = false;
+            }
+        }
+
         private bool CanEventFire(IBaBEvent evt)
         {
             if (_eventsOnCooldown.TryGetValue(evt.StringId, out var result))
@@ -107,9 +129,14 @@ namespace BloodAndBittersteel.Features.BaBEvents
                 InformationManager.DisplayMessage(new($"DEBUG MESSAGE: {e.Message}", new Color(1, 0, 0)));
             }
         }
+        public bool HasEventFired(string eventId)
+        {
+            return _eventsOnCooldown.ContainsKey(eventId);
+        }
         public override void SyncData(IDataStore dataStore) 
         {
             dataStore.SyncData("bab_eventsOnCooldown", ref _eventsOnCooldown);
+            dataStore.SyncData("bab_tick_events", ref _checkTickEvent);
         }
     }
 }

@@ -2,31 +2,34 @@ using BloodAndBittersteel.Features.BlackfyreRebellion;
 using System;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
+using TaleWorlds.Core;
 using TaleWorlds.Localization;
-using TaleWorlds.ObjectSystem;
 
 namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
 {
     public class SuccessionEvent
     {
         private const string StringId = "succession";
-        public static readonly TextObject TitleText = new("{=bab_succession_title}Succession");
-        public static readonly TextObject Description = new("{=bab_succession_desc}A new Leader of the Rebellion rises to lead the cause.");
+        public static readonly TextObject Description = new("{=bab_succession_desc} Succession. The rebellion has not yet failed! {NEW_LEADER} rises to lead the cause.");
 
         private class SuccessionSceneNotificationData : BecomeKingSceneNotificationItem
         {
             public SuccessionSceneNotificationData(Hero newLeaderHero) : base(newLeaderHero) { }
-            public override TextObject TitleText => new("{=bab_succession_title}Succession");
+            public override TextObject TitleText 
+            { 
+                get
+                { 
+                    GameTexts.SetVariable("NEW_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId).Leader.Name);
+                    return Description;
+                }
+            }
         }
 
         private static readonly Random _random = new();
         private static string[] SuccessionChain() => new[] { "BLACKFYRE_m_01", "BLACKFYRE_m_02", "BLACKFYRE_m_03", "BLACKFYRE_m_04" };
-
-
-        private static Hero FindHeroById(string id) => (MBObjectManager.Instance.GetObject<Hero>(id));
-
-        private static Hero GetNextSuccessionHeir()
+        private static Hero? GetNextSuccessionHeir()
         {
             var behavior = RebellionCampaignBehavior.Instance;
             var chain = SuccessionChain();
@@ -36,7 +39,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
                 var currentIndex = Array.IndexOf(chain, currentLeaderStringId);
                 if (currentIndex >= 0 && currentIndex < chain.Length - 1)
                 {
-                    var nextInChain = FindHeroById(chain[currentIndex + 1]);
+                    var nextInChain = Hero.Find(chain[currentIndex + 1]);
                     if (nextInChain != null && !nextInChain.IsDead)
                         return nextInChain;
                 }
@@ -57,7 +60,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
                 if (clanHeads.Any())
                     return clanHeads[_random.Next(clanHeads.Count)];
             }
-            return Hero.MainHero;
+            return null;
         }
 
         public static bool Condition()
@@ -70,10 +73,9 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
             if (string.IsNullOrEmpty(currentLeaderStringId))
                 return true;
 
-            var currentLeader = FindHeroById(currentLeaderStringId);
+            var currentLeader = Hero.Find(currentLeaderStringId);
             if (currentLeader != null && !currentLeader.IsDead)
                 return false;
-
             return true;
         }
 
@@ -86,25 +88,16 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
                 return;
 
             behavior.RebellionData.RebellionLeader = newHeir.StringId;
-
-            var oldHero = FindHeroById(oldLeaderStringId);
-            if (oldHero != null && Clan.All.Any(c => c.Leader == oldHero))
-            {
-                foreach (var clan in Clan.All.Where(c => c.Leader == oldHero))
-                    TaleWorlds.CampaignSystem.Actions.ChangeClanLeaderAction.ApplyWithSelectedNewLeader(clan, newHeir);
-            }
-
+            ChangeClanLeaderAction.ApplyWithSelectedNewLeader(newHeir.Clan, newHeir);
             var kingdom = Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId);
-            kingdom?.ChangeKingdomName(
-                    new TextObject("{=bab_new_crownlands_name}Realm of the Blackfyre"),
-                    new TextObject("{=bab_new_crownlands_informal}Realm of the Blackfyre"));
+            kingdom.RulingClan = newHeir.Clan;
         }
         [BaBEvent]
         private static BaBSceneEvent CreateEvent()
         {
             var behavior = RebellionCampaignBehavior.Instance;
             var currentLeaderStringId = behavior.RebellionData.RebellionLeader;
-            Hero hero;
+            Hero? hero;
 
             if (string.IsNullOrEmpty(currentLeaderStringId))
             {
@@ -112,7 +105,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
             }
             else
             {
-                var currentLeader = FindHeroById(currentLeaderStringId);
+                var currentLeader = Hero.Find(currentLeaderStringId);
                 if (currentLeader != null && !currentLeader.IsDead)
                     hero = currentLeader;
                 else

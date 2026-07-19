@@ -3,6 +3,7 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
 using TaleWorlds.CampaignSystem.Settlements;
+using TaleWorlds.Core;
 using TaleWorlds.Localization;
 using static BloodAndBittersteel.Features.BaBEvents.BaBEventTypes;
 
@@ -19,12 +20,20 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
             "{=bab_daemon_king_desc}" +
             "The banners of the Black Dragon have triumphed upon the field, as {REBELLION_LEADER} has shattered the armies raised in defense of King Daeron. " +
             "With the loyalist hosts scattered and the cause of the Iron Throne thrown into doubt, Daemon now claims the mantle of King of the Andals, the Rhoynar, and the First Men. " +
-            "Yet even a string of victories does not end a war of brothers, though those who once swore fealty to {CROWNLANDS_KING} must now choose whether to kneel before the new king or continue the fight against the dragon that has risen.");
+            "Yet even a string of victories does not end a war of brothers, and those who once swore fealty to {CROWNLANDS_KING} are still hesitant to kneel before the new king.");
 
         private class DaemonBecomesKingSceneNotificationData : BecomeKingSceneNotificationItem
         {
             public DaemonBecomesKingSceneNotificationData(Hero newLeaderHero) : base(newLeaderHero) { }
-            public override TextObject TitleText => new("{=bab_daemon_king_title}Victor of the Rebellion");
+            public override TextObject TitleText
+            {
+                get
+                {
+                    GameTexts.SetVariable("REBELLION_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId).Leader.Name);
+                    GameTexts.SetVariable("CROWNLANDS_KING", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId).Leader.Name);
+                    return Description;
+                }
+            }
         }
 
         private static readonly Random _random = new();

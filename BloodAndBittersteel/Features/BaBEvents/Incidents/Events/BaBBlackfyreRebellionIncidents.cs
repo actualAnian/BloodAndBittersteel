@@ -101,6 +101,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents
                                 IncidentsCampaignBehaviour.IncidentType.Siege,
                                 CampaignTime.Never,
                                 condition: description => {
+                                    if (BaBEventsCampaignBehavior.Instance.ForceInvokeIncidentNextTick) return true;
                                     return CampaignTime.Now >= RebellionConfig.RebellionStartTime;
                                 });
             List<IncidentEffect> joinRebellion = new()

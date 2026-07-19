@@ -44,7 +44,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
             _movie = _layer.LoadMovie("BaBEventPopup", _dataSource);
             MapScreen.AddLayer(_layer);
 
-            MapScreen.SetIsBaBEventPopupActive(true);
+            BaBEventMapScreenExtensions.SetIsBaBEventPopupActive(true);
             _previousTimeControlMode = Campaign.Current.TimeControlMode;
             Campaign.Current.TimeControlMode = CampaignTimeControlMode.Stop;
             Campaign.Current.SetTimeControlModeLock(false);
@@ -53,7 +53,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
         {
             _layer?.ReleaseMovie(_movie);
             MapScreen.RemoveLayer(_layer!);
-            MapScreen.SetIsBaBEventPopupActive(false);
+            BaBEventMapScreenExtensions.SetIsBaBEventPopupActive(false);
             Campaign.Current.SetTimeControlModeLock(false);
             Campaign.Current.TimeControlMode = _previousTimeControlMode ?? CampaignTimeControlMode.UnstoppablePlay;
 
@@ -74,7 +74,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents
 
         private void OnPopupClosed()
         {
-            MapScreen.CloseBaBEventPopup();
+            BaBEventMapScreenExtensions.CloseBaBEventPopup();
         }
 
         private void ClosePopup()
