@@ -1,4 +1,4 @@
-﻿using BloodAndBittersteel.Features.Tournaments;
+﻿using BloodAndBittersteel.Features.FemaleLords;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -27,7 +27,7 @@ namespace BloodAndBittersteel.Models
         }
         private bool CanPlayerJoinTournament(Settlement settlement, out bool disableOption, out TextObject disabledText)
         {
-            if (!TournamentConfig.CanParticipate(Hero.MainHero.CharacterObject))
+            if (!FemaleLordsConfig.CanLeadParties(Hero.MainHero.CharacterObject))
             {
                 disableOption = true;
                 disabledText = new TextObject("{=bab_tournament_female_blocked}This land does not allow females to join tournaments. Perhaps if you made a reputation for yourself as valorous, it would change.");
