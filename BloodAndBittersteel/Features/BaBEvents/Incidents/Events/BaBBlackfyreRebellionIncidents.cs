@@ -6,17 +6,12 @@ using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
-using static BloodAndBittersteel.Features.BaBIncidents.BaBIncidentsBase;
+using static BloodAndBittersteel.Features.BaBEvents.Incidents.BaBIncidentsBase;
 
-namespace BloodAndBittersteel.Features.BaBIncidents
+namespace BloodAndBittersteel.Features.BaBEvents.Incidents
 {
-    public class BaBBlackfyreRebellionIncidents : IIncidentProvider
+    public class BaBBlackfyreRebellionIncidents
     {
-        public IEnumerable<BaBIncident> InitializeEvents()
-        {
-            yield return CreateStartRebellionIncident();
-        }
-
         public static void CreateRebellionKingdom(RebellionSide sideChosen)
         {
             var rebellionClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
@@ -50,39 +45,6 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             var crownlands = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
             FactionManager.DeclareWar(rebelKingdom, crownlands);
             Campaign.Current.GetCampaignBehavior<RebellionCampaignBehavior>().OnRebellionStart(sideChosen);
-        }
-        public static BaBIncident CreateStartRebellionIncident()
-        {
-            BaBIncident incident = new("start_rebellion", BaBIncidentTypes.OnDailyTick, 1);
-            incident.Initialize("{=bab_black_dragon_rises}The Black Dragon Rises",
-                                "",
-                                IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
-                                IncidentsCampaignBehaviour.IncidentType.Siege,
-                                CampaignTime.Never, 
-                                condition: description => {
-                                    //return CampaignTime.Now >= RebellionConfig.RebellionStartTime;
-                                    return true; });
-            List<IncidentEffect> joinRebellion = new()
-            {
-                StartTheRebellionEffect(RebellionSide.Rebel),
-                JoinTheRebellionEffect(),
-            };
-            List<IncidentEffect> fightRebellion = new()
-            {
-                StartTheRebellionEffect(RebellionSide.Loyalist),
-                FightTheRebellionEffect(),
-            };
-            List<IncidentEffect> stayNeutral = new()
-            {
-                StartTheRebellionEffect(RebellionSide.Neutral),
-            };
-            var joinRebellionText = "{=bab_join_rebellion}You gather your men and march to the Blackwater Rush to join the rebellion. The time is nigh, now is the time for sword not quill";
-            var fightRebellionText = "{=bab_fight_rebellion}Convinced by your captains and sergeants, you order the men to pack up camp to aid the Crown against the rabble of pretenders at their doorsteps.";
-            var stayNeutralText = "{=bab_stay_neutral}Unsure of what to make of these news, you heed advice from both camps that have sprung up amongst your men, some shouted that the rebel cause was just while others half-drew their swords from their sheaths at the mention of the name Daemon. Not seeking a full out mutiny, you inform your men that your host shall not partake for the time being in this royal squabble. That your intent is to see which one promises more for fighting men.";
-            incident.AddOption(joinRebellionText, joinRebellion, (text) => { return Clan.PlayerClan != Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId).RulingClan; }, null);
-            incident.AddOption(fightRebellionText, fightRebellion, null, null);
-            incident.AddOption(stayNeutralText, stayNeutral, null, null);
-            return incident;
         }
         public static IncidentEffect StartTheRebellionEffect(RebellionSide sideChosen)
         {
@@ -128,6 +90,41 @@ namespace BloodAndBittersteel.Features.BaBIncidents
             var kingdom = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
             ChangeKingdomAction.ApplyByJoinToKingdom(Clan.PlayerClan, kingdom);
             ChangeRelationAction.ApplyPlayerRelation(kingdom.Leader, RebellionConfig.RelationGainOnJoinKingdom);
+        }
+        [BaBEvent]
+        public static BaBIncident CreateStartRebellionIncident()
+        {
+            BaBIncident incident = new("start_rebellion", BaBEventTypes.OnDailyTick, 1);
+            incident.Initialize("{=bab_black_dragon_rises}The Black Dragon Rises",
+                                "",
+                                IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
+                                IncidentsCampaignBehaviour.IncidentType.Siege,
+                                CampaignTime.Never,
+                                condition: description => {
+                                    if (BaBEventsCampaignBehavior.Instance.ForceInvokeIncidentNextTick) return true;
+                                    return CampaignTime.Now >= RebellionConfig.RebellionStartTime;
+                                });
+            List<IncidentEffect> joinRebellion = new()
+            {
+                StartTheRebellionEffect(RebellionSide.Rebel),
+                JoinTheRebellionEffect(),
+            };
+            List<IncidentEffect> fightRebellion = new()
+            {
+                StartTheRebellionEffect(RebellionSide.Loyalist),
+                FightTheRebellionEffect(),
+            };
+            List<IncidentEffect> stayNeutral = new()
+            {
+                StartTheRebellionEffect(RebellionSide.Neutral),
+            };
+            var joinRebellionText = "{=bab_join_rebellion}You gather your men and march to the Blackwater Rush to join the rebellion. The time is nigh, now is the time for sword not quill";
+            var fightRebellionText = "{=bab_fight_rebellion}Convinced by your captains and sergeants, you order the men to pack up camp to aid the Crown against the rabble of pretenders at their doorsteps.";
+            var stayNeutralText = "{=bab_stay_neutral}Unsure of what to make of these news, you heed advice from both camps that have sprung up amongst your men, some shouted that the rebel cause was just while others half-drew their swords from their sheaths at the mention of the name Daemon. Not seeking a full out mutiny, you inform your men that your host shall not partake for the time being in this royal squabble. That your intent is to see which one promises more for fighting men.";
+            incident.AddOption(joinRebellionText, joinRebellion, (text) => { return Clan.PlayerClan != Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId).RulingClan; }, null);
+            incident.AddOption(fightRebellionText, fightRebellion, null, null);
+            incident.AddOption(stayNeutralText, stayNeutral, null, null);
+            return incident;
         }
     }
 }
