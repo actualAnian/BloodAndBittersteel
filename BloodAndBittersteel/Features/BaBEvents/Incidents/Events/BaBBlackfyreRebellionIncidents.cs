@@ -8,7 +8,7 @@ using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Localization;
 using static BloodAndBittersteel.Features.BaBEvents.Incidents.BaBIncidentsBase;
 
-namespace BloodAndBittersteel.Features.BaBEvents.Incidents
+namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
 {
     public class BaBBlackfyreRebellionIncidents
     {

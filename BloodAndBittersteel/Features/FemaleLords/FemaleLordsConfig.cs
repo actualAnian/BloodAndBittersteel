@@ -1,11 +1,11 @@
 ﻿using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 
-namespace BloodAndBittersteel.Features.Tournaments
+namespace BloodAndBittersteel.Features.FemaleLords
 {
-    public static class TournamentConfig
+    public static class FemaleLordsConfig
     {
-        public static bool CanParticipate(CharacterObject characterObject)
+        public static bool CanLeadParties(CharacterObject characterObject)
         {
             return !characterObject.IsFemale || !BaBSettings.Instance.FemalePrejudice || characterObject.GetTraitLevel(DefaultTraits.Valor) >= 1;
         }

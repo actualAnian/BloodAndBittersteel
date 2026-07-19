@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BloodAndBittersteel.Features.FemaleLords;
+using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.TournamentGames;
 
@@ -11,7 +12,7 @@ namespace BloodAndBittersteel.Features.Tournaments
         {
             if (__result == false) return;
 
-            if (!TournamentConfig.CanParticipate(character))
+            if (!FemaleLordsConfig.CanLeadParties(character))
             {
                 __result = false;
                 return;

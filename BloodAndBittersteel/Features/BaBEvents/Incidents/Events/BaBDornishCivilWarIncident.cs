@@ -9,7 +9,7 @@ using TaleWorlds.CampaignSystem.Incidents;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 
-namespace BloodAndBittersteel.Features.BaBEvents.Incidents
+namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
 {
     public class BaBDornishCivilWarIncident
     {
