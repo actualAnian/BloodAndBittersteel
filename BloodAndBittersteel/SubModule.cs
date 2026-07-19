@@ -1,6 +1,7 @@
 ﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
+using BloodAndBittersteel.Features.FemaleLords;
 using BloodAndBittersteel.Features.HelmetTilting;
 using BloodAndBittersteel.Features.IronbornWives;
 using BloodAndBittersteel.Features.NightsWatch;
@@ -30,6 +31,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new BaBDailyTribute());
                 campaignGameStarter.AddBehavior(new IronbornWivesCampaignBehavior());
                 campaignGameStarter.AddBehavior(new NightsWatchCampaignBehavior());
+                campaignGameStarter.AddBehavior(new FemaleLordsCampaignBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
