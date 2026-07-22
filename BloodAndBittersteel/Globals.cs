@@ -4,5 +4,6 @@
     {
         public const string IronbornCultureId = "vlandia";
         public const string SkagosKingdomId = "sturgia";
+        public const string WildlingsCultureId = "empire";
     }
 }

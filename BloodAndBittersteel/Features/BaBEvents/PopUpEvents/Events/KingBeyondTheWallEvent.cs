@@ -10,7 +10,6 @@ using RebellionConfig = BloodAndBittersteel.Features.BlackfyreRebellion.Rebellio
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 {
-    
     public static class KingBeyondTheWallEvent
     {
         public const string StringId = "king_beyond_wall";
