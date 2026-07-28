@@ -1,8 +1,10 @@
 ﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.IronbornWives;
+using BloodAndBittersteel.Features.Jousting;
 using BloodAndBittersteel.Features.ModifiableValues;
 using BloodAndBittersteel.Features.NightsWatch;
+using System;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;
@@ -11,9 +13,7 @@ namespace BloodAndBittersteel
 {
     internal class BaBSaveableTypeDefiner : SaveableTypeDefiner
     {
-        public BaBSaveableTypeDefiner() : base(5_18379_918)
-        {
-        }
+        public BaBSaveableTypeDefiner() : base(5_18379_918) { }
         protected override void DefineClassTypes()
         {
             AddClassDefinition(typeof(TimedModifier), 1);
@@ -22,13 +22,16 @@ namespace BloodAndBittersteel
             AddClassDefinition(typeof(BaBIncident), 4);
             AddClassDefinition(typeof(BecomeSaltWifeLogEntry), 5);
             AddClassDefinition(typeof(JoinedNightsWatchLogEntry), 6);
-            AddEnumDefinition(typeof(RebellionSide), 7);
+            AddClassDefinition(typeof(JoustTournamentGame), 7);
+
+            AddEnumDefinition(typeof(RebellionSide), 8);
         }
         protected override void DefineContainerDefinitions()
         {
             ConstructContainerDefinition(typeof(List<string>));
             ConstructContainerDefinition(typeof(List<TimedModifier>));
             ConstructContainerDefinition(typeof(Dictionary<string, CampaignTime>));
+            ConstructContainerDefinition(typeof(Dictionary<CampaignTime, string>));
         }
     }
 }

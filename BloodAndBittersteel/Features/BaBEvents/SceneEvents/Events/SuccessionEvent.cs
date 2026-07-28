@@ -21,7 +21,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
             { 
                 get
                 { 
-                    GameTexts.SetVariable("NEW_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId).Leader.Name);
+                    GameTexts.SetVariable("NEW_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId).Leader.Name);
                     return Description;
                 }
             }
@@ -53,7 +53,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
                     return adultMales[_random.Next(adultMales.Count)];
             }
 
-            var rebellionKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId);
+            var rebellionKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId);
             if (rebellionKingdom != null)
             {
                 var clanHeads = (from c in rebellionKingdom.Clans let h = c.Leader where h != null && !h.IsFemale && !h.IsDead && !h.IsChild select h).ToList();
@@ -89,7 +89,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
 
             behavior.RebellionData.RebellionLeader = newHeir.StringId;
             ChangeClanLeaderAction.ApplyWithSelectedNewLeader(newHeir.Clan, newHeir);
-            var kingdom = Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId);
+            var kingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId);
             kingdom.RulingClan = newHeir.Clan;
         }
         [BaBEvent]

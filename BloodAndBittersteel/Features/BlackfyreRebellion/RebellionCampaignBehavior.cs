@@ -48,7 +48,7 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
             _rebellionData.IsRebellionActive = true;
             _rebellionData.PlayerSide = sideChosen;
             _rebellionData.KingOfTheIronThrone = Settlement.All.FirstOrDefault(s => s.StringId == "town_EN1").Owner.StringId;
-            _rebellionData.RebellionLeader = Kingdom.All.First(k => k.StringId == RebellionConfig.RebellionFactionStringId).Leader.StringId;
+            _rebellionData.RebellionLeader = Kingdom.All.First(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId).Leader.StringId;
         }
 
         public override void SyncData(IDataStore dataStore)

@@ -13,7 +13,6 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
 {
     public class BaBDornishCivilWarIncident
     {
-        public static readonly string DorneKingdomId = "Dorne";
         private static IncidentEffect JoinLoyalistsEffect()
         {
             return BaBIncidentsBase.CreateCustomIncidentEffect(
@@ -26,7 +25,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                 effect =>
                 {
                     TextObject textObject = new("{=bab_dornish_loyalist}You will stand with {DORNE_KING}! The Vulture King must be stopped before his rebellion tears all of Dorne apart!");
-                    var loyalKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == DorneKingdomId);
+                    var loyalKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.DorneKingdomId);
                     GameTexts.SetVariable("DORNE_KING", loyalKingdom.Leader.Name);
                     return new List<TextObject> { textObject };
                 });
@@ -34,7 +33,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
 
         private static void JoinLoyalistSide()
         {
-            var loyalKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == DorneKingdomId);
+            var loyalKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.DorneKingdomId);
 
             if (loyalKingdom != null && !loyalKingdom.IsEliminated)
             {
@@ -61,7 +60,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
 
         private static void JoinRebelSide()
         {
-            var rebelKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == VultureKingEvent.NewDornishKingdomId);
+            var rebelKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.NewDornishKingdomId);
 
             if (rebelKingdom != null && !rebelKingdom.IsEliminated)
             {
@@ -89,7 +88,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                     var playerClan = Clan.PlayerClan;
                     if (playerClan.Kingdom == null)
                         return false;
-                    return playerClan.Kingdom?.StringId == DorneKingdomId;
+                    return playerClan.Kingdom?.StringId == Globals.DorneKingdomId;
                 });
 
             List<IncidentEffect> joinLoyalists = new()

@@ -14,11 +14,10 @@ using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.GauntletUI;
 using TaleWorlds.MountAndBlade.View.MissionViews;
 using TaleWorlds.ObjectSystem;
 
-namespace BloodAndBittersteel.Features.Jousting
+namespace BloodAndBittersteel.Features.Jousting.JoustingMission
 {
     public class JoustFightMissionController : MissionLogic, ITournamentGameBehavior
     {
@@ -26,25 +25,24 @@ namespace BloodAndBittersteel.Features.Jousting
         {
             _culture = culture;
         }
-        private TournamentMatch _match = null;
+        private TournamentMatch? _match = null;
         private bool _isLastRound;
-        private BasicMissionTimer _endTimer;
-        private BasicMissionTimer _cheerTimer;
-        private BasicMissionTimer _dismountNotificationTimer;
-        private GameEntity _team0MountedSpawn;
-        private GameEntity _team1MountedSpawn;
-        private GameEntity _team0FootSpawn;
-        private GameEntity _team1FootSpawn;
+        private BasicMissionTimer? _endTimer;
+        private BasicMissionTimer? _cheerTimer;
+        private BasicMissionTimer? _dismountNotificationTimer;
+        private GameEntity? _team0MountedSpawn;
+        private GameEntity? _team1MountedSpawn;
+        private GameEntity? _team0FootSpawn;
+        private GameEntity? _team1FootSpawn;
         private bool _isSimulated;
         private bool _forceEndMatch;
         private bool _cheerStarted = false;
         private readonly CultureObject _culture;
-        private List<TournamentParticipant> _aliveParticipants;
-        private List<TournamentTeam> _aliveTeams;
+        private List<TournamentParticipant> _aliveParticipants = new();
+        private List<TournamentTeam> _aliveTeams = new();
         private readonly List<Agent> _currentTournamentAgents = new();
         private readonly List<Agent> _currentTournamentMountAgents = new();
-        //private GauntletCameraFadeView _cameraView;
-        private JoustFightState _currentState = JoustFightState.MountedCombat;
+private JoustFightState _currentState = JoustFightState.MountedCombat;
 
         public JoustFightState CurrentState => _currentState;
 
@@ -61,8 +59,9 @@ namespace BloodAndBittersteel.Features.Jousting
             _team0MountedSpawn = Mission.Scene.FindEntityWithTag("team0_mounted_spawn");
             _team1MountedSpawn = Mission.Scene.FindEntityWithTag("team1_mounted_spawn");
             _team0FootSpawn = Mission.Scene.FindEntityWithTag("team0_foot_spawn");
-            _team1FootSpawn = Mission.Scene.FindEntityWithTag("team1_foot_spawn");
-            //_cameraView = Mission.GetMissionBehavior<GauntletCameraFadeView>();
+_team1FootSpawn = Mission.Scene.FindEntityWithTag("team1_foot_spawn");
+			if (_team0MountedSpawn == null || _team1MountedSpawn == null || _team0FootSpawn == null || _team1FootSpawn == null)
+                InformationManager.DisplayMessage(new("ERROR, THE SCENE IS MISSING ONE OF THE FOLLOWING ENTITIES: team0_mounted_spawn, team1_mounted_spawn, team0_foot_spawn, team1_foot_spawn"));
         }
 
         public override void OnMissionTick(float dt)
@@ -95,6 +94,7 @@ namespace BloodAndBittersteel.Features.Jousting
                     }
 
                     var target = GetSpawnPointForTeam(agent.Team.TeamIndex, false);
+                    if (target == null) return;
                     if (agent.IsPlayerControlled && !agent.HasMount) num++;
                     else if (agent.Position.DistanceSquared(target.GlobalPosition) < 5 && !agent.HasMount)
                     {
@@ -124,6 +124,7 @@ namespace BloodAndBittersteel.Features.Jousting
         public void PrepareForMatch()
         {
             List<Equipment> participantWeaponEquipmentList = GetParticipantWeaponEquipmentList();
+            if (_match == null) return;
             foreach (TournamentTeam tournamentTeam in _match.Teams)
             {
                 int num = 0;
@@ -158,7 +159,8 @@ namespace BloodAndBittersteel.Features.Jousting
             {
                 BattleSideEnum side = tournamentTeam.IsPlayerTeam ? BattleSideEnum.Defender : BattleSideEnum.Attacker;
                 Team team = Mission.Teams.Add(side, tournamentTeam.TeamColor, uint.MaxValue, tournamentTeam.TeamBanner, true, false, true);
-                GameEntity spawnPoint = GetSpawnPointForTeam(num, true);
+                var spawnPoint = GetSpawnPointForTeam(num, true);
+                if (spawnPoint == null) return;
                 foreach (TournamentParticipant tournamentParticipant in tournamentTeam.Participants)
                 {
                     SpawnTournamentParticipant(spawnPoint, tournamentParticipant, team);
@@ -177,7 +179,7 @@ namespace BloodAndBittersteel.Features.Jousting
             _aliveTeams = _match.Teams.ToList();
         }
 
-        private GameEntity GetSpawnPointForTeam(int teamIndex, bool isMounted)
+        private GameEntity? GetSpawnPointForTeam(int teamIndex, bool isMounted)
         {
             if (teamIndex == 0)
             {
@@ -194,21 +196,22 @@ namespace BloodAndBittersteel.Features.Jousting
 
         public void RestartMatch()
         {
+            Agent.Main.Equipment[0] = new(MBObjectManager.Instance.GetObject<ItemObject>("vlandia_lance_2_t4"), null, null);
+            
             if (!IsMatchEnded() && _endTimer == null)
             {
-                if (true)//_cameraView != null)
-                {
-                    //_cameraView.BeginFadeOutAndIn(0.1f, 0.1f, 0.5f);
-                    foreach (var agent in _currentTournamentAgents)
+                ScreenFadeController.BeginFadeOutAndIn(0.1f, 0.1f, 0.5f);
+
+                foreach (var agent in _currentTournamentAgents)
                     {
                         if (agent.Team.TeamIndex == 0)
                         {
-                            agent.TeleportToPosition(_team0MountedSpawn.GlobalPosition);
+                            agent.TeleportToPosition(_team0MountedSpawn!.GlobalPosition);
                             agent.LookDirection = _team0MountedSpawn.GetFrame().rotation.f;
                         }
                         else if (agent.Team.TeamIndex == 1)
                         {
-                            agent.TeleportToPosition(_team1MountedSpawn.GlobalPosition);
+                            agent.TeleportToPosition(_team1MountedSpawn!.GlobalPosition);
                             agent.LookDirection = _team1MountedSpawn.GetFrame().rotation.f;
                         }
 
@@ -217,7 +220,6 @@ namespace BloodAndBittersteel.Features.Jousting
                             //agent.ApplyStatusEffect("ArenaImpairment", agent, 1f);
                         }
                     }
-                }
             }
         }
 
@@ -239,8 +241,10 @@ namespace BloodAndBittersteel.Features.Jousting
             CharacterObject characterObject = _culture.TournamentTeamTemplatesForOneParticipant.FirstOrDefault();
             foreach (Equipment sourceEquipment in characterObject.BattleEquipments)
             {
+                var lance = MBObjectManager.Instance.GetObject<ItemObject>("vlandia_lance_2_t4");
                 Equipment equipment = new();
                 equipment.FillFrom(sourceEquipment, true);
+                equipment[0] = new(lance);
                 list.Add(equipment);
             }
             return list;
@@ -293,6 +297,7 @@ namespace BloodAndBittersteel.Features.Jousting
 
         public void OnMatchResultsReady()
         {
+            if (_match == null) return;
             if (!_match.IsPlayerParticipating())
             {
                 MBInformationManager.AddQuickInformation(new TextObject("Match is over"));
@@ -408,6 +413,7 @@ namespace BloodAndBittersteel.Features.Jousting
 
         public override void OnAgentRemoved(Agent affectedAgent, Agent affectorAgent, AgentState agentState, KillingBlow killingBlow)
         {
+            if (_match == null) return;
             if (!IsMatchEnded() && affectorAgent != null && affectedAgent != affectorAgent && affectedAgent.IsHuman && affectorAgent.IsHuman)
             {
                 TournamentParticipant participant = _match.GetParticipant(affectedAgent.Origin.UniqueSeed);
@@ -431,7 +437,8 @@ namespace BloodAndBittersteel.Features.Jousting
                     if (!agent.IsPlayerControlled)
                     {
                         var spawnpoint = GetSpawnPointForTeam(agent.Team.TeamIndex, false);
-                        WorldPosition pos = new WorldPosition(Mission.Scene, spawnpoint.GlobalPosition);
+                        if (spawnpoint == null) return;
+                        var pos = new WorldPosition(Mission.Scene, spawnpoint.GlobalPosition);
                         agent.SetScriptedPosition(ref pos, true, Agent.AIScriptedFrameFlags.GoWithoutMount | Agent.AIScriptedFrameFlags.NoAttack);
                         agent.ToggleInvulnerable();
                     }
@@ -475,7 +482,7 @@ namespace BloodAndBittersteel.Features.Jousting
 
         public bool CheckIfIsThereAnyEnemies()
         {
-            Team team = null;
+            Team? team = default;
             foreach (Agent agent in _currentTournamentAgents)
             {
                 if (agent.IsHuman && agent.IsActive() && agent.Team != null)
@@ -495,13 +502,14 @@ namespace BloodAndBittersteel.Features.Jousting
 
         private void Simulate()
         {
+            if (_match == null) return;
             _isSimulated = false;
             if (_currentTournamentAgents.Count == 0)
             {
                 _aliveParticipants = _match.Participants.ToList();
                 _aliveTeams = _match.Teams.ToList();
             }
-            TournamentParticipant tournamentParticipant = _aliveParticipants.FirstOrDefault((TournamentParticipant x) => x.Character == CharacterObject.PlayerCharacter);
+            TournamentParticipant tournamentParticipant = _aliveParticipants.FirstOrDefault(x => x.Character == CharacterObject.PlayerCharacter);
             if (tournamentParticipant != null)
             {
                 TournamentTeam team = tournamentParticipant.Team;
@@ -513,12 +521,10 @@ namespace BloodAndBittersteel.Features.Jousting
                 _aliveTeams.Remove(team);
                 AddScoreToRemainingTeams();
             }
-            Dictionary<TournamentParticipant, Tuple<float, float>> dictionary = new Dictionary<TournamentParticipant, Tuple<float, float>>();
+            var dictionary = new Dictionary<TournamentParticipant, Tuple<float, float>>();
             foreach (TournamentParticipant tournamentParticipant3 in _aliveParticipants)
             {
-                float item;
-                float item2;
-                tournamentParticipant3.Character.GetSimulationAttackPower(out item, out item2, tournamentParticipant3.MatchEquipment);
+                tournamentParticipant3.Character.GetSimulationAttackPower(out float item, out float item2, tournamentParticipant3.MatchEquipment);
                 dictionary.Add(tournamentParticipant3, new Tuple<float, float>(item, item2));
             }
             int num = 0;
@@ -563,7 +569,7 @@ namespace BloodAndBittersteel.Features.Jousting
             {
                 return true;
             }
-            return _currentTournamentAgents.Any((Agent agent) => agent.IsPlayerControlled);
+            return _currentTournamentAgents.Any(agent => agent.IsPlayerControlled);
         }
 
         private Agent GetPlayerAgent()
@@ -572,7 +578,7 @@ namespace BloodAndBittersteel.Features.Jousting
             {
                 return Mission.MainAgent;
             }
-            return _currentTournamentAgents.FirstOrDefault((Agent agent) => agent.IsPlayerControlled);
+            return _currentTournamentAgents.FirstOrDefault(agent => agent.IsPlayerControlled);
         }
 
         private void SkipMatch()
@@ -582,7 +588,7 @@ namespace BloodAndBittersteel.Features.Jousting
 
         public override InquiryData OnEndMissionRequest(out bool canPlayerLeave)
         {
-            InquiryData result = null;
+            InquiryData? result = null;
             canPlayerLeave = true;
             if (_match != null)
             {
@@ -626,7 +632,7 @@ namespace BloodAndBittersteel.Features.Jousting
                     canPlayerLeave = false;
                 }
             }
-            return result;
+            return result!;
         }
 
         public enum JoustFightState

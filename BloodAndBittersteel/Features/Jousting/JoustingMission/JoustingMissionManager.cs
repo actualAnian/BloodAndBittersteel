@@ -20,7 +20,7 @@ using SandBox.Missions.MissionLogics;
 using TaleWorlds.MountAndBlade.View;
 using TaleWorlds.Engine;
 
-namespace BloodAndBittersteel.Features.Jousting
+namespace BloodAndBittersteel.Features.Jousting.JoustingMission
 {
     [MissionManager]
     public static class JoustingMissionManager

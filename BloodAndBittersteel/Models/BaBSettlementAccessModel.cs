@@ -1,4 +1,5 @@
 ﻿using BloodAndBittersteel.Features.FemaleLords;
+using BloodAndBittersteel.Features.Jousting;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -33,6 +34,15 @@ namespace BloodAndBittersteel.Models
                 disabledText = new TextObject("{=bab_tournament_female_blocked}This land does not allow females to join tournaments. Perhaps if you made a reputation for yourself as valorous, it would change.");
                 return false;
             }
+
+            var tournamentGame = Campaign.Current.TournamentManager.GetTournamentGame(settlement.Town);
+            if (tournamentGame is JoustTournamentGame && Hero.MainHero.Gold < 10000 && settlement.Owner != Hero.MainHero)
+            {
+                disableOption = true;
+                disabledText = new TextObject("{=bab_joust_gold_required}You need at least 10,000 gold to enter the jousting tournament.");
+                return false;
+            }
+
             return _baseModel.CanMainHeroDoSettlementAction(settlement, SettlementAction.JoinTournament, out disableOption, out disabledText);
         }
 

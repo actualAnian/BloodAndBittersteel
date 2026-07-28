@@ -1,8 +1,7 @@
+using BloodAndBittersteel.Features.Jousting.JoustingMission;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Settlements;
-using TaleWorlds.CampaignSystem.Settlements.Locations;
 using TaleWorlds.CampaignSystem.TournamentGames;
-using TaleWorlds.Core;
 
 namespace BloodAndBittersteel.Features.Jousting
 {
@@ -25,7 +24,7 @@ namespace BloodAndBittersteel.Features.Jousting
             //{
             //    return false;
             //}
-                
+
             return base.CanBeAParticipant(character, considerSkills);
         }
 

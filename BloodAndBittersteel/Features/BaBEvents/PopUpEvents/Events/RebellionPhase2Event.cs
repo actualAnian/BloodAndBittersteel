@@ -36,14 +36,14 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 
         public static readonly List<string> KingdomsAllyingDaemon = new()
         {
-            "Ironborn",
+            Globals.IronbornKingdomId,
         };
 
         public static readonly List<string> RemainingKingdomsJoiningCrown = new()
         {
-            "Stormlands",
-            "Reach",
-            "Riverlands",
+            Globals.StormlandsKingdomId,
+            Globals.ReachKingdomId,
+            Globals.RiverlandsKingdomId,
         };
         private static readonly Random _random = new();
         public static bool Condition()
@@ -65,8 +65,8 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 
         public static void Consequence()
         {
-            var daemonKingdom = Kingdom.All.First(k => k.StringId == RebellionConfig.RebellionFactionStringId);
-            var crownlands = Kingdom.All.First(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId);
+            var daemonKingdom = Kingdom.All.First(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId);
+            var crownlands = Kingdom.All.First(k => k.StringId == Globals.CrownlandsKingdomStringId);
 
             foreach (var clanStringId in ClansJoiningDaemon)
             {

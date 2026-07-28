@@ -34,6 +34,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new NightsWatchCampaignBehavior());
                 campaignGameStarter.AddBehavior(new FemaleLordsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new JoustingCampaignBehavior());
+                campaignGameStarter.AddBehavior(new AiJoustingBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
@@ -42,7 +43,6 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddModel(new BaBSettlementLoyaltyModel(gameStarterObject.GetExistingModel<SettlementLoyaltyModel>()));
                 campaignGameStarter.AddModel(new BaBMarriageModel(gameStarterObject.GetExistingModel<MarriageModel>()));
                 campaignGameStarter.AddModel(new BaBAgeModel(gameStarterObject.GetExistingModel<AgeModel>()));
-                campaignGameStarter.AddModel(new BaBTournamentModel(gameStarterObject.GetExistingModel<TournamentModel>()));
                 // lance system defines PartySizeLimitModel
 
                 RemoveChildGenerationAtGameStart(campaignGameStarter);

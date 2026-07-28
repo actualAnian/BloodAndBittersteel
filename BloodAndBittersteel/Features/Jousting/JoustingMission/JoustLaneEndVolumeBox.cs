@@ -7,11 +7,11 @@ using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
-namespace BloodAndBittersteel.Features.Jousting
+namespace BloodAndBittersteel.Features.Jousting.JoustingMission
 {
     public class JoustLaneEndVolumeBox : MissionObject
     {
-        private JoustFightMissionController _missionController;
+        private JoustFightMissionController? _missionController;
         private int _teamIndex = -1;
 
         protected override void OnInit()

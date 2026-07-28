@@ -231,7 +231,7 @@ namespace BloodAndBittersteel.Features.NightsWatch
         private bool CanAnyoneSendToJoinNightsWatch(Hero capturer, Hero prisoner)
         {
             if (prisoner.IsFemale) return false;
-            if (prisoner.MapFaction.StringId == NightsWatchConfig.NightsWatchFactionStringId) return false;
+            if (prisoner.MapFaction.StringId == Globals.NightsWatchKingdomStringId) return false;
             return true;
         }
         private bool CanAIForceToJoinNightsWatch(Hero capturer, Hero prisoner)
