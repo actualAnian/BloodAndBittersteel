@@ -29,8 +29,8 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
             {
                 get
                 {
-                    GameTexts.SetVariable("REBELLION_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId).Leader.Name);
-                    GameTexts.SetVariable("CROWNLANDS_KING", Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.CrownlandsKingdomStringId).Leader.Name);
+                    GameTexts.SetVariable("REBELLION_LEADER", Kingdom.All.FirstOrDefault(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId).Leader.Name);
+                    GameTexts.SetVariable("CROWNLANDS_KING", Kingdom.All.FirstOrDefault(k => k.StringId == Globals.CrownlandsKingdomStringId).Leader.Name);
                     return Description;
                 }
             }
@@ -41,11 +41,11 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
         {
             var kingsLanding = Settlement.All.FirstOrDefault(s => s.StringId == "town_EN1");
             var ownerClan = kingsLanding.OwnerClan;
-            return ownerClan.StringId == RebellionConfig.RebellionFactionStringId;
+            return ownerClan.StringId == Globals.BlackfyreRebellionKingdomStringId;
         }
         public static void Consequence()
         {
-            var kingdomToRename = Kingdom.All.FirstOrDefault(k => k.StringId == RebellionConfig.RebellionFactionStringId);
+            var kingdomToRename = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId);
             if (kingdomToRename == null)
                 return;
 
@@ -57,7 +57,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
         private static BaBSceneEvent CreateEvent()
         {
             var daemonClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
-            var hero = daemonClan?.Leader ?? Hero.MainHero;
+            var hero = daemonClan.Leader;
             var notificationData = new DaemonBecomesKingSceneNotificationData(hero);
 
             return new(

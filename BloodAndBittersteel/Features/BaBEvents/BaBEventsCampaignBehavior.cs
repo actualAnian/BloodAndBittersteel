@@ -15,7 +15,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
         OnWeeklyTick,
         OnTick,
     }
-    public class BaBEventsCampaignBehavior : CampaignBehaviorBase, INonReadyObjectHandler
+    public class BaBEventsCampaignBehavior : CampaignBehaviorBase
     {
         public static BaBEventsCampaignBehavior Instance => Campaign.Current.GetCampaignBehavior<BaBEventsCampaignBehavior>();
         readonly Random _random = new();
@@ -46,16 +46,22 @@ namespace BloodAndBittersteel.Features.BaBEvents
             foreach (var evt in BaBEventLoader.Instance.AllEvents)
                 AddEvent(evt);
         }
-        public void OnBeforeNonReadyObjectsDeleted()
-        {
-            InitializeEvents();
-        }
+        //public void OnBeforeNonReadyObjectsDeleted()
+        //{
+        //    InitializeEvents();
+        //}
 
         public override void RegisterEvents()
         {
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
             CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
             CampaignEvents.TickEvent.AddNonSerializedListener(this, CheckTickEvents);
+            CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, OnGameLoaded);
+        }
+
+        private void OnGameLoaded(CampaignGameStarter starter)
+        {
+            InitializeEvents();
         }
 
         private void CheckTickEvents(float obj)

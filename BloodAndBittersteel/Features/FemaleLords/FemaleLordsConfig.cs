@@ -7,7 +7,10 @@ namespace BloodAndBittersteel.Features.FemaleLords
     {
         public static bool CanLeadParties(CharacterObject characterObject)
         {
-            return !characterObject.IsFemale || !BaBSettings.Instance.FemalePrejudice || characterObject.GetTraitLevel(DefaultTraits.Valor) >= 1;
+            return !characterObject.IsFemale
+            || !BaBSettings.Instance.FemalePrejudice 
+            || characterObject.Culture.StringId == Globals.WildlingsCultureId
+            || characterObject.GetTraitLevel(DefaultTraits.Valor) >= 1;
         }
     }
 }

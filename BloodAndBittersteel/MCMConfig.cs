@@ -38,11 +38,15 @@ namespace BloodAndBittersteel
         [SettingPropertyGroup("{=CustomSettings_General}General")]
         bool FemalePrejudice { get; set; }
         Dropdown<InputKey> HelmetTilting { get; set; }
+        public bool ShowJoustingPopUp { get; set; }
+
     }
     public class HardcodedCustomSettings : ICustomSettingsProvider
     {
         public bool FemalePrejudice { get; set; } = true;
         public Dropdown<InputKey> HelmetTilting { get; set; } = new Dropdown<InputKey>(new InputKey[] { InputKey.H }, selectedIndex: 0);
+        public bool ShowJoustingPopUp { get; set; } = true;
+
     }
     public class CustomSettings : AttributeGlobalSettings<CustomSettings>, ICustomSettingsProvider
     {
@@ -110,6 +114,8 @@ namespace BloodAndBittersteel
             InputKey.F11,
             InputKey.F12,
         }, selectedIndex: 7);
+        [SettingPropertyBool("Show Jousting Events", Order = 3, RequireRestart = false, HintText = "show a pop up event when a jousting tournament starts")]
+        public bool ShowJoustingPopUp { get; set; } = true;
 
     }
 }

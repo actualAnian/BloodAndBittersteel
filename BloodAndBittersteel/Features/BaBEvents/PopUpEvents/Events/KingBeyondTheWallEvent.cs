@@ -10,7 +10,6 @@ using RebellionConfig = BloodAndBittersteel.Features.BlackfyreRebellion.Rebellio
 
 namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 {
-    
     public static class KingBeyondTheWallEvent
     {
         public const string StringId = "king_beyond_wall";
@@ -35,7 +34,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 
         public static readonly List<string> KingdomsAtWarWithFreeFolk = new()
         {
-            "North",
+            Globals.NorthKingdomId,
         };
 
         public static readonly List<string> KingdomsAllyingFreeFolk = new()
@@ -69,7 +68,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             if (leaderClan == null)
                 return;
 
-            Kingdom freeFolkKingdom = Kingdom.CreateKingdom("bab_free_folk");
+            Kingdom freeFolkKingdom = Kingdom.CreateKingdom(Globals.FreeFolkKingdomStringId);
             freeFolkKingdom.InitializeKingdom(
                 new TextObject("{=bab_free_folk_name}Free Folk"),
                 new TextObject("{=bab_free_folk_informal}Wildlings"),

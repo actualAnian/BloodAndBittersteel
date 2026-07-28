@@ -31,12 +31,10 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             "DORNE_16",
             "DORNE_20",
         };
-        public const string DorneKingdomId = "Dorne";
-        public const string NewDornishKingdomId = "bab_dornish_rebels";
         public static readonly List<string> KingdomsAtWarWithNewKingdom = new()
         {
-            DorneKingdomId,
-            "Crownlands",
+            Globals.DorneKingdomId,
+            Globals.CrownlandsKingdomStringId,
         };
         private static readonly Random _random = new();
         public static bool Condition()
@@ -59,14 +57,14 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
 
         public static void Consequence()
         {
-            var dorneKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == DorneKingdomId);
+            var dorneKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.DorneKingdomId);
             var dorneLeader = dorneKingdom.Leader.Name;
             GameTexts.SetVariable("DORNE_KING", dorneLeader);
             var leaderClan = Clan.FindFirst(c => c.StringId == "DORNE_20");
             if (leaderClan == null)
                 return;
 
-            Kingdom newKingdom = Kingdom.CreateKingdom(NewDornishKingdomId);
+            Kingdom newKingdom = Kingdom.CreateKingdom(Globals.NewDornishKingdomId);
             newKingdom.InitializeKingdom(
                 new TextObject("{=bab_dorne_king_name}Vulture King's Realm"),
                 new TextObject("{=bab_dorne_king_informal}Dornish Rebels"),
