@@ -29,7 +29,7 @@ namespace BloodAndBittersteel.Models
 
         public override bool IsPeaceDecisionAllowedBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, out TextObject reason)
         {
-            if (kingdom1.StringId == "khuzait" || kingdom2.StringId == "khuzait") return _baseModel.IsPeaceDecisionAllowedBetweenKingdoms(kingdom1, kingdom2, out reason);
+            if (kingdom1.StringId == Globals.KhuzaitKingdomId || kingdom2.StringId == Globals.KhuzaitKingdomId) return _baseModel.IsPeaceDecisionAllowedBetweenKingdoms(kingdom1, kingdom2, out reason);
             reason = new("{=bab_peace_denied}Peace cannot be made while a rebellion is ongoing.");
             return false;
         }
@@ -46,17 +46,16 @@ namespace BloodAndBittersteel.Models
 
         public override bool IsWarDecisionAllowedBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, out TextObject reason)
         {
-            if (kingdom1.StringId == "khuzait" || kingdom2.StringId == "khuzait") return _baseModel.IsPeaceDecisionAllowedBetweenKingdoms(kingdom1, kingdom2, out reason);
-            if (kingdom1.StringId.Contains("empire") && !kingdom2.StringId.Contains("empire"))
+            if (kingdom1.StringId == Globals.KhuzaitKingdomId || kingdom2.StringId == Globals.KhuzaitKingdomId) return _baseModel.IsPeaceDecisionAllowedBetweenKingdoms(kingdom1, kingdom2, out reason);
+            if (kingdom1.StringId.Contains(Globals.CrownlandsKingdomStringId) && !kingdom2.StringId.Contains(Globals.CrownlandsKingdomStringId))
                 reason = new("{=bab_declare_war_empire_vassal}Can not declare war on your vassal");
-            else if (kingdom1.StringId.Contains("empire") && kingdom2.StringId.Contains("empire"))
+            else if (kingdom1.StringId.Contains(Globals.CrownlandsKingdomStringId) && kingdom2.StringId.Contains(Globals.CrownlandsKingdomStringId))
                 reason = new("{=bab_declare_war_empire_empire}Can not declare war on another part of your realm");
-            else if (!kingdom1.StringId.Contains("empire") && kingdom2.StringId.Contains("empire"))
+            else if (!kingdom1.StringId.Contains(Globals.CrownlandsKingdomStringId) && kingdom2.StringId.Contains(Globals.CrownlandsKingdomStringId))
                 reason = new("{=bab_declare_war_vassal_empire}Can not declare war on your liege");
             else 
                 reason = new("{=bab_declare_war_vassal_vassal}Can not declare war on another crownland");
             return false;
-
         }
     }
 }

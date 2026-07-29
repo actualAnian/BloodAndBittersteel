@@ -1,0 +1,63 @@
+﻿<Prefab>
+	<Constants>
+	</Constants>
+	<Variables>
+	</Variables>
+	<VisualDefinitions>
+		<VisualDefinition Name="PopupPanel" EaseIn="true" TransitionDuration="0.2">
+			<VisualState  State="Default" />
+		</VisualDefinition>
+	</VisualDefinitions>
+	<Window>
+		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+			<Children>
+				<DimensionSyncWidget Id="BaBEventPopupParent" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="1200" SuggestedHeight="@Height"  VisualDefinition="PopupPanel" HorizontalAlignment="Center" VerticalAlignment="Center" DimensionToSync="Vertical">
+					<Children>
+						<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Top" Sprite="StdAssets\Popup\canvas" />
+
+						<!-- Content area with clip -->
+						<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ClipContents="true">
+							<Children>
+								<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom">
+									<Children>
+										<!-- Title -->
+										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="590" SuggestedHeight="125" HorizontalAlignment="Center" Sprite="StdAssets\tabbar_popup" IsDisabled="true" MarginTop="-16">
+											<Children>
+												<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="-32" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="34" Text="@Title" />
+											</Children>
+										</Widget>
+										<!-- Image with frame -->
+										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="960" SuggestedHeight="540" HorizontalAlignment="Center">
+											<Children>
+												<ImageWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="@SpriteName" />
+												<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="frame_9" ExtendLeft="18" ExtendTop="18" ExtendRight="18" ExtendBottom="18" IsEnabled="false" />
+											</Children>
+										</Widget>
+
+										<!-- Description text -->
+										<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="24" MarginLeft="40" MarginRight="40" >
+											<Children>
+												<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Brush="Popup.Description.Text" Text="@SmallText" />
+											</Children>
+										</Widget>
+
+										<!-- Close button - positioned at bottom, centered -->
+										<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedHeight="48" SuggestedWidth="240" HorizontalAlignment="Center" VerticalAlignment="Bottom" MarginTop="24" Brush="ButtonBrush1" Command.Click="Close">
+											<Children>
+												<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="20" Text="Continue" />
+											</Children>
+										</ButtonWidget>
+									</Children>
+								</ListPanel>
+
+
+								<!-- Frame overlay -->
+								<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="frame_9" ExtendLeft="18" ExtendTop="18" ExtendRight="18" ExtendBottom="18" IsEnabled="false" />
+							</Children>
+						</Widget>
+					</Children>
+				</DimensionSyncWidget>
+			</Children>
+		</Widget>
+	</Window>
+</Prefab>

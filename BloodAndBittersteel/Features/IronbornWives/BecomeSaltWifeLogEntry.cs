@@ -34,8 +34,7 @@ namespace BloodAndBittersteel.Features.IronbornWives
 
             return text;
         }
-
-        public bool IsVisibleInEncyclopediaPageOf<T>(T obj) where T : MBObjectBase
+        public bool IsVisibleInEncyclopediaPageOf(MBObjectBase obj)
         {
             return obj == _happenedTo || obj == _forcedBy;
         }
