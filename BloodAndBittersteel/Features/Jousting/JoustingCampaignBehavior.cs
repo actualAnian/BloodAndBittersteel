@@ -1,6 +1,5 @@
 ﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
@@ -152,8 +151,9 @@ namespace BloodAndBittersteel.Features.Jousting
 
         private void EndJoustingTournament(Town town)
         {
-            if (Campaign.Current.TournamentManager.GetTournamentGame(town) != null)
-                Campaign.Current.TournamentManager.ResolveTournament(Campaign.Current.TournamentManager.GetTournamentGame(town), town);
+            var tournamentGame = Campaign.Current.TournamentManager.GetTournamentGame(town);
+            //if (tournamentGame != null && tournamentGame is JoustTournamentGame)
+            //    Campaign.Current.TournamentManager.ResolveTournament(Campaign.Current.TournamentManager.GetTournamentGame(town), town);
             _activeJoustingTournamentTowns.Remove(town);
         }
 
@@ -285,8 +285,12 @@ namespace BloodAndBittersteel.Features.Jousting
                 GameTexts.SetVariable("MAX_TOURNAMENTS", JoustingConfig.MaxActiveJoustingTournamentsForPlayerToHostHisOwn);
                 return new TextObject("{=bab_joust_too_many}My lord, there are already {MAX_TOURNAMENTS} tournaments being held across the realm. We must wait until some conclude.");
             }
+            if (Campaign.Current.TournamentManager.GetTournamentGame(Hero.MainHero.CurrentSettlement.Town) != null)
+            {
+                return new TextObject("{=bab_joust_this_town_tournament}My lord, this towns already has an ongoing tournament.");
+            }
 
-            var playerTownWithActiveTournament = Clan.PlayerClan.Fiefs.FirstOrDefault(t => Campaign.Current.TournamentManager.GetTournamentGame(t) != null);
+            var playerTownWithActiveTournament = Clan.PlayerClan.Fiefs.FirstOrDefault(t => Campaign.Current.TournamentManager.GetTournamentGame(t) != null && Campaign.Current.TournamentManager.GetTournamentGame(t) is JoustTournamentGame);
             if (playerTownWithActiveTournament != null)
             {
                 return new TextObject("{=bab_joust_town_tournament}My lord, one of our towns already has an ongoing tournament.");

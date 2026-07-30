@@ -7,14 +7,12 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.AgentOrigins;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
-using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.TournamentGames;
 using TaleWorlds.Core;
 using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using TaleWorlds.MountAndBlade.View.MissionViews;
 using TaleWorlds.ObjectSystem;
 
 namespace BloodAndBittersteel.Features.Jousting.JoustingMission
@@ -42,7 +40,7 @@ namespace BloodAndBittersteel.Features.Jousting.JoustingMission
         private List<TournamentTeam> _aliveTeams = new();
         private readonly List<Agent> _currentTournamentAgents = new();
         private readonly List<Agent> _currentTournamentMountAgents = new();
-private JoustFightState _currentState = JoustFightState.MountedCombat;
+        private JoustFightState _currentState = JoustFightState.MountedCombat;
 
         public JoustFightState CurrentState => _currentState;
 
@@ -59,7 +57,7 @@ private JoustFightState _currentState = JoustFightState.MountedCombat;
             _team0MountedSpawn = Mission.Scene.FindEntityWithTag("team0_mounted_spawn");
             _team1MountedSpawn = Mission.Scene.FindEntityWithTag("team1_mounted_spawn");
             _team0FootSpawn = Mission.Scene.FindEntityWithTag("team0_foot_spawn");
-_team1FootSpawn = Mission.Scene.FindEntityWithTag("team1_foot_spawn");
+            _team1FootSpawn = Mission.Scene.FindEntityWithTag("team1_foot_spawn");
 			if (_team0MountedSpawn == null || _team1MountedSpawn == null || _team0FootSpawn == null || _team1FootSpawn == null)
                 InformationManager.DisplayMessage(new("ERROR, THE SCENE IS MISSING ONE OF THE FOLLOWING ENTITIES: team0_mounted_spawn, team1_mounted_spawn, team0_foot_spawn, team1_foot_spawn"));
         }
