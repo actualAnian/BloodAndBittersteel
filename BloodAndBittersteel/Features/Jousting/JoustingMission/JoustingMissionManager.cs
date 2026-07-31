@@ -9,13 +9,7 @@ using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.View.MissionViews;
-using TaleWorlds.MountAndBlade.ViewModelCollection.OrderOfBattle;
-using SandBox.ViewModelCollection;
-using TaleWorlds.MountAndBlade.Source.Missions.Handlers;
-using TaleWorlds.MountAndBlade.Source.Missions.Handlers.Logic;
-using TaleWorlds.MountAndBlade.Missions.Handlers;
 using TaleWorlds.MountAndBlade.Source.Missions;
-using static TaleWorlds.MountAndBlade.Mission;
 using SandBox.Missions.MissionLogics;
 using TaleWorlds.MountAndBlade.View;
 using TaleWorlds.Engine;
@@ -28,7 +22,7 @@ namespace BloodAndBittersteel.Features.Jousting.JoustingMission
         [MissionMethod]
         public static Mission OpenJoustingFightMission(string scene, JoustTournamentGame tournamentGame, Settlement settlement, CultureObject culture, bool isPlayerParticipating)
         {
-            JoustFightMissionController joustFightMissionController = new JoustFightMissionController(culture);
+            var joustFightMissionController = new JoustFightMissionController(culture);
             return MissionState.OpenNew("JoustFight", SandBoxMissions.CreateSandBoxMissionInitializerRecord(scene, "", false, DecalAtlasGroup.Town),
             (missionController) => new MissionBehavior[]
             {
