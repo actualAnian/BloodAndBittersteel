@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanceTemplates>
 	<Lance>
-		<StringId>"aserai_all"</StringId>
-		<Name>Epic Troops</Name>
-		<CultureId>"aserai"</CultureId>
-		<LanceOriginType>"town"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
-		<Weight>10</Weight>
+		<StringId>"aserai_all"</StringId> <!-- necessary -->
+		<Name>Epic Troops</Name> <!-- necessary -->
+		<CultureId>"aserai"</CultureId> <!-- remove for all-cultures lance-->
+		<LanceOriginType>"town"</LanceOriginType> <!-- possible values town, village, castle, settlement, mercenary, all-->
+		<Weight>10</Weight> <!-- chance for the lance to be chosen by ai-->
 		<Troops>
 			<MeleeTroop>
 				<Likelihood>0.3</Likelihood>
@@ -36,7 +35,6 @@
 		<CultureId>"aserai"</CultureId>
 		<ClanId>"CLAN_A"</ClanId>
 		<LanceOriginType>"town"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -68,7 +66,6 @@
 		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_1"</ClanId>
 		<LanceOriginType>"town"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -124,7 +121,6 @@
 		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_14"</ClanId>
 		<LanceOriginType>"town"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -168,7 +164,6 @@
 		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_5"</ClanId>
 		<LanceOriginType>"town"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -203,7 +198,6 @@
 		<Name>Stormlands Proper Lance</Name>
 		<CultureId>"battania"</CultureId>
 		<LanceOriginType>"village"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -230,7 +224,6 @@
 		<Name>Stormlands Rainwood Lance</Name>
 		<CultureId>"sturgia"</CultureId>
 		<LanceOriginType>"village"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>20</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -257,7 +250,6 @@
 		<Name>Mercenary Lance</Name>
 		<CultureId>"vlandia"</CultureId>
 		<LanceOriginType>"mercenary"</LanceOriginType>
-		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>

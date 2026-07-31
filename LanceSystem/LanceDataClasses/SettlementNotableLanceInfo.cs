@@ -65,7 +65,6 @@ namespace LanceSystem.LanceDataClasses
         public void SetRandomLanceTemplateWeighted()
         {
             var possibleTemplates = GetPossibleTemplates();
-            if (possibleTemplates.Count() == 1) SetLanceTemplate(possibleTemplates.First());
             int totalWeight = possibleTemplates.Sum(l => l.weight);
 
             int roll = _random.Next(totalWeight);
