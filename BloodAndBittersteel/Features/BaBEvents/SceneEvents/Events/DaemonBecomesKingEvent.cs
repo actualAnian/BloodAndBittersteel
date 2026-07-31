@@ -41,7 +41,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
         {
             var kingsLanding = Settlement.All.FirstOrDefault(s => s.StringId == "town_EN1");
             var ownerClan = kingsLanding.OwnerClan;
-            return ownerClan.StringId == Globals.BlackfyreRebellionKingdomStringId;
+            return ownerClan.MapFaction.StringId == Globals.BlackfyreRebellionKingdomStringId;
         }
         public static void Consequence()
         {
