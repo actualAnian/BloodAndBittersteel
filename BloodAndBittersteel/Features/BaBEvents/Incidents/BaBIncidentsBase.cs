@@ -7,6 +7,7 @@ using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.Incidents
 {
+    // as of 1.4.7 the condition of each Effect for the incident has to return true, for the event to be fired -> Incident.CanIncidentBeInvoked
     public static class BaBIncidentsBase
     {
         static readonly ConstructorInfo _ctor =
