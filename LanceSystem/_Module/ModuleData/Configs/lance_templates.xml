@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanceTemplates>
 	<Lance>
-		<StringId>"aserai_1"</StringId>
+		<StringId>"aserai_all"</StringId>
 		<Name>Epic Troops</Name>
 		<CultureId>"aserai"</CultureId>
-		<ClanId>"CLAN_A"</ClanId>
-		<LanceOriginType>"castle"</LanceOriginType>
+		<LanceOriginType>"town"</LanceOriginType>
 		<!-- possible values town, village, castle, mercenary, all-->
-		<Weight>100</Weight>
+		<Weight>10</Weight>
 		<Troops>
 			<MeleeTroop>
 				<Likelihood>0.3</Likelihood>
@@ -32,15 +31,17 @@
 		</Troops>
 	</Lance>
 	<Lance>
-		<StringId>"test_lance"</StringId>
-		<Name>Test</Name>
-		<LanceOriginType>"settlement"</LanceOriginType>
+		<StringId>"house_troops"</StringId>
+		<Name>House Troops</Name>
+		<CultureId>"aserai"</CultureId>
+		<ClanId>"CLAN_A"</ClanId>
+		<LanceOriginType>"town"</LanceOriginType>
 		<!-- possible values town, village, castle, mercenary, all-->
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
 				<Likelihood>0.3</Likelihood>
-				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+				<BasicTroopId>"looter"</BasicTroopId>
 			</MeleeTroop>
 			<MeleeTroop>
 				<Likelihood>0.1</Likelihood>
@@ -48,16 +49,230 @@
 			</MeleeTroop>
 			<RangedTroop>
 				<Likelihood>0.6</Likelihood>
-				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+				<BasicTroopId>"looter"</BasicTroopId>
 			</RangedTroop>
 			<CavalryTroop>
 				<Likelihood>0.1</Likelihood>
-				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+				<BasicTroopId>"looter"</BasicTroopId>
 			</CavalryTroop>
 			<HorseArcherTroop>
 				<Likelihood>0.0</Likelihood>
-				<BasicTroopId>"battanian_volunteer"</BasicTroopId>
+				<BasicTroopId>"looter"</BasicTroopId>
 			</HorseArcherTroop>
 		</Troops>
 	</Lance>
+
+	<Lance>
+		<StringId>"baratheon_paramount"</StringId>
+		<Name>House Baratheon</Name>
+		<CultureId>"vlandia"</CultureId>
+		<ClanId>"Stormlands_1"</ClanId>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BARATHEON_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BARATHEON_LEVY_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BARATHEON_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BARATHEON_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BARATHEON_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BARATHEON_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BARATHEON_xbow_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"connington_major"</StringId>
+		<Name>House Connington</Name>
+		<CultureId>"vlandia"</CultureId>
+		<ClanId>"Stormlands_14"</ClanId>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"CONNINGTON_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"CONNINGTON_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CONNINGTON_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CONNINGTON_2ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"fell_minor"</StringId>
+		<Name>House Fell</Name>
+		<CultureId>"vlandia"</CultureId>
+		<ClanId>"Stormlands_5"</ClanId>
+		<LanceOriginType>"town"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"FELL_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"FELL_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"stormlands_proper"</StringId>
+		<Name>Stormlands Proper Lance</Name>
+		<CultureId>"battania"</CultureId>
+		<LanceOriginType>"village"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"STORMLANDS_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"stormlands_rainwood"</StringId>
+		<Name>Stormlands Rainwood Lance</Name>
+		<CultureId>"sturgia"</CultureId>
+		<LanceOriginType>"village"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>20</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_LEVY3_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_xbow_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"essos_mercenary"</StringId>
+		<Name>Mercenary Lance</Name>
+		<CultureId>"vlandia"</CultureId>
+		<LanceOriginType>"mercenary"</LanceOriginType>
+		<!-- possible values town, village, castle, mercenary, all-->
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_LEVY1_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_LEVY2_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"RAINWOOD_xbow_ranged_t1"</BasicTroopId>
+			</MeleeTroop>
+		</Troops>
+	</Lance>
+
 </LanceTemplates>
