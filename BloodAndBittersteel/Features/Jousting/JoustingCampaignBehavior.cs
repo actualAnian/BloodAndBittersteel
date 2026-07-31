@@ -151,9 +151,6 @@ namespace BloodAndBittersteel.Features.Jousting
 
         private void EndJoustingTournament(Town town)
         {
-            var tournamentGame = Campaign.Current.TournamentManager.GetTournamentGame(town);
-            //if (tournamentGame != null && tournamentGame is JoustTournamentGame)
-            //    Campaign.Current.TournamentManager.ResolveTournament(Campaign.Current.TournamentManager.GetTournamentGame(town), town);
             _activeJoustingTournamentTowns.Remove(town);
         }
 
