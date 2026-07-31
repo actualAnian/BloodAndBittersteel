@@ -24,8 +24,9 @@ namespace LanceSystem.Utils
                 var character = MBObjectManager.Instance.GetObject<CharacterObject>(troopStringId);
                 if (character == null)
                 {
-                    InformationManager.DisplayMessage(new($"No troop with id {troopStringId}"));
-                    break;
+                    throw new Exception($"No troop with id {troopStringId}");
+                    //InformationManager.DisplayMessage(new($"No troop with id {troopStringId}"));
+                    //break;
                 }
                 roster.AddToCounts(character, 1);
             }

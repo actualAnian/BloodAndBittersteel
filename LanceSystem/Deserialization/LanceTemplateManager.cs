@@ -15,6 +15,7 @@ namespace LanceSystem.Deserialization
         private readonly Lance FallBackLance = new("fallback",
                                                     "Fallback Lance",
                                                    "any",
+                                                   null,
                                                    LanceTemplateOriginType.All,
                                                    new LanceTroopsTemplate(new List<TroopData>() { new(LanceTroopCategory.Infantry, 0.5, "looter"), new(LanceTroopCategory.Ranged, 0.5, "looter") }));
         private LanceTemplateManager() { }
@@ -23,11 +24,13 @@ namespace LanceSystem.Deserialization
             Lances = LanceDataDeserializer.LoadFromFile(_path);
             Lances.Add("fallback", FallBackLance);
         }
-        public IEnumerable<Lance> GetLances(string cultureId, LanceTemplateOriginType originType)
+        public IEnumerable<Lance> GetLances(string cultureId, string? clanId, LanceTemplateOriginType originType)
         {
             var result = Lances.Values.Where(l =>
                 (l.CultureId == null 
                 || l.CultureId == cultureId)
+                && (l.ClanId == null
+                || l.ClanId == clanId)
                 &&
                 (l.LanceOriginType == originType 
                 || l.LanceOriginType == LanceTemplateOriginType.All)
@@ -40,7 +43,7 @@ namespace LanceSystem.Deserialization
             if (settlement.IsVillage) type = LanceTemplateOriginType.Village;
             else if (settlement.IsTown) type = LanceTemplateOriginType.Town;
             else type = LanceTemplateOriginType.Castle;
-            return GetLances(cultureId, type);
+            return GetLances(cultureId, settlement.Owner.Clan.StringId, type);
         }
         public Lance GetLanceFromId(string lanceId)
         {

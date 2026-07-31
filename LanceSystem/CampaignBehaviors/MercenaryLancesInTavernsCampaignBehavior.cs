@@ -570,7 +570,7 @@ namespace LanceSystem.CampaignBehaviors
         }
         public IEnumerable<Lance> GetPossibleTemplates(Settlement settlement)
         {
-            return LanceTemplateManager.Instance.GetLances(settlement.Culture.StringId, LanceTemplateOriginType.Mercenary);
+            return LanceTemplateManager.Instance.GetLances(settlement.Culture.StringId, null, LanceTemplateOriginType.Mercenary);
         }
         public TextObject GetLanceName(Settlement settlement, Lance lance)
         {

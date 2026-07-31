@@ -12,6 +12,7 @@ namespace BaBUnitTests
         [TestInitialize]
         public void Setup()
         {
+
             LanceUtils.UtilsRandom = new Random(12345);
             _testLogger = new TestLogger();
             LanceLogger.Logger = _testLogger;
