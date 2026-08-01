@@ -32,9 +32,9 @@ namespace BaBUnitTests
                 );
             prop.SetValue(cam.Models, new TestCharacterStatsModel());
         }
-        static PropertyInfo upgradeTargetsProperty = typeof(CharacterObject).GetProperty("UpgradeTargets", BindingFlags.Instance | BindingFlags.Public);
+        static readonly PropertyInfo upgradeTargetsProperty = typeof(CharacterObject).GetProperty("UpgradeTargets", BindingFlags.Instance | BindingFlags.Public);
 
-        static PropertyInfo defaultFormationProperty = typeof(CharacterObject).GetProperty("DefaultFormationClass", BindingFlags.Instance | BindingFlags.Public);
+        static readonly PropertyInfo defaultFormationProperty = typeof(CharacterObject).GetProperty("DefaultFormationClass", BindingFlags.Instance | BindingFlags.Public);
 
         [TestMethod]
         public void GetNextTroopToUpgrade_NoUpgradeTargets_ReturnsNull()

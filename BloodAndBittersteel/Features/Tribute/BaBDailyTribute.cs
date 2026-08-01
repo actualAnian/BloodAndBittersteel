@@ -1,5 +1,5 @@
 ﻿using BloodAndBittersteel.Features.BlackfyreRebellion;
-using BloodAndBittersteel.Features.ModifiableValues;
+using BloodAndBittersteel.Library.ModifiableValues;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 

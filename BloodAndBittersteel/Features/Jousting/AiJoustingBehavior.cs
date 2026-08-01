@@ -13,22 +13,7 @@ namespace BloodAndBittersteel.Features.Jousting
         public override void RegisterEvents()
         {
             CampaignEvents.AiHourlyTickEvent.AddNonSerializedListener(this, OnAiHourlyTick);
-            CampaignEvents.TickEvent.AddNonSerializedListener(this, OnTick);
         }
-
-        private void OnTick(float obj)
-        {
-            int lordAmount = 0;
-             foreach (var p in MobileParty.AllLordParties)
-             {
-                if (p.TargetSettlement?.StringId == "town_K3")
-                    lordAmount++;
-             }
-            int aa = 35;
-            //var p = MobileParty.All.Where(p => p.StringId == "BLACKFYRE_m_10_party_1");
-            //int a = 5;
-        }
-
         private void OnAiHourlyTick(MobileParty party, PartyThinkParams p)
         {
             foreach(var tournamentTown in GetAllActiveTournamentTowns())

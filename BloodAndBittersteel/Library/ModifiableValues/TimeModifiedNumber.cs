@@ -2,7 +2,7 @@
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;
 
-namespace BloodAndBittersteel.Features.ModifiableValues
+namespace BloodAndBittersteel.Library.ModifiableValues
 {
     public class TimedModifierNumber
     {
