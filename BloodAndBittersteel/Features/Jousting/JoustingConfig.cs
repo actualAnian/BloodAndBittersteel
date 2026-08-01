@@ -56,7 +56,7 @@ namespace BloodAndBittersteel.Features.Jousting
         private static readonly Rule<Town, ItemObject> Fallback = new(
             condition: town => true,
             valueFactory: town => MBObjectManager.Instance.GetObject<ItemObject>("grain"));
-        public static HierarchicalRuleEngine<Town, ItemObject> GetJoustingRewardItem = new(new List<Rule<Town, ItemObject>>()
+        public static OrderedRuleEngine<Town, ItemObject> GetJoustingRewardItem = new(new List<Rule<Town, ItemObject>>()
         {
             BelongsToClan,
             BelongsToCulture,
