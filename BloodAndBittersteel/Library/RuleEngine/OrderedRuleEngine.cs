@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace BloodAndBittersteel.Library.RuleEngine
 {
-    public class HierarchicalRuleEngine<TContext, TResult>
+    public class OrderedRuleEngine<TContext, TResult>
     {
         private readonly List<Rule<TContext, TResult>> _rules;
-        public HierarchicalRuleEngine(IEnumerable<Rule<TContext, TResult>> rules)
+        public OrderedRuleEngine(IEnumerable<Rule<TContext, TResult>> rules)
         {
             _rules = rules.ToList();
         }
