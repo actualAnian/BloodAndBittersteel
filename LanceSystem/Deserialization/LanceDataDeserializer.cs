@@ -32,9 +32,13 @@ namespace LanceSystem.Deserialization
                 var normalized = NormalizeTroopLikelihoods(parsed);
                 var troops = new LanceTroopsTemplate(normalized);
                 var weight = (int?)lanceElem.Element("Weight") ?? 1;
-                var lance = new Lance(CleanString(lanceElem.Element("StringId")),
-                                      CleanString(lanceElem.Element("Name")),
-                                      CleanString(lanceElem.Element("CultureId")),
+                var stringId = CleanString(lanceElem.Element("StringId"));
+                var name = CleanString(lanceElem.Element("Name"));
+                if (stringId == null || name == null) throw new Exception("ERROR IN lance_templates. StringId and Name can not be null");
+                var lance = new Lance(stringId,
+                                      name,
+                                      CleanString(lanceElem.Element("CultureId")), 
+                                      CleanString(lanceElem.Element("ClanId")),
                                       ParseLanceOrigin(lanceElem.Element("LanceOriginType").Value),
                                       troops, 
                                       weight
@@ -91,9 +95,9 @@ namespace LanceSystem.Deserialization
                 _ => LanceTemplateOriginType.All
             };
         }
-        private static string CleanString(XElement? value)
+        private static string? CleanString(XElement? value)
         {
-            if (value == null) return "";
+            if (value == null) return null;
             return value.Value.Trim().Trim('"');
         }
     }
