@@ -8,7 +8,7 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_SingleMatchingRule_ReturnsResolvedValue()
         {
-            var rule = new Rule<int, string>(condition: c => c > 0, valueFactory: c => "matched");
+            var rule = new Rule<int, string>(matches: c => c > 0, resolve: c => "matched");
             var engine = new OrderedRuleEngine<int, string>([rule]);
 
             var result = engine.Get(5);
@@ -19,7 +19,7 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_SingleNonMatchingRule_Throws()
         {
-            var rule = new Rule<int, string>(condition: c => false, valueFactory: c => "unused");
+            var rule = new Rule<int, string>(matches: c => false, resolve: c => "unused");
             var engine = new OrderedRuleEngine<int, string>([rule]);
 
             Assert.ThrowsExactly<InvalidOperationException>(() => engine.Get(5));
@@ -28,9 +28,9 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_MultipleRules_FirstMatchingWins()
         {
-            var first = new Rule<int, string>(condition: c => true, valueFactory: c => "first");
-            var second = new Rule<int, string>(condition: c => true, valueFactory: c => "second");
-            var third = new Rule<int, string>(condition: c => true, valueFactory: c => "third");
+            var first = new Rule<int, string>(matches: c => true, resolve: c => "first");
+            var second = new Rule<int, string>(matches: c => true, resolve: c => "second");
+            var third = new Rule<int, string>(matches: c => true, resolve: c => "third");
             var engine = new OrderedRuleEngine<int, string>([first, second, third]);
 
             var result = engine.Get(1);
@@ -41,8 +41,8 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_MultipleRules_SkipsNonMatchingUntilMatch()
         {
-            var first = new Rule<int, string>(condition: c => false, valueFactory: c => "first");
-            var second = new Rule<int, string>(condition: c => true, valueFactory: c => "second");
+            var first = new Rule<int, string>(matches: c => false, resolve: c => "first");
+            var second = new Rule<int, string>(matches: c => true, resolve: c => "second");
             var engine = new OrderedRuleEngine<int, string>([first, second]);
 
             var result = engine.Get(1);
@@ -53,8 +53,8 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_MultipleRules_DifferentContexts_SelectDifferentRules()
         {
-            var forOne = new Rule<int, string>(condition: c => c == 1, valueFactory: c => "one");
-            var forTwo = new Rule<int, string>(condition: c => c == 2, valueFactory: c => "two");
+            var forOne = new Rule<int, string>(matches: c => c == 1, resolve: c => "one");
+            var forTwo = new Rule<int, string>(matches: c => c == 2, resolve: c => "two");
             var engine = new OrderedRuleEngine<int, string>([forOne, forTwo]);
 
             Assert.AreEqual("one", engine.Get(1));
@@ -64,8 +64,8 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_MultipleRules_AllNonMatching_Throws()
         {
-            var first = new Rule<int, string>(condition: c => false, valueFactory: c => "first");
-            var second = new Rule<int, string>(condition: c => false, valueFactory: c => "second");
+            var first = new Rule<int, string>(matches: c => false, resolve: c => "first");
+            var second = new Rule<int, string>(matches: c => false, resolve: c => "second");
             var engine = new OrderedRuleEngine<int, string>([first, second]);
 
             Assert.ThrowsExactly<InvalidOperationException>(() => engine.Get(1));
@@ -75,8 +75,8 @@ namespace BaBUnitTests
         public void Get_MultipleRules_StopsAfterFirstMatch()
         {
             int matchesEvaluated = 0;
-            var first = new Rule<int, string>(condition: c => true, valueFactory: c => "first");
-            var second = new Rule<int, string>(condition: c => { matchesEvaluated++; return true; }, valueFactory: c => "second");
+            var first = new Rule<int, string>(matches: c => true, resolve: c => "first");
+            var second = new Rule<int, string>(matches: c => { matchesEvaluated++; return true; }, resolve: c => "second");
             var engine = new OrderedRuleEngine<int, string>([first, second]);
 
             engine.Get(1);
@@ -101,7 +101,7 @@ namespace BaBUnitTests
         [TestMethod]
         public void Get_PassesContextToResolve()
         {
-            var rule = new Rule<int, string>(condition: c => true, valueFactory: c => c.ToString());
+            var rule = new Rule<int, string>(matches: c => true, resolve: c => c.ToString());
             var engine = new OrderedRuleEngine<int, string>([rule]);
 
             var result = engine.Get(42);

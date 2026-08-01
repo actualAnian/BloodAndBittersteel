@@ -48,14 +48,14 @@ namespace BloodAndBittersteel.Features.Jousting
             [Globals.IronbornCultureId] = new() { "grain", "grain" },
         };
         private static readonly Rule<Town, ItemObject> BelongsToClan = new(
-            condition: town => ClanItems.ContainsKey(town.OwnerClan.StringId),
-            valueFactory: town => MBObjectManager.Instance.GetObject<ItemObject>(ClanItems[town.OwnerClan.StringId].GetRandomElement()));
+            matches: town => ClanItems.ContainsKey(town.OwnerClan.StringId),
+            resolve: town => MBObjectManager.Instance.GetObject<ItemObject>(ClanItems[town.OwnerClan.StringId].GetRandomElement()));
         private static readonly Rule<Town, ItemObject> BelongsToCulture = new(
-            condition: town => CultureItems.ContainsKey(town.OwnerClan.Culture.StringId),
-            valueFactory: town => MBObjectManager.Instance.GetObject<ItemObject>(CultureItems[town.OwnerClan.Culture.StringId].GetRandomElement()));
+            matches: town => CultureItems.ContainsKey(town.OwnerClan.Culture.StringId),
+            resolve: town => MBObjectManager.Instance.GetObject<ItemObject>(CultureItems[town.OwnerClan.Culture.StringId].GetRandomElement()));
         private static readonly Rule<Town, ItemObject> Fallback = new(
-            condition: town => true,
-            valueFactory: town => MBObjectManager.Instance.GetObject<ItemObject>("grain"));
+            matches: town => true,
+            resolve: town => MBObjectManager.Instance.GetObject<ItemObject>("grain"));
         public static OrderedRuleEngine<Town, ItemObject> GetJoustingRewardItem = new(new List<Rule<Town, ItemObject>>()
         {
             BelongsToClan,

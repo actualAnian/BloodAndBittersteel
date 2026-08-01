@@ -4,10 +4,10 @@ namespace BloodAndBittersteel.Library.RuleEngine
 {
     public class Rule<TContext, TResult>
     {
-        public Rule(Func<TContext, bool> condition, Func<TContext, TResult> valueFactory)
+        public Rule(Func<TContext, bool> matches, Func<TContext, TResult> resolve)
         {
-            Matches = condition;
-            Resolve = valueFactory;
+            Matches = matches;
+            Resolve = resolve;
         }
 
         public Func<TContext, bool> Matches { get; init; }
