@@ -2,9 +2,8 @@
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.IronbornWives;
 using BloodAndBittersteel.Features.Jousting;
-using BloodAndBittersteel.Features.ModifiableValues;
 using BloodAndBittersteel.Features.NightsWatch;
-using System;
+using BloodAndBittersteel.Library.ModifiableValues;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.SaveSystem;

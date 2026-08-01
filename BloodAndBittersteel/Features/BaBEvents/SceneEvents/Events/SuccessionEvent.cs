@@ -5,6 +5,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.SceneInformationPopupTypes;
 using TaleWorlds.Core;
+using TaleWorlds.Library;
 using TaleWorlds.Localization;
 
 namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
@@ -110,6 +111,11 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
                     hero = currentLeader;
                 else
                     hero = GetNextSuccessionHeir();
+            }
+            if (hero == null)
+            {
+                InformationManager.DisplayMessage(new("ERROR, could not find a successor for the rebellion leader!"));
+                hero = Hero.AllAliveHeroes.GetRandomElementInefficiently();
             }
             var notificationData = new SuccessionSceneNotificationData(hero);
             return new(StringId, BaBEventTypes.OnDailyTick, notificationData, CampaignTime.Never, Condition, Consequence);

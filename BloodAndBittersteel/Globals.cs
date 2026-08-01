@@ -3,9 +3,12 @@
     public static class Globals
     {
         //@TODO 23.07 BaBKingdomDecisionPermissionModel.IsWarDecisionAllowedBetweenKingdoms needs to be updated
+
+        // cultures
         public const string IronbornCultureId = "vlandia";
         public const string WildlingsCultureId = "empire";
 
+        // kingdoms
         public const string NightsWatchKingdomStringId = "vlandia";
         public const string SkagosKingdomId = "sturgia";
         public const string BlackfyreRebellionKingdomStringId = "bab_blackfyre_rebels";
@@ -22,5 +25,10 @@
         public const string ReachKingdomId = "Reach";
         public const string StormlandsKingdomId = "Stormlands";
         public const string RiverlandsKingdomId = "Riverlands";
+
+        // clans
+        public const string ClanLannisterId = "temp";
+        public const string ClanStarkId = "temp";
+
     }
 }

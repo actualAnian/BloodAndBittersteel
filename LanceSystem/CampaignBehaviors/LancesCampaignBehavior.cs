@@ -56,7 +56,7 @@ namespace LanceSystem.CampaignBehaviors
         CampaignTime _mercRecruitTimeSpan = CampaignTime.Zero;
         [SaveableField(4)]
         Dictionary<string, NotableDeathRecord> _pendingNotableDeaths = new();
-        List<string> LockedParties = new();
+        readonly List<string> LockedParties = new();
 
         public bool CanRecruitDisbandedLanceAsMercenaries()
         {

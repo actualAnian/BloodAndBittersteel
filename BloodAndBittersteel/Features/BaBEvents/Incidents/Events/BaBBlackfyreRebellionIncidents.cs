@@ -121,7 +121,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
             var joinRebellionText = "{=bab_join_rebellion}You gather your men and march to the Blackwater Rush to join the rebellion. The time is nigh, now is the time for sword not quill";
             var fightRebellionText = "{=bab_fight_rebellion}Convinced by your captains and sergeants, you order the men to pack up camp to aid the Crown against the rabble of pretenders at their doorsteps.";
             var stayNeutralText = "{=bab_stay_neutral}Unsure of what to make of these news, you heed advice from both camps that have sprung up amongst your men, some shouted that the rebel cause was just while others half-drew their swords from their sheaths at the mention of the name Daemon. Not seeking a full out mutiny, you inform your men that your host shall not partake for the time being in this royal squabble. That your intent is to see which one promises more for fighting men.";
-            incident.AddOption(joinRebellionText, joinRebellion, (text) => { return true; return Clan.PlayerClan != Kingdom.All.First(k => k.StringId == Globals.CrownlandsKingdomStringId).RulingClan; }, null);
+            incident.AddOption(joinRebellionText, joinRebellion, (text) => { return true; }, null);
             incident.AddOption(fightRebellionText, fightRebellion, null, null);
             incident.AddOption(stayNeutralText, stayNeutral, null, null);
             return incident;

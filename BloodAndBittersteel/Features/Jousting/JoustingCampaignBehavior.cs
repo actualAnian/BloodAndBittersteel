@@ -184,7 +184,10 @@ namespace BloodAndBittersteel.Features.Jousting
         private void OnTournamentFinished(CharacterObject winner, MBReadOnlyList<CharacterObject> participants, Town town, ItemObject prize)
         {
             if (_activeJoustingTournamentTowns.Contains(town))
+            {
+                GiveGoldAction.ApplyBetweenCharacters(null, winner.HeroObject, JoustingConfig.WinnerGoldPrize);
                 EndJoustingTournament(town);
+            }
         }
 
         private void OnSessionLaunched(CampaignGameStarter campaignGameStarter)

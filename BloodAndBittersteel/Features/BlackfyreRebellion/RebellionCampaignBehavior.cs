@@ -15,9 +15,9 @@ namespace BloodAndBittersteel.Features.BlackfyreRebellion
         [SaveableProperty(3)]
         public RebellionSide PlayerSide { get; set; } = RebellionSide.Neutral;
         [SaveableProperty(4)]
-        public string KingOfTheIronThrone { get; set; }
+        public string? KingOfTheIronThrone { get; set; }
         [SaveableProperty(5)]
-        public string RebellionLeader { get; set; }
+        public string? RebellionLeader { get; set; }
 
     }
     public enum RebellionSide
