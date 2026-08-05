@@ -63,9 +63,8 @@
 	<Lance>
 		<StringId>"baratheon_paramount"</StringId>
 		<Name>House Baratheon</Name>
-		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_1"</ClanId>
-		<LanceOriginType>"town"</LanceOriginType>
+		<LanceOriginType>"settlement"</LanceOriginType>
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -97,16 +96,8 @@
 				<BasicTroopId>"BARATHEON_LEVY3_t1"</BasicTroopId>
 			</MeleeTroop>
 			<RangedTroop>
-				<Likelihood>0.1</Likelihood>
+				<Likelihood>0.2</Likelihood>
 				<BasicTroopId>"BARATHEON_ranged_t1"</BasicTroopId>
-			</RangedTroop>
-			<RangedTroop>
-				<Likelihood>0.1</Likelihood>
-				<BasicTroopId>"BARATHEON_ranged_t1"</BasicTroopId>
-			</RangedTroop>
-			<RangedTroop>
-				<Likelihood>0.1</Likelihood>
-				<BasicTroopId>"STORMLANDS_ranged_t1"</BasicTroopId>
 			</RangedTroop>
 			<RangedTroop>
 				<Likelihood>0.1</Likelihood>
@@ -118,9 +109,8 @@
 	<Lance>
 		<StringId>"connington_major"</StringId>
 		<Name>House Connington</Name>
-		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_14"</ClanId>
-		<LanceOriginType>"town"</LanceOriginType>
+		<LanceOriginType>"settlement"</LanceOriginType>
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -161,9 +151,8 @@
 	<Lance>
 		<StringId>"fell_minor"</StringId>
 		<Name>House Fell</Name>
-		<CultureId>"vlandia"</CultureId>
 		<ClanId>"Stormlands_5"</ClanId>
-		<LanceOriginType>"town"</LanceOriginType>
+		<LanceOriginType>"settlement"</LanceOriginType>
 		<Weight>100</Weight>
 		<Troops>
 			<MeleeTroop>
@@ -264,6 +253,133 @@
 				<Likelihood>0.1</Likelihood>
 				<BasicTroopId>"RAINWOOD_xbow_ranged_t1"</BasicTroopId>
 			</MeleeTroop>
+		</Troops>
+	</Lance>
+
+
+	<Lance>
+		<StringId>"darklyn_major"</StringId>
+		<Name>House Darklyn</Name>
+		<ClanId>"Crownlands_5"</ClanId>
+		<LanceOriginType>"settlement"</LanceOriginType>
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"DARKLYN_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"DARKLYN_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<CavalryTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"DARKLYN_cavalry_t1"</BasicTroopId>
+			</CavalryTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_Lcavalry_t1"</BasicTroopId>
+			</CavalryTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_cavalry_t1"</BasicTroopId>
+			</CavalryTroop>
+			<RangedTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"DARKLYN_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"DARKLYN_xbow_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_xbow_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"brune_major"</StringId>
+		<Name>House Brune of Dyre Den</Name>
+		<ClanId>"Crownlands_10"</ClanId>
+		<LanceOriginType>"settlement"</LanceOriginType>
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BRUNE_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.3</Likelihood>
+				<BasicTroopId>"BRUNE_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<CavalryTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CROWNLANDS_cavalry_t1"</BasicTroopId>
+			</CavalryTroop>
+			<RangedTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BRUNE_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BRUNE_xbow_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+		</Troops>
+	</Lance>
+
+	<Lance>
+		<StringId>"brune_minor"</StringId>
+		<Name>House Brune of Brownhollow</Name>
+		<ClanId>"Crownlands_11"</ClanId>
+		<LanceOriginType>"settlement"</LanceOriginType>
+		<Weight>100</Weight>
+		<Troops>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_recruit_t1"</BasicTroopId>
+			</MeleeTroop>
+			<MeleeTroop>
+				<Likelihood>0.2</Likelihood>
+				<BasicTroopId>"BRUNEB_levy_t1"</BasicTroopId>
+			</MeleeTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BRUNE_ranged_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"BRUNE_xbow_t1"</BasicTroopId>
+			</RangedTroop>
+			<RangedTroop>
+				<Likelihood>0.1</Likelihood>
+				<BasicTroopId>"CLAWMAN_ranged_t1"</BasicTroopId>
+			</RangedTroop>
 		</Troops>
 	</Lance>
 
