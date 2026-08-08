@@ -74,7 +74,6 @@ public static class CharacterCreationOptionsStageVMPatch
             if (!Equals(Hero.MainHero.BirthDay, CharacterSelectionViewModel.Instance.OriginalHeroBirthday))
                 Hero.MainHero.SetBirthDay(CharacterSelectionViewModel.Instance.OriginalHeroBirthday);
 
-            MBInformationManager.Clear();
             InformationManager.ClearAllMessages();
             Clan.PlayerClan.WarPartyComponents.Where(item => (item.Leader == null && item.MobileParty != null) || item.MobileParty != Hero.MainHero.PartyBelongedTo).ToList().ForEach(warparty =>
             {

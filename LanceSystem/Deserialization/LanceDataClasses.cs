@@ -12,7 +12,7 @@ namespace LanceSystem.Deserialization
         All
     }
 
-    public record Lance(string StringId, string Name, string? CultureId, string? ClanId, LanceTemplateOriginType LanceOriginType, LanceTroopsTemplate TroopsTemplate, int weight = 1);
+    public record Lance(string StringId, string Name, string? CultureId, string? ClanId, LanceTemplateOriginType LanceOriginType, LanceTroopsTemplate TroopsTemplate, int weight = 1, string? bannerKey = null);
 
     public record LanceTroopsTemplate(List<TroopData> TroopTypes);
 

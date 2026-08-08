@@ -41,7 +41,8 @@ namespace LanceSystem.Deserialization
                                       CleanString(lanceElem.Element("ClanId")),
                                       ParseLanceOrigin(lanceElem.Element("LanceOriginType").Value),
                                       troops, 
-                                      weight
+                                      weight,
+                                      CleanString(lanceElem.Element("BannerKey"))
                                       );
                 templates.Add(lance.StringId, lance);
             }

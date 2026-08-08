@@ -37,7 +37,7 @@ public class PreMadeCharacterSelection
             .Where(f => f.IsClan && f.Culture.StringId == culture?.StringId && f.Leader != null)
             .Select(f => f.Leader)
             .Distinct()
-            .OrderBy(l => l.Name.ToString()).Reverse()
+            .OrderBy(l => l.Clan.Name.ToString()).Reverse()
             .ToList();
         return clanLeaders;
     }

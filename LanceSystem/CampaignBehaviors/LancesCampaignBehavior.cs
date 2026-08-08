@@ -20,6 +20,7 @@ using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.MountAndBlade.GauntletUI;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 using static TaleWorlds.CampaignSystem.MapEvents.MapEvent;
@@ -360,7 +361,8 @@ namespace LanceSystem.CampaignBehaviors
                 List<InquiryElement> list = new();
                 foreach (var template in notableLanceData.GetPossibleTemplates())
                 {
-                    list.Add(new(template, template.StringId, new BannerImageIdentifier(Clan.PlayerClan.Banner)));
+                    var banner = template.bannerKey != null ? new BannerImageIdentifier(new Banner (template.bannerKey)) : new BannerImageIdentifier(Clan.PlayerClan.Banner);
+                    list.Add(new(template, template.StringId, banner));
                 }
                 MultiSelectionInquiryData inquiry = new(new TextObject("{=lance_template_menu}Lance Menu").ToString(), new TextObject("{=lance_choose_template}Choose your lance template").ToString(), list, true, 1, 1, GameTexts.FindText("str_yes", null).ToString(), GameTexts.FindText("str_no", null).ToString(), 
                 list =>
