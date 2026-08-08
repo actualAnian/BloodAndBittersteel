@@ -257,7 +257,6 @@ namespace LanceSystem.Utils
                 _ => LanceTroopCategory.Infantry,
             };
         }
-        // @TODO add tests for this method
         internal static CharacterObject? GetNextTroopToUpgrade(List<float> cachedMaxTroopPerTier, TroopRoster currentNotableLanceTroopRoster, LanceTroopCategory troopType)
         {
             var elements = currentNotableLanceTroopRoster.GetTroopRoster();

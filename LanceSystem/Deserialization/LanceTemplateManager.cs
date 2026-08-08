@@ -1,5 +1,6 @@
 ﻿using BloodAndBittersteel;
 using LanceSystem.Logger;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Settlements;
@@ -8,7 +9,7 @@ namespace LanceSystem.Deserialization
 {
     public class LanceTemplateManager
     {
-        private static readonly string _path = PathHelper.BaBOutsideConfigPath + "lance_templates.xml";
+        private static readonly Lazy<string> _path = new(() => PathHelper.BaBOutsideConfigPath + "lance_templates.xml");
         private static LanceTemplateManager? _instance;
         public static LanceTemplateManager Instance => _instance ??= new LanceTemplateManager();
         public Dictionary<string, Lance> Lances { get; private set; } = new();
@@ -21,20 +22,15 @@ namespace LanceSystem.Deserialization
         private LanceTemplateManager() { }
         public void LoadFromFile()
         {
-            Lances = LanceDataDeserializer.LoadFromFile(_path);
+            Lances = LanceDataDeserializer.LoadFromFile(_path.Value);
             Lances.Add("fallback", FallBackLance);
         }
         public IEnumerable<Lance> GetLances(string cultureId, string? clanId, LanceTemplateOriginType originType)
         {
             var result = Lances.Values.Where(l =>
-                (l.CultureId == null 
-                || l.CultureId == cultureId)
-                && (l.ClanId == null
-                || l.ClanId == clanId)
-                &&
-                (l.LanceOriginType == originType 
-                || l.LanceOriginType == LanceTemplateOriginType.All)
-                || l.LanceOriginType == LanceTemplateOriginType.Settlement && (originType == LanceTemplateOriginType.Town || originType == LanceTemplateOriginType.Castle || originType == LanceTemplateOriginType.Village));
+                (l.CultureId == null || l.CultureId == cultureId)
+                && (l.ClanId == null || l.ClanId == clanId)
+                && ((l.LanceOriginType == originType || l.LanceOriginType == LanceTemplateOriginType.All) || l.LanceOriginType == LanceTemplateOriginType.Settlement && (originType == LanceTemplateOriginType.Town || originType == LanceTemplateOriginType.Castle || originType == LanceTemplateOriginType.Village)));
             return result.Any() ? result : new List<Lance> { FallBackLance };
         }
         public IEnumerable<Lance> GetLances(string cultureId, Settlement settlement)

@@ -1,18 +1,42 @@
-﻿using LanceSystem.LanceDataClasses;
+﻿using BaBUnitTests.TestUtilities;
+using LanceSystem.LanceDataClasses;
 using LanceSystem.Logger;
 using LanceSystem.Utils;
+using System.Reflection;
+using System.Runtime.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Roster;
 
 namespace BaBUnitTests
 {
     [TestClass]
+    [DoNotParallelize]
     public sealed class LanceUtilsTests
     {
+        [ClassInitialize]
+        public static void Setup(TestContext context)
+        {
+            Campaign cam = (Campaign)FormatterServices.GetUninitializedObject(typeof(Campaign));
+            var currentProp = typeof(Campaign)
+                .GetProperty(
+                    "Current",
+                    BindingFlags.Static | BindingFlags.Public
+                );
+            currentProp.SetValue(null, cam);
+            var modelsField = typeof(Campaign).GetField("_gameModels", BindingFlags.Instance | BindingFlags.NonPublic);
+            GameModels models = (GameModels)FormatterServices.GetUninitializedObject(typeof(GameModels));
+            modelsField.SetValue(cam, models);
+            var prop = typeof(GameModels)
+                .GetProperty(
+                    "CharacterStatsModel",
+                    BindingFlags.Instance | BindingFlags.Public
+                );
+            prop.SetValue(cam.Models, new TestCharacterStatsModel());
+        }
+
         [TestInitialize]
         public void Setup()
         {
-
             LanceUtils.UtilsRandom = new Random(12345);
             _testLogger = new TestLogger();
             LanceLogger.Logger = _testLogger;

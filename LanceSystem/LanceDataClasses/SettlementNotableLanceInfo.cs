@@ -44,7 +44,16 @@ namespace LanceSystem.LanceDataClasses
             }
             set { _cachedMaxLanceTroops = value; }
         }
-        public List<float> CachedMaxTroopPerTier;
+        List<float>? _cachedMaxTroopPerTier;
+        public List<float> CachedMaxTroopPerTier 
+        {
+            get
+            {
+                var notable = MBObjectManager.Instance.GetObject<CharacterObject>(NotableId).HeroObject;
+                _cachedMaxTroopPerTier ??= Campaign.Current.Models.LanceModel().GetLanceTroopQuality(notable);
+                return _cachedMaxTroopPerTier;
+            }
+            set { _cachedMaxTroopPerTier = value; } }
         private Lance? _cachedLance;
         public Lance CurrentLance 
         {

@@ -23,6 +23,7 @@ public class PreMadeCharacterSelection
 
         var clanMembers = kingdoms
             .SelectMany(kingdom => kingdom.Clans)
+            .OrderBy(clan => clan.Name.ToString()).Reverse()
             .SelectMany(clan => clan.Heroes)
             .Where(hero => !hero.IsClanLeader && !hero.IsChild && !hero.IsDead)
             .Distinct()
@@ -36,6 +37,7 @@ public class PreMadeCharacterSelection
             .Where(f => f.IsClan && f.Culture.StringId == culture?.StringId && f.Leader != null)
             .Select(f => f.Leader)
             .Distinct()
+            .OrderBy(l => l.Name.ToString()).Reverse()
             .ToList();
         return clanLeaders;
     }
@@ -45,6 +47,7 @@ public class PreMadeCharacterSelection
         var activeWanderers = Campaign.Current.AliveHeroes
             .Where(h => h.Culture.StringId == culture?.StringId && h.IsWanderer && !h.IsChild && !h.IsDead)
             .Distinct()
+            .OrderBy(h => h.Name.ToString())
             .ToList();
 
         return activeWanderers;
