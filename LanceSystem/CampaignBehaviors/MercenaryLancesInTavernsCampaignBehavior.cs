@@ -327,9 +327,8 @@ namespace LanceSystem.CampaignBehaviors
 
         private void CreateMutiny(TemporaryRenegotiationData data)
         {
-            var behavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
             var mutinousTroops = data.LanceData.LanceRoster.CloneRosterData();
-            behavior.RemoveLanceFromParty(PartyBase.MainParty, data.LanceData);
+            LancesCampaignBehavior.Instance.RemoveLanceFromParty(PartyBase.MainParty, data.LanceData);
             var settlement = SettlementHelper.FindNearestSettlementToMobileParty(MobileParty.MainParty, MobileParty.NavigationType.All, x => x.IsVillage || x.IsTown);
             PartyTemplateObject looterTemplate = Campaign.Current.ObjectManager.GetObject<PartyTemplateObject>("looters_template");
 
@@ -560,11 +559,10 @@ namespace LanceSystem.CampaignBehaviors
         public void HireMercenaryLance(PartyBase party, Settlement settlement, TroopRoster mercenaryTroops)
         {
             GiveGoldAction.ApplyBetweenCharacters(party.Owner, null, _tempMercData!.Cost, false);
-            var lancesBehavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
             int lanceSize = GetLanceSizeFromClan(Clan.PlayerClan);
             var name = GetLanceName(settlement, _tempMercData!.Template);
             var lanceData = new MercenaryLanceData(settlement.StringId, mercenaryTroops, name.ToString(), lanceSize, _tempMercData.Template, party.Owner.StringId);
-            lancesBehavior.AddLanceToParty(party, lanceData);
+            LancesCampaignBehavior.Instance.AddLanceToParty(party, lanceData);
             _mercData.Add(lanceData);
             _lastRequestTimes[settlement.StringId] = CampaignTime.Now;
         }

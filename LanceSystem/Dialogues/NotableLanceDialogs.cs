@@ -220,7 +220,7 @@ namespace LanceSystem.Dialogues
                     GameTexts.SetVariable("REFUSAL_TEXT", refusalText);
                     return true;
                 }
-                var lance = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().GetNotableData(notable.StringId);
+                var lance = LancesCampaignBehavior.Instance.GetNotableData(notable.StringId);
                 if (lance.IsTaken)
                 {
                     if (PartyBase.MainParty.Lances().Any(l => l is NotableLanceData nl &&  nl.NotableId == lance.NotableId))

@@ -12,11 +12,9 @@ namespace LanceSystem.Patches
     [HarmonyPatch(typeof(AiPatrollingBehavior), "GetDistanceScoreForLandPatrolling")]
     public static class AiPatrollingBehaviorPatch
     {
-        static LancesCampaignBehavior? _behavior;
         private static bool HasAvailableLances(MobileParty party)
         {
-            _behavior ??= Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
-            return party.Owner.MapFaction.Settlements.Any(f => _behavior.DoesSettlementHaveFreeLances(f));
+            return party.Owner.MapFaction.Settlements.Any(f => LancesCampaignBehavior.Instance.DoesSettlementHaveFreeLances(f));
         }
         private static bool Prefix(Settlement targetSettlement, MobileParty mobileParty, float distanceToFurthestAllySettlementToFactionMidSettlement, out float bestDistanceScore)
         {

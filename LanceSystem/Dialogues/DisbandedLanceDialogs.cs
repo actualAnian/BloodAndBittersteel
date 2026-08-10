@@ -76,7 +76,7 @@ namespace LanceSystem.Dialogues
                         _ => "{=lance_merc_accept_high}Gladly. We will serve under your command.",
                     };
                     GameTexts.SetVariable("RECRUIT_MERC_RESPONSE", text);
-                    return Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().CanRecruitDisbandedLanceAsMercenaries();
+                    return LancesCampaignBehavior.Instance.CanRecruitDisbandedLanceAsMercenaries();
                 },
                 null);
             starter.AddDialogLine(
@@ -93,7 +93,7 @@ namespace LanceSystem.Dialogues
                         _ => "{=lance_merc_refuse_high}you honour us my {?PLAYER.GENDER}lady{?}lord{\\?}, but we are weary after an arduous campaign, we must refuse.",
                     };
                     GameTexts.SetVariable("RECRUIT_MERC_RESPONSE", text);
-                    var willRefuse = !Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().CanRecruitDisbandedLanceAsMercenaries();
+                    var willRefuse = !LancesCampaignBehavior.Instance.CanRecruitDisbandedLanceAsMercenaries();
                     if (willRefuse)
                         PlayerEncounter.LeaveEncounter = true;
                     return willRefuse;
@@ -170,8 +170,7 @@ namespace LanceSystem.Dialogues
                 null,
                 () =>
                 {
-                    var behavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
-                    behavior.ReAddLanceToPlayerParty(PlayerEncounter.EncounteredParty.MobileParty);
+                    LancesCampaignBehavior.Instance.ReAddLanceToPlayerParty(PlayerEncounter.EncounteredParty.MobileParty);
                     PlayerEncounter.LeaveEncounter = true;
                 }
             );

@@ -6,7 +6,7 @@ namespace LanceSystem
 {
     public class LanceEvents
     {
-        private static readonly MbEvent<LanceData> _lanceDisbanded = new();
+        private static MbEvent<LanceData> _lanceDisbanded = new();
         public static IMbEvent<LanceData> LanceDisbanded
         {
             get
@@ -18,7 +18,7 @@ namespace LanceSystem
         {
             _lanceDisbanded.Invoke(lance);
         }
-        private static readonly MbEvent<PartyBase, CharacterObject, CharacterObject, int> _aiUpgradeTroops = new();
+        private static MbEvent<PartyBase, CharacterObject, CharacterObject, int> _aiUpgradeTroops = new();
         public static IMbEvent<PartyBase, CharacterObject, CharacterObject, int> AiUpgradeTroops
         {
             get
@@ -29,6 +29,11 @@ namespace LanceSystem
         internal static void OnAiUpgradeTroops(PartyBase party, CharacterObject from, CharacterObject to, int amount)
         {
             _aiUpgradeTroops.Invoke(party, from, to, amount);
+        }
+        internal static void RemoveAllListeners()
+        {
+            _lanceDisbanded = new MbEvent<LanceData>();
+            _aiUpgradeTroops = new MbEvent<PartyBase, CharacterObject, CharacterObject, int>();
         }
     }
 }

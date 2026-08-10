@@ -49,7 +49,9 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
         public static bool Condition()
         {
             var daemonClan = Clan.FindFirst(c => c.StringId == RebellionConfig.RebellionLeader);
-            if (daemonClan == null || daemonClan.Leader?.IsDead == true)
+            if (daemonClan == null
+            || daemonClan.Leader?.IsDead == true
+            || Kingdom.All.First(k => k.StringId == Globals.BlackfyreRebellionKingdomStringId) == null)
                 return false;
 
             int year = CampaignTime.Now.GetYear;

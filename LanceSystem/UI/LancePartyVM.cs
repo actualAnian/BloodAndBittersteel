@@ -317,12 +317,11 @@ namespace LanceSystem.UI
             //    TroopRoster lance = _lancesTroopRosters[lanceNumber];
             //    playerLances[lanceNumber -1].LanceRoster = lance;
             //}
-            var behavior = Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>() ?? throw new InvalidOperationException("LancesCampaignBehavior not found in campaign behaviors.");
             for (int i = PartyLances.Count - 1; i >= 1; i--)
             {
                 LanceVM? lance = PartyLances[i];
                 if (!lance.IsNotDisbanded)
-                    behavior.DisbandLanceInParty(PartyBase.MainParty, i - 1, false);
+                    LancesCampaignBehavior.Instance.DisbandLanceInParty(PartyBase.MainParty, i - 1, false);
             }
         }
         public override void OnFinalize()

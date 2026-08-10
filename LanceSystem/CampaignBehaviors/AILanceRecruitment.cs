@@ -29,8 +29,9 @@ namespace LanceSystem.CampaignBehaviors
         {
             get
             {
-                _behavior ??= Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
-                return _behavior;
+                return Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>(); ;
+                //_behavior ??= Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>();
+                //return _behavior;
             }
         }
         LanceModel? _model;

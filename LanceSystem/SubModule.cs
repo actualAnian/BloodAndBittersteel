@@ -17,6 +17,7 @@ namespace LanceSystem
         public static readonly Harmony harmony = new("bloodandbittersteel");
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
+            LanceEvents.RemoveAllListeners();
             if (gameStarterObject is CampaignGameStarter campaignGameStarter)
             {
                 campaignGameStarter.AddBehavior(new LancesCampaignBehavior());

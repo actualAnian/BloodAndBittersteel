@@ -17,7 +17,7 @@ namespace LanceSystem.LanceDataClasses
         public override int MaxSize => GetSettlementNotableLanceInfo().CachedMaxLanceTroops.RoundedResultNumber;
         public SettlementNotableLanceInfo GetSettlementNotableLanceInfo()
         {
-            return Campaign.Current.GetCampaignBehavior<LancesCampaignBehavior>().GetNotableData(NotableId);
+            return LancesCampaignBehavior.Instance.GetNotableData(NotableId);
         }
     }
 }

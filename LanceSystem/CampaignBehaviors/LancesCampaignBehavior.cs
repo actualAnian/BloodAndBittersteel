@@ -295,6 +295,7 @@ namespace LanceSystem.CampaignBehaviors
         }
         public void UpdateLanceTroops(PartyBase party)
         {
+            int a = 5;
             var lances = GetOrCreateLances(party);
             if (lances.Count == 0)
                 return;
