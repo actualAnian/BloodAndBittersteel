@@ -120,6 +120,7 @@ namespace LanceSystem.CampaignBehaviors
         {
             if (party  == null || party == MobileParty.MainParty) return;
             if (!LanceModel.IsUsingLanceSystem(party.Party)) return;
+            LancesCampaignBehavior.Instance.UpdateLanceTroops(party.Party);
             TryRefillLances(party, settlement);
             while (CanRecruitLance(party, settlement))
             {
@@ -152,7 +153,7 @@ namespace LanceSystem.CampaignBehaviors
         {
             if (party.LeaderHero == null || party.ActualClan.Leader != settlement.Owner) return false;
             if (!LancesBehavior.DoesSettlementHaveFreeLances(settlement)) return false;
-            if (LanceModel.MaxLancesForParty(party.Party).RoundedResultNumber <= party.Party.Lances().Count && !HasLancesToBeDisbanded(party)) return false;
+            if (!party.Party.HasFreeLanceSlots() && !HasLancesToBeDisbanded(party)) return false;
             return true;
         }
         private bool CanAffordLance(MobileParty party, Settlement settlement)

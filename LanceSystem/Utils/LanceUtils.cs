@@ -2,6 +2,7 @@
 using LanceSystem.LanceDataClasses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
@@ -72,7 +73,6 @@ namespace LanceSystem.Utils
                         }
                     }
                 }
-
                 if (remainingToMove <= 0) break;
             }
         }
@@ -174,6 +174,14 @@ namespace LanceSystem.Utils
                 int excess = lanceCount - partyCount;
                 if (excess <= 0)
                     continue;
+                StackTrace trace = new(); // TryRefillLances
+                foreach(var task in trace.GetFrames())
+                {
+                    if (task.ToString().Contains("TryRefillLances"))
+                    {
+
+                    }
+                }
                 RemoveTroopsRandomlyFromLances(character, excess, lances);
             }
         }

@@ -48,7 +48,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="_Module\ModuleData\project.mbproj" />
   </ItemGroup>

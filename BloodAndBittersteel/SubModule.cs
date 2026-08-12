@@ -9,12 +9,15 @@ using BloodAndBittersteel.Features.NightsWatch;
 using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
+using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
 
 namespace BloodAndBittersteel
@@ -67,10 +70,33 @@ namespace BloodAndBittersteel
 
             defaultInformationRestrictionModel.IsDisabledByCheat = true;
         }
+        private void RemoveSandboxAndStoryOptions()
+        {
+            var initialOptionsList = Module.CurrentModule.GetInitialStateOptions().ToList();
+            initialOptionsList.RemoveAll(x => x.Id == "SandBoxNewGame" || x.Id == "StoryModeNewGame");
+            Module.CurrentModule.ClearStateOptions();
+            foreach (InitialStateOption initialStateOption in initialOptionsList)
+                Module.CurrentModule.AddInitialStateOption(initialStateOption);
+        }
+
+        void AddBaBStart()
+        {
+            Module.CurrentModule.AddInitialStateOption(
+            new InitialStateOption("bab", name: new TextObject("Blood And Bittersteel", null), 3,
+            () => MBGameManager.StartNewGame(new BaBCampaignManager(() => new Campaign(CampaignGameMode.Campaign))),
+            () =>
+            {
+                //if (Globals.IsWarSailsLoaded && !hasRFWarsails) return (true, new("{=rf_start_remove_warsails}You have war sails enabled but your RF version is not warsails compatible"));
+                //if (!Globals.IsWarSailsLoaded && hasRFWarsails) return (true, new("{=rf_start_add_warsails}You don't have war sails enabled but your RF version IS ONLY warsails compatible"));
+                return (Module.CurrentModule.IsOnlyCoreContentEnabled, new("Disabled during installation.", null));
+            }, null, null));
+        }
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
             ItemSwapManager.Instance.LoadFromFile();
+            RemoveSandboxAndStoryOptions();
+            AddBaBStart();
         }
         protected override void OnSubModuleUnloaded()
         {

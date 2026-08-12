@@ -17,10 +17,8 @@ using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.CampaignSystem.Settlements.Buildings;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
-using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
-using TaleWorlds.MountAndBlade.GauntletUI;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.SaveSystem;
 using static TaleWorlds.CampaignSystem.MapEvents.MapEvent;
@@ -225,8 +223,11 @@ namespace LanceSystem.CampaignBehaviors
                     if (lordParty == null) continue;
                     foreach (NotableLanceData lanceData in GetOrCreateLances(lordParty.Party).Cast<NotableLanceData>())
                     {
-                        lanceData.NotableId = hero.StringId;
-                        newData.PartyLanceBelongsTo = newTargetPartyLance;
+                        if (kvp.Key == lanceData.NotableId)
+                        {
+                            lanceData.NotableId = hero.StringId;
+                            newData.PartyLanceBelongsTo = newTargetPartyLance;
+                        }
                     }
                 }
                 else if (!record.WasLanceTaken)
@@ -295,7 +296,6 @@ namespace LanceSystem.CampaignBehaviors
         }
         public void UpdateLanceTroops(PartyBase party)
         {
-            int a = 5;
             var lances = GetOrCreateLances(party);
             if (lances.Count == 0)
                 return;
@@ -438,7 +438,7 @@ namespace LanceSystem.CampaignBehaviors
             var notableTroopRoster = lance.GetSettlementNotableLanceInfo().CurrentNotableLanceTroopRoster;
             LanceUtils.TransferTroopsBetweenTroopRosters(notableTroopRoster, tempRoster, amountToGet, lance.MaxSize);
             lance.LanceRoster.Add(tempRoster);
-            party.MemberRoster.Add(tempRoster);
+            AddTroopsToPartySafely(party, tempRoster);
         }
         public void RecruitNotableLanceToParty(PartyBase party, Hero notable)
         {
@@ -476,6 +476,16 @@ namespace LanceSystem.CampaignBehaviors
             var lances = GetOrCreateLances(party);
             RemoveTroopsFromLancesSafely(party, lance.LanceRoster);
             RemoveLance(lances, lance);
+        }
+        public void AddTroopsToPartySafely(PartyBase party, TroopRoster troopsToAdd)
+        {
+            LockedParties.Add(party.Id);
+            foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(troopsToAdd))
+            {
+                if (troop.Character == null) break;
+                party.MemberRoster.AddToCounts(troop.Character, troop.Number);
+            }
+            LockedParties.Remove(party.Id);
         }
         public static FieldInfo troopRosterData = AccessTools.Field("TaleWorlds.CampaignSystem.Roster.TroopRoster:data");
         public void RemoveTroopsFromLancesSafely(PartyBase party, TroopRoster troopsToRemove)

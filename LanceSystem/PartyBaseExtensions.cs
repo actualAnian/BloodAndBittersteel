@@ -15,7 +15,7 @@ namespace LanceSystem
         }
         public static bool HasFreeLanceSlots(this PartyBase party)
         {
-            return Campaign.Current.Models.LanceModel().MaxLancesForParty(party).RoundedResultNumber < party.Lances().Count;
+            return Campaign.Current.Models.LanceModel().MaxLancesForParty(party).RoundedResultNumber > party.Lances().Count;
         }
     }
 }
