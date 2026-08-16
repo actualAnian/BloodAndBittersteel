@@ -74,7 +74,7 @@ namespace LanceSystem.CampaignBehaviors
             if (MBRandom.RandomFloat > GetSuccessChance)
                 return false;
             var minmaxTuple = GetMinMaxNumberOfVolunteers;
-            _amount = MBRandom.RandomInt(minmaxTuple.Item1, minmaxTuple.Item2);
+            _amount = MBRandom.RandomInt(minmaxTuple.Item1, minmaxTuple.Item2 + 1);
             _cachedTroopToGive = notable.Culture.BasicTroop;
 
             var text = "{=lance_volunteer_dialog} {AMOUNT} {VOLUNTEER_NAME} want to join your cause";

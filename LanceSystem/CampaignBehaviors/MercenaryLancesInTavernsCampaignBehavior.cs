@@ -58,8 +58,11 @@ namespace LanceSystem.CampaignBehaviors
             {
                 return Clan.PlayerClan.Tier switch
                 {
+                    0 => 1f,
                     1 => 0.8f,
-                    2 => 0.5f,
+                    2 => 0.6f,
+                    3 => 0.4f,
+                    4 => 0.2f,
                     _ => 0.0f,
                 };
             }
@@ -352,10 +355,25 @@ namespace LanceSystem.CampaignBehaviors
         {
             var partyWithoutLance = PartyBase.MainParty.MemberRoster.CloneRosterData();
             LancesCampaignBehavior.Instance.RemoveTroopsFromLancesSafely(partyWithoutLance, lance.LanceRoster);
+            NormalizeWounded(MobileParty.MainParty, lance);
             PowerCalculationContext context = Campaign.Current.Models.MilitaryPowerModel.GetContextForPosition(MobileParty.MainParty.Position);
             var playerStrength = TroopRosterExtensions.CalculateTroopRosterStrength(partyWithoutLance, BattleSideEnum.Defender, context);
             var mutinyStrength = TroopRosterExtensions.CalculateTroopRosterStrength(lance.LanceRoster, BattleSideEnum.Attacker, context);
             return mutinyStrength * 1.2f > playerStrength;
+        }
+        private void NormalizeWounded(MobileParty party, MercenaryLanceData lance)
+        {
+            var lanceRoster = lance.LanceRoster;
+            foreach (var troop in lanceRoster.GetTroopRoster())
+            {
+                if (troop.Character == null) continue;
+                var characterCopy = party.MemberRoster.GetElementCopyAtIndex(party.MemberRoster.FindIndexOfTroop(troop.Character));
+                var healthy = characterCopy.Number - characterCopy.WoundedNumber;
+                int index = lanceRoster.FindIndexOfTroop(troop.Character);
+                var amountInLance = lanceRoster.GetTroopCount(troop.Character);
+                var change = Math.Min(healthy, lanceRoster.GetElementWoundedNumber(lanceRoster.FindIndexOfTroop(troop.Character)));
+                lanceRoster.AddToCountsAtIndex(index, 0, -change);
+            }
         }
         private void AddDialogs(CampaignGameStarter starter)
         {

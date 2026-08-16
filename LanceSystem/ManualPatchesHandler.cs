@@ -33,7 +33,7 @@ namespace LanceSystem
             MethodInfo upgradeTroop = AccessTools.Method("PartyCharacterVM:Upgrade");
             harmony.Patch(upgradeTroop, prefix: new HarmonyMethod(typeof(PartyCharacterVMPatch), nameof(PartyCharacterVMPatch.Prefix)));
             MethodInfo recruitTroop = AccessTools.Method("PartyCharacterVM:ExecuteRecruitTroop");
-            harmony.Patch(recruitTroop, prefix: new HarmonyMethod(typeof(PartyCharacterVMRecruitPrisonerPatch), nameof(PartyCharacterVMRecruitPrisonerPatch.Prefix  )));
+            harmony.Patch(recruitTroop, prefix: new HarmonyMethod(typeof(PartyCharacterVMRecruitPrisonerPatch), nameof(PartyCharacterVMRecruitPrisonerPatch.Prefix)));
         }
     }
 #pragma warning restore BHA0003 // Type was not found

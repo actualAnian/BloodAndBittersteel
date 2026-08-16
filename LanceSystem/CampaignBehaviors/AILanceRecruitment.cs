@@ -80,9 +80,10 @@ namespace LanceSystem.CampaignBehaviors
             {
                 if (lance is not NotableLanceData notableLance) continue;
                 var lanceInfo = notableLance.GetSettlementNotableLanceInfo();
+                if (!lanceInfo.IsValid) continue;
                 var settlement = MBObjectManager.Instance.GetObject<CharacterObject>(lanceInfo.NotableId).HeroObject.CurrentSettlement;
                 var maxLanceMembers = lanceInfo.CachedMaxLanceTroops;
-                var missingPercentage = (maxLanceMembers.ResultNumber - lance.MaxSize) / maxLanceMembers.ResultNumber;
+                var missingPercentage = (maxLanceMembers.ResultNumber - lance.LanceRoster.TotalManCount) / maxLanceMembers.ResultNumber;
                 if (1-missingPercentage > LanceStrengthToConsiderRefilling) continue;
                 var score = missingPercentage * RefillLanceMultiplier + ScoreFromDistance(party, settlement);
                 AddBehaviorTupleWithScore(p, settlement, score);
@@ -134,7 +135,7 @@ namespace LanceSystem.CampaignBehaviors
             foreach (var lance in party.Party.Lances())
                 if ((float)lance.TotalManCount / lance.MaxSize < LanceStrengthToConsiderDisbanding)
                 {
-                    LancesBehavior.DisbandLanceInParty(party.Party, lance, true);
+                    LancesBehavior.DisbandLanceInParty(party.Party, lance, true, true);
                     return;
                 }
         }
