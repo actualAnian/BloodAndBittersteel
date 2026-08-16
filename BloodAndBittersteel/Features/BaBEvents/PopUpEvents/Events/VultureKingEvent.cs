@@ -50,7 +50,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             if (_random.NextDouble() > 0.9)
                 return true;
             int dayOfYear = CampaignTime.Now.GetDayOfYear;
-            if (CampaignTime.DaysInYear / dayOfYear > 0.5) 
+            if (dayOfYear != 0 && CampaignTime.DaysInYear / dayOfYear > 0.5) 
                 return true;
             return false;
         }

@@ -214,8 +214,8 @@ namespace LanceSystem.UI
                 {
                     if (troop.NumOfUpgradeableTroops != 0)
                     {
-                        if (upgradeableTroops.TryGetValue(troop.StringId, out int value))
-                            upgradeableTroops[troop.StringId] = Math.Max(value, troop.NumOfUpgradeableTroops);
+                        //if (upgradeableTroops.TryGetValue(troop.StringId, out int value))
+                        //    upgradeableTroops[troop.StringId] = Math.Max(value, troop.NumOfUpgradeableTroops);
                         upgradeableTroops[troop.StringId] = troop.NumOfUpgradeableTroops;
                     }
                 }

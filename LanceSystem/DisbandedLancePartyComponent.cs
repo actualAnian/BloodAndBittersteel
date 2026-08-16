@@ -21,8 +21,8 @@ namespace LanceSystem
         [SaveableField(2)]
         private readonly Hero _owner;
         [SaveableField(3)]
-        private readonly string _notableLanceBelongsTo;
-        public string NotableLanceBelongsTo => _notableLanceBelongsTo;
+        private string _notableLanceBelongsTo;
+        public string NotableLanceBelongsTo { get => _notableLanceBelongsTo; set => _notableLanceBelongsTo = value; }
 
         public override bool AvoidHostileActions
         {

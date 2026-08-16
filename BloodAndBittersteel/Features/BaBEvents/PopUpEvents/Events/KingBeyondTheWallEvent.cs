@@ -56,7 +56,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
             if (_random.NextDouble() > 0.9) return true;
 
             int dayOfYear = CampaignTime.Now.GetDayOfYear;
-            if (CampaignTime.DaysInYear / dayOfYear > 0.2)
+            if (dayOfYear !=0 && CampaignTime.DaysInYear / dayOfYear > 0.2)
                 return true;
 
             return false;
@@ -114,7 +114,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events
                 ImageStringId,
                 TitleText,
                 Description,
-                CampaignTime.Days(24),
+                CampaignTime.Never,
                 Condition,
                 Consequence);
         }

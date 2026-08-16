@@ -76,14 +76,6 @@ namespace LanceSystem.Utils
                 if (remainingToMove <= 0) break;
             }
         }
-        //public static int CalculateNumberOfTroopsToRemove(TroopRosterElement troop, TroopRoster roster)
-        //{
-        //    var character = troop.Character;
-        //    int memberCount = troop.Number;
-        //    int lanceCount = roster.GetTroopCount(character);
-
-        //    return Math.Max(0, lanceCount - memberCount);
-        //}
         public static void UpgradeTroopsRandomlyInLances(CharacterObject from, CharacterObject to, int toAdd, List<LanceData> lances)
         {
             if (toAdd <= 0 || lances.Count == 0)
@@ -99,18 +91,10 @@ namespace LanceSystem.Utils
             }
             if (toAdd > totalAvailable)
             {
-                //LanceLogger.Logger.Warning(
-                //    $"UpgradeTroopsRandomlyInLances requested {toAdd} upgrades but only {totalAvailable} '{from?.StringId}' troops available.");
+                // this means the troops updated was not in a lance (in a retinue)
             }
             toAdd = Math.Min(toAdd, totalAvailable);
             if (toAdd == 0) return;
-            for (int i = 0; i < lances.Count; i++)
-            {
-                counts[i] = lances[i].LanceRoster.GetTroopCount(from);
-                totalAvailable += counts[i];
-            }
-
-            toAdd = Math.Min(toAdd, totalAvailable);
 
             var upgradeCounts = new int[lances.Count];
             int remaining = toAdd;
@@ -174,14 +158,6 @@ namespace LanceSystem.Utils
                 int excess = lanceCount - partyCount;
                 if (excess <= 0)
                     continue;
-                StackTrace trace = new(); // TryRefillLances
-                foreach(var task in trace.GetFrames())
-                {
-                    if (task.ToString().Contains("TryRefillLances"))
-                    {
-
-                    }
-                }
                 RemoveTroopsRandomlyFromLances(character, excess, lances);
             }
         }

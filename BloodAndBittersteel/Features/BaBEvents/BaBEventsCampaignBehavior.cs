@@ -40,7 +40,7 @@ namespace BloodAndBittersteel.Features.BaBEvents
             if (evt is BaBIncident babIncident)
                 Game.Current.ObjectManager.RegisterPresumedObject(babIncident);
         }
-        private void InitializeEvents()
+        private void InitializeEvents(CampaignGameStarter starter)
         {
             foreach (var evt in BaBEventLoader.Instance.AllEvents)
                 AddEvent(evt);
@@ -55,14 +55,9 @@ namespace BloodAndBittersteel.Features.BaBEvents
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, OnDailyTick);
             CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
             CampaignEvents.TickEvent.AddNonSerializedListener(this, CheckTickEvents);
-            CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, OnGameLoaded);
+            CampaignEvents.OnGameLoadedEvent.AddNonSerializedListener(this, InitializeEvents);
+            CampaignEvents.OnNewGameCreatedEvent.AddNonSerializedListener(this, InitializeEvents);
         }
-
-        private void OnGameLoaded(CampaignGameStarter starter)
-        {
-            InitializeEvents();
-        }
-
         private void CheckTickEvents(float obj)
         {
             if (ForceInvokeIncidentNextTick)

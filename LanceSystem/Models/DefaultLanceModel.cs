@@ -25,7 +25,7 @@ namespace LanceSystem.Models
         public override ExplainedNumber MaxLancesForParty(PartyBase party)
         {
             var number = new ExplainedNumber();
-            number.Add(LancesFromClanTier(party.Owner.Clan.Tier), new("{lance_lances_from_clan}Lances from clan tier"));
+            number.Add(LancesFromClanTier(party.Owner.Clan.Tier), new("{=lance_lances_from_clan}Lances from clan tier"));
             return number;
         }
         private static int BaseLanceCount => 20;
@@ -117,7 +117,9 @@ namespace LanceSystem.Models
         }
         private void IncreaseNotableTroopsTier(Hero notable, SettlementNotableLanceInfo lanceData)
         {
-            var troopsToUpgrade = random.Next(DailyTroopsToUpgrade(notable));
+            var maxTroopsToUpgrade = DailyTroopsToUpgrade(notable);
+            if (maxTroopsToUpgrade <= 0) return;
+            var troopsToUpgrade = random.Next(maxTroopsToUpgrade);
             while (troopsToUpgrade > 0)
             {
                 var troopType = LanceModelUtils.ChooseNextTroopTypeToGet(lanceData.CurrentNotableLanceTroopRoster, lanceData.CurrentLance.TroopsTemplate);
@@ -125,8 +127,7 @@ namespace LanceSystem.Models
                 if (troopToUpgrade == null)
                     break;
                 var possibleUpgrades = troopToUpgrade.UpgradeTargets.Where(t => LanceModelUtils.ClassFormationToLanceTroopType(t) == troopType);
-                var goodUpgrades = possibleUpgrades.Where(c => LanceModelUtils.ClassFormationToLanceTroopType(c) == troopType);
-                lanceData.CurrentNotableLanceTroopRoster.AddToCounts(goodUpgrades.GetRandomElementInefficiently(), 1);
+                lanceData.CurrentNotableLanceTroopRoster.AddToCounts(possibleUpgrades.GetRandomElementInefficiently(), 1);
                 lanceData.CurrentNotableLanceTroopRoster.RemoveTroop(troopToUpgrade, 1);
             }
         }
@@ -269,6 +270,20 @@ namespace LanceSystem.Models
         public override bool IsUsingLanceSystem(PartyBase party)
         {
             return party == PartyBase.MainParty || party.LeaderHero != null && party.MapFaction.IsKingdomFaction;
+        }
+
+        private static readonly Occupation[] notableOccupations = new[]
+        {
+            Occupation.GangLeader,
+            Occupation.Artisan,
+            Occupation.Merchant,
+            Occupation.RuralNotable,
+            Occupation.Headman
+        };
+
+        public override bool CanNotableHaveLance(Hero notable)
+        {
+            return notableOccupations.Contains(notable.Occupation);
         }
     }
 }

@@ -6,12 +6,14 @@ using LanceSystem.Logger;
 using LanceSystem.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.Conversation;
 using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem.Party.PartyComponents;
 using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.CampaignSystem.Settlements.Buildings;
@@ -102,6 +104,7 @@ namespace LanceSystem.CampaignBehaviors
                     var lordParty = MobileParty.AllLordParties.FirstOrDefault(p => p.StringId == info.PartyLanceBelongsTo);
                     var lances = GetOrCreateLances(lordParty.Party);
                     var lanceToRemoveIndex = lances.FindIndex(l => l is NotableLanceData notableLance && notableLance.NotableId == info.NotableId);
+                    if (lanceToRemoveIndex < 0) continue;
                     if (lordParty == MobileParty.MainParty)
                     {
                         var lanceDisbandedText = $"{{=lance_lost_settlement_text}}The lance {lances[lanceToRemoveIndex].Name} has been disbanded as the notable no longer answers to you.";
@@ -132,7 +135,7 @@ namespace LanceSystem.CampaignBehaviors
                             var inquiry = new InquiryData(new TextObject("{=lance_lost_title}Lance Lost!").ToString(), new TextObject(lanceDisbandedText).ToString(), true, false, new TextObject("{=WVkc4UgX}Continue.").ToString(), "", () => { }, () => { });
                             InformationManager.ShowInquiry(inquiry, true, false);
                         }
-                        DisbandLanceInParty(lordParty.Party, lanceToDisband, false);
+                        DisbandLanceInParty(lordParty.Party, lanceToDisband, false, false);
                     }
                 }
                 _pendingNotableDeaths.Remove(key);
@@ -142,6 +145,11 @@ namespace LanceSystem.CampaignBehaviors
 
         private void OnNotableHeroKilled(Hero victim, Hero killer, KillCharacterAction.KillCharacterActionDetail detail, bool showNotification)
         {
+            /*
+             * we can not do any more logic, because that data is needed inside OnHeroCreated method
+             * If a new hero was not created, the data is inconsistent until the next DailyTick
+             * to prevent crashes, all relevant logic needs to check for SettlementNotableLanceInfo.IsValid, before doing the actions
+             */
             if (!victim.IsNotable || !_notablesLance.ContainsKey(victim.StringId))
                 return;
 
@@ -190,31 +198,23 @@ namespace LanceSystem.CampaignBehaviors
             LanceUtils.TransferTroopsBetweenTroopRosters(party.MemberRoster, lanceData.CurrentNotableLanceTroopRoster, party.MemberRoster.TotalManCount, maxAmount.RoundedResultNumber);
             DestroyPartyAction.Apply(null, party);
         }
-        private void OnNotableHeroCreated(Hero hero, bool isBornNaturally)
+        private void OnNotableHeroCreated(Hero newHero , bool isBornNaturally)
         {
-            var notableOccupations = new[]
-            {
-                Occupation.GangLeader,
-                Occupation.Artisan,
-                Occupation.Merchant,
-                Occupation.RuralNotable,
-                Occupation.Headman
-            };
 
-            if (!notableOccupations.Contains(hero.Occupation))
+            if (!Campaign.Current.Models.LanceModel().CanNotableHaveLance(newHero))
                 return;
 
             foreach (var kvp in _pendingNotableDeaths.ToList())
             {
                 var record = kvp.Value;
 
-                if (record.HomeSettlement != hero.HomeSettlement || record.Occupation != hero.Occupation)
+                if (record.HomeSettlement != newHero.HomeSettlement || record.Occupation != newHero.Occupation)
                     continue;
                 var oldInfo = _notablesLance[kvp.Key];
-                var newData = new SettlementNotableLanceInfo(hero, oldInfo.CurrentNotableLanceTroopRoster, oldInfo.IsTaken);
+                var newData = new SettlementNotableLanceInfo(newHero, oldInfo.CurrentNotableLanceTroopRoster, oldInfo.IsTaken);
                 newData.SetLanceTemplate(oldInfo.CurrentLance);
 
-                _notablesLance[hero.StringId] = newData;
+                _notablesLance[newHero.StringId] = newData;
                 if (record.WasLanceTaken && !string.IsNullOrEmpty(record.PartyThatHasLance))
                 {
                     var newTargetPartyLance = record.PartyThatHasLance;
@@ -225,9 +225,14 @@ namespace LanceSystem.CampaignBehaviors
                     {
                         if (kvp.Key == lanceData.NotableId)
                         {
-                            lanceData.NotableId = hero.StringId;
+                            lanceData.NotableId = newHero.StringId;
                             newData.PartyLanceBelongsTo = newTargetPartyLance;
                         }
+                    }
+                    foreach (DisbandedLancePartyComponent? dibandedComponent in MobileParty.All.Where(p => p.PartyComponent is DisbandedLancePartyComponent).Select(p => p.PartyComponent as DisbandedLancePartyComponent))
+                    {
+                        if (dibandedComponent == null) continue;
+                        dibandedComponent.NotableLanceBelongsTo = newHero.StringId;
                     }
                 }
                 else if (!record.WasLanceTaken)
@@ -240,10 +245,10 @@ namespace LanceSystem.CampaignBehaviors
                 break; // Only one notable can replace one other
             }
 
-            if (!_notablesLance.ContainsKey(hero.StringId))
+            if (!_notablesLance.ContainsKey(newHero.StringId))
             {
                 var dummyRoster = TroopRoster.CreateDummyTroopRoster();
-                _notablesLance[hero.StringId] = new SettlementNotableLanceInfo(hero, dummyRoster, false);
+                _notablesLance[newHero.StringId] = new SettlementNotableLanceInfo(newHero, dummyRoster, false);
             }
         }
         private void OnHeroPrisonerTaken(PartyBase capturerParty, Hero hero)
@@ -332,7 +337,6 @@ namespace LanceSystem.CampaignBehaviors
             {
                 foreach (var notable in settlement.Notables)
                 {
-                    var all = Hero.AllAliveHeroes;
                     var lanceModel = Campaign.Current.Models.LanceModel();
                     lanceModel.UpdateNotablesLanceTroops(notable, _notablesLance[notable.StringId]);
                     _notablesLance[notable.StringId].CachedMaxLanceTroops = Campaign.Current.Models.LanceModel().GetMaxTroopsInLance(notable);
@@ -443,8 +447,7 @@ namespace LanceSystem.CampaignBehaviors
         public void RecruitNotableLanceToParty(PartyBase party, Hero notable)
         {
             var lanceData = _notablesLance[notable.StringId];
-            lanceData.IsTaken = true;
-            lanceData.PartyLanceBelongsTo = party.Id;
+            SetNotableLanceAsTaken(lanceData, party);
             var notableTroops = lanceData.CurrentNotableLanceTroopRoster;
             var partyLanceTroops = TroopRoster.CreateDummyTroopRoster();
             partyLanceTroops.Add(notableTroops);
@@ -452,6 +455,11 @@ namespace LanceSystem.CampaignBehaviors
             notableTroops.Clear();
             var lance = new NotableLanceData(partyLanceTroops, notable.StringId, notable.BornSettlement.StringId, lanceName);
             AddLanceToParty(party, lance);
+        }
+        public void SetNotableLanceAsTaken(SettlementNotableLanceInfo lanceData, PartyBase party)
+        {
+            lanceData.IsTaken = true;
+            lanceData.PartyLanceBelongsTo = party.Id;
         }
         public void AddLanceToParty(PartyBase party, LanceData lance)
         {
@@ -516,29 +524,31 @@ namespace LanceSystem.CampaignBehaviors
         {
             var ownerParty = AccessTools.Property("TaleWorlds.CampaignSystem.Roster.TroopRoster:OwnerParty").GetGetMethod(true);
             var party = (PartyBase)ownerParty.Invoke(removeFrom, null);
-            LockedParties.Add(party.Id);
+            if (party != null)
+                LockedParties.Add(party.Id);
             foreach (var troop in (TroopRosterElement[])troopRosterData.GetValue(troopsToRemove))
             {
                 if (troop.Character == null) break;
                 removeFrom.RemoveTroop(troop.Character, troop.Number);
             }
-            LockedParties.Remove(party.Id);
+            if (party != null)
+                LockedParties.Remove(party.Id);
         }
-        public void DisbandLanceInParty(PartyBase party, LanceData lanceToDisband, bool removeTroops)
+        public void DisbandLanceInParty(PartyBase party, LanceData lanceToDisband, bool removeTroops, bool createDisbandedParty)
         {
-            CheckLanceConsistency(party);
             try
             {
                 if (removeTroops)
                     RemoveTroopsFromLancesSafely(party, lanceToDisband.LanceRoster);
                 RemoveLance(party.Lances(), lanceToDisband);
-                if (lanceToDisband is NotableLanceData nl && removeTroops)
+                if (lanceToDisband is NotableLanceData nl && createDisbandedParty)
                     DisbandedLancePartyComponent.CreateDisbandedLanceParty(nl, party);
             }
             catch(Exception)
             {
                 LanceLogger.Logger.Warning($"Error disbanding lance in party {party.Name} of lord {party.LeaderHero?.Name}");
             }
+            CheckLanceConsistency(party);
         }
         public void DisbandLanceInParty(PartyBase party, int lanceNumber, bool removeTroops) // if disbanded through lance ui, the troops are already removed from the party
         {
@@ -548,7 +558,7 @@ namespace LanceSystem.CampaignBehaviors
                 return;
             }
             var lanceToDisband = party.Lances()[lanceNumber];
-            DisbandLanceInParty(party, lanceToDisband, removeTroops);
+            DisbandLanceInParty(party, lanceToDisband, removeTroops, true);
         }
         public void ReAddLanceToPlayerParty(MobileParty lanceParty)
         {
@@ -562,6 +572,7 @@ namespace LanceSystem.CampaignBehaviors
             var lanceName = GetLanceName(notable, notable.BornSettlement, lanceData.CurrentLance).ToString();
             var newLance = new NotableLanceData(lanceParty.MemberRoster, pc.NotableLanceBelongsTo, pc.HomeSettlement.StringId, lanceName);
             lanceParty.Party.Lances().Add(newLance);
+            SetNotableLanceAsTaken(_notablesLance[pc.NotableLanceBelongsTo], MobileParty.MainParty.Party);
             DestroyPartyAction.Apply(null, lanceParty);
         }
         public bool HasLances(PartyBase party)
