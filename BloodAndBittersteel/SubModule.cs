@@ -7,11 +7,11 @@ using BloodAndBittersteel.Features.IronbornWives;
 using BloodAndBittersteel.Features.Jousting;
 using BloodAndBittersteel.Features.NightsWatch;
 using BloodAndBittersteel.Features.Tribute;
+using BloodAndBittersteel.MCM;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
-using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Xml.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
@@ -19,6 +19,7 @@ using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
+using static BloodAndBittersteel.MCM.BaBSettings;
 
 namespace BloodAndBittersteel
 {
@@ -97,6 +98,7 @@ namespace BloodAndBittersteel
             ItemSwapManager.Instance.LoadFromFile();
             RemoveSandboxAndStoryOptions();
             AddBaBStart();
+            CustomSettingsBootstrap.Initialize();
         }
         protected override void OnSubModuleUnloaded()
         {

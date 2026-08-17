@@ -2,6 +2,7 @@
 using HarmonyLib;
 using LanceSystem.CampaignBehaviors;
 using LanceSystem.Deserialization;
+using LanceSystem.MCM;
 using LanceSystem.Models;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
@@ -37,6 +38,7 @@ namespace LanceSystem
         {
             harmony.PatchAll();
             LanceTemplateManager.Instance.LoadFromFile();
+            CustomSettingsBootstrap.Initialize();
         }
         public override void OnGameInitializationFinished(Game game)
         {

@@ -1,5 +1,6 @@
 ﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BaBEvents.PopUpEvents.Events;
+using BloodAndBittersteel.MCM;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;

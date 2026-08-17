@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LanceSystem.MCM;
+using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 

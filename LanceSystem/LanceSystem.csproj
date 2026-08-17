@@ -9,7 +9,15 @@
 		<ModuleId>$(MSBuildProjectName)</ModuleId>
 		<ModuleName>$(MSBuildProjectName)</ModuleName>
 		<GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
-		<Configurations>Debug;Release;aaa</Configurations>
+		<Configurations>Debug;Release;aaa;ccc</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	  <Optimize>True</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	  <Optimize>False</Optimize>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,9 +25,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="MCMv5">
-			<HintPath>$(SolutionDir)BloodAndBittersteel\_Module\bin\Win64_Shipping_Client\MCMv5.dll</HintPath>
-		</Reference>
 		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\Newtonsoft.Json.dll">
 			<HintPath>%(Identity)</HintPath>
 			<Private>False</Private>

@@ -8,12 +8,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
 		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;aaa;ccc</Configurations>
 	</PropertyGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Lib.Harmony" Version="2.4.2" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-		<PackageReference Include="MSTest" Version="4.0.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+		<PackageReference Include="MSTest" Version="4.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>

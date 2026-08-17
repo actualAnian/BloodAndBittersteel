@@ -1,5 +1,6 @@
 ﻿using LanceSystem.CampaignBehaviors;
 using LanceSystem.LanceDataClasses;
+using LanceSystem.MCM;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;

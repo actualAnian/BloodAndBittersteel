@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BloodAndBittersteel.MCM;
+using System;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade;
@@ -12,7 +13,7 @@ namespace BloodAndBittersteel.Features.HelmetTilting
         //ItemObject item2 = MBObjectManager.Instance.GetObject<ItemObject>("emirs_helmet");
         public override void OnMissionTick(float dt)
         {
-            if (Input.IsKeyPressed(BaBSettings.Instance.HelmetTilting.SelectedValue))
+            if (Input.IsKeyPressed(BaBSettings.Instance.HelmetTilting))
             {
                 if (Agent.Main == null) return;
                 foreach(EquipmentIndex eqIndex in Enum.GetValues(typeof(EquipmentIndex)))
