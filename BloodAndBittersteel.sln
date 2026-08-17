@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.3.11312.210
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37531.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodAndBittersteel", "BloodAndBittersteel\BloodAndBittersteel.csproj", "{05502B10-3A15-D2D0-F302-84F249FAC569}"
 EndProject
@@ -18,6 +18,7 @@ Global
 		aaa|x64 = aaa|x64
 		bbb|x64 = bbb|x64
 		ccc|x64 = ccc|x64
+		ddd|x64 = ddd|x64
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -28,6 +29,8 @@ Global
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.bbb|x64.Build.0 = aaa|x64
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.ccc|x64.ActiveCfg = Debug|x64
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.ccc|x64.Build.0 = Debug|x64
+		{05502B10-3A15-D2D0-F302-84F249FAC569}.ddd|x64.ActiveCfg = aaa|x64
+		{05502B10-3A15-D2D0-F302-84F249FAC569}.ddd|x64.Build.0 = aaa|x64
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.Debug|x64.ActiveCfg = Debug|x64
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.Debug|x64.Build.0 = Debug|x64
 		{05502B10-3A15-D2D0-F302-84F249FAC569}.Release|x64.ActiveCfg = Release|x64
@@ -38,6 +41,8 @@ Global
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.bbb|x64.Build.0 = aaa|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.ccc|x64.ActiveCfg = Release|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.ccc|x64.Build.0 = Release|x64
+		{5B350C35-E991-48CC-AA94-BC8C4870346D}.ddd|x64.ActiveCfg = aaa|x64
+		{5B350C35-E991-48CC-AA94-BC8C4870346D}.ddd|x64.Build.0 = aaa|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Debug|x64.ActiveCfg = Debug|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Debug|x64.Build.0 = Debug|x64
 		{5B350C35-E991-48CC-AA94-BC8C4870346D}.Release|x64.ActiveCfg = Release|Any CPU
@@ -48,16 +53,20 @@ Global
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.bbb|x64.Build.0 = aaa|x64
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.ccc|x64.ActiveCfg = aaa|x64
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.ccc|x64.Build.0 = aaa|x64
+		{574F7696-BEE2-41E9-910D-36257D0F21DE}.ddd|x64.ActiveCfg = aaa|x64
+		{574F7696-BEE2-41E9-910D-36257D0F21DE}.ddd|x64.Build.0 = aaa|x64
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Debug|x64.ActiveCfg = Release|Any CPU
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Debug|x64.Build.0 = Release|Any CPU
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Release|x64.ActiveCfg = Release|Any CPU
 		{574F7696-BEE2-41E9-910D-36257D0F21DE}.Release|x64.Build.0 = Release|Any CPU
-		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.aaa|x64.ActiveCfg = aaa|x64
-		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.aaa|x64.Build.0 = aaa|x64
+		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.aaa|x64.ActiveCfg = bbb|x64
+		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.aaa|x64.Build.0 = bbb|x64
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.bbb|x64.ActiveCfg = bbb|x64
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.bbb|x64.Build.0 = bbb|x64
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.ccc|x64.ActiveCfg = bbb|x64
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.ccc|x64.Build.0 = bbb|x64
+		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.ddd|x64.ActiveCfg = bbb|x64
+		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.ddd|x64.Build.0 = bbb|x64
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.Debug|x64.Build.0 = Debug|Any CPU
 		{605D8B8A-4487-44AD-BD50-4AC9C8FD5B61}.Release|x64.ActiveCfg = Release|Any CPU
@@ -68,6 +77,8 @@ Global
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.bbb|x64.Build.0 = Release|Any CPU
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.ccc|x64.ActiveCfg = aaa|x64
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.ccc|x64.Build.0 = aaa|x64
+		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.ddd|x64.ActiveCfg = ddd|x64
+		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.ddd|x64.Build.0 = ddd|x64
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.Debug|x64.Build.0 = Debug|Any CPU
 		{414AD6AD-1DDE-4719-BBAA-1A5FC50F0851}.Release|x64.ActiveCfg = Release|Any CPU
