@@ -98,9 +98,18 @@ public class PreMadeCharacterSelection
 
         if (prebuildHero.Clan != null)
             ReflectionHelper.SetPropertyValue(Campaign.Current, "PlayerDefaultFaction", prebuildHero.Clan);
+        ApplyBannerColor(prebuildHero);
         JumpToNextStage(state, nextIndex, prebuildHero);
     }
-
+    private void ApplyBannerColor(Hero prebuildHero)
+    {
+        uint primaryColor = prebuildHero.Clan.Banner.GetPrimaryColor();
+        uint firstIconColor = prebuildHero.Clan.Banner.GetFirstIconColor();
+        Clan playerClan = Clan.PlayerClan;
+        playerClan.Color = primaryColor;
+        playerClan.Color2 = firstIconColor;
+        playerClan.UpdateBannerColor(primaryColor, firstIconColor);
+    }
     private static readonly int FocusPointsBonus = 4;
     private static readonly int AttributePointsBonus = 2;
     private static readonly int NewCharFocusPoints = 16;
