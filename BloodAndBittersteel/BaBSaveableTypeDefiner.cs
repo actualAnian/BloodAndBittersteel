@@ -3,6 +3,7 @@ using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.IronbornWives;
 using BloodAndBittersteel.Features.Jousting;
 using BloodAndBittersteel.Features.NightsWatch;
+using BloodAndBittersteel.Features.Tournaments;
 using BloodAndBittersteel.Library.ModifiableValues;
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
@@ -22,8 +23,9 @@ namespace BloodAndBittersteel
             AddClassDefinition(typeof(BecomeSaltWifeLogEntry), 5);
             AddClassDefinition(typeof(JoinedNightsWatchLogEntry), 6);
             AddClassDefinition(typeof(JoustTournamentGame), 7);
+            AddClassDefinition(typeof(BaBFightTournamentGame), 8);
 
-            AddEnumDefinition(typeof(RebellionSide), 8);
+            AddEnumDefinition(typeof(RebellionSide), 9);
         }
         protected override void DefineContainerDefinitions()
         {
