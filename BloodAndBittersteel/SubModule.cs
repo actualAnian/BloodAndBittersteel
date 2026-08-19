@@ -13,6 +13,7 @@ using HarmonyLib;
 using System;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.AdvancedStartOptions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.GameComponents;
@@ -85,7 +86,7 @@ namespace BloodAndBittersteel
         {
             Module.CurrentModule.AddInitialStateOption(
             new InitialStateOption("bab", name: new TextObject("Blood And Bittersteel", null), 3,
-            () => MBGameManager.StartNewGame(new BaBCampaignManager(() => new Campaign(CampaignGameMode.Campaign))),
+            () => MBGameManager.StartNewGame(new BaBCampaignManager(() => new Campaign(CampaignGameMode.Campaign, new AdvancedStartOptionsData()))),
             () =>
             {
                 //if (Globals.IsWarSailsLoaded && !hasRFWarsails) return (true, new("{=rf_start_remove_warsails}You have war sails enabled but your RF version is not warsails compatible"));

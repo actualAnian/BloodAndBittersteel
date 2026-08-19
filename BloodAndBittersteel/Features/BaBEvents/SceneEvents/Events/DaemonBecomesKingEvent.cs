@@ -51,7 +51,8 @@ namespace BloodAndBittersteel.Features.BaBEvents.SceneEvents.Events
 
             kingdomToRename.ChangeKingdomName(
                 new TextObject("{=bab_new_crownlands_name}Realm of the Blackfyre"),
-                new TextObject("{=bab_new_crownlands_informal}Realm of the Blackfyre"));
+                new TextObject("{=bab_new_crownlands_informal}Realm of the Blackfyre"),
+                new TextObject("{=bab_new_crownlands_name}Realm of the Blackfyre"));
         }
         [BaBEvent]
         private static BaBSceneEvent CreateEvent()

@@ -84,6 +84,11 @@ namespace BloodAndBittersteel.Models
             return _baseModel.GetEffectiveRelation(hero, hero1);
         }
 
+        public override int GetEffectiveRelationChange(Hero originalHero, Hero originalGainedRelationWith, int relationChange)
+        {
+            return _baseModel.GetEffectiveRelationChange(originalHero, originalGainedRelationWith, relationChange);
+        }
+
         public override float GetHeroCommandingStrengthForClan(Hero hero)
         {
             return _baseModel.GetHeroCommandingStrengthForClan(hero);
@@ -192,11 +197,6 @@ namespace BloodAndBittersteel.Models
         public override int GetRelationCostOfExpellingClanFromKingdom()
         {
             return _baseModel.GetRelationCostOfExpellingClanFromKingdom();
-        }
-
-        public override float GetRelationIncreaseFactor(Hero hero1, Hero hero2, float relationValue)
-        {
-            return _baseModel.GetRelationIncreaseFactor(hero1, hero2, relationValue);
         }
 
         public override int GetRelationValueOfSupportingClan()

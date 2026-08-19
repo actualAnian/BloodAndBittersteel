@@ -30,10 +30,6 @@ namespace BloodAndBittersteel.Models
 
         public override float LowSecurityLoyaltyEffect => _previousModel.LowSecurityLoyaltyEffect;
 
-        public override float GovernorSameCultureLoyaltyEffect => _previousModel.GovernorSameCultureLoyaltyEffect;
-
-        public override float GovernorDifferentCultureLoyaltyEffect => _previousModel.GovernorDifferentCultureLoyaltyEffect;
-
         public override float SettlementOwnerDifferentCultureLoyaltyEffect => _previousModel.SettlementOwnerDifferentCultureLoyaltyEffect;
 
         public override int ThresholdForTaxBoost => _previousModel.ThresholdForTaxBoost;

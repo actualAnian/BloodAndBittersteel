@@ -77,7 +77,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
             incident.Initialize(
                 "{=bab_dornish_succession_title}The Prince of Dorne Calls Upon You",
                 "",
-                IncidentsCampaignBehaviour.IncidentTrigger.LeavingVillage,
+                new Incident.IncidentTrigger(new string[] { "LeavingVillage" }),
                 IncidentsCampaignBehaviour.IncidentType.HardTravel,
                 CampaignTime.Never,
                 condition: description =>

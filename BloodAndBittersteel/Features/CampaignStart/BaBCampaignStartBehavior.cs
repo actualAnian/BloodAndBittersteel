@@ -15,6 +15,13 @@ namespace BloodAndBittersteel.Features.CampaignStart
         {
             CampaignEvents.OnCharacterCreationIsOverEvent.AddNonSerializedListener(this, OnCreationOver);
         }
+
+        private void OnCreationOver(int obj)
+        {
+            if (CharacterSelectionViewModel.Instance?.PreBuildHero != null) return;
+            TeleportPlayerToStartLocation();
+        }
+
         private void TeleportPlayerToStartLocation()
         {
             var startSettlementId = BaBCampaignStartConfig.GetStartSettlementFromCulture(Hero.MainHero.Culture);
@@ -30,11 +37,6 @@ namespace BloodAndBittersteel.Features.CampaignStart
                     mapState.Handler.TeleportCameraToMainParty();
                 }
             }
-        }
-        private void OnCreationOver()
-        {
-            if (CharacterSelectionViewModel.Instance?.PreBuildHero != null) return;
-            TeleportPlayerToStartLocation();
         }
         public override void SyncData(IDataStore dataStore) { }
     }
