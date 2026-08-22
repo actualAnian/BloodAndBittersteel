@@ -1,15 +1,16 @@
-﻿using BloodAndBittersteel;
-using LanceSystem.Logger;
+﻿using LanceSystem.Logger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Settlements;
+using TaleWorlds.CampaignSystem.Settlements.Locations;
 
 namespace LanceSystem.Deserialization
 {
     public class LanceTemplateManager
     {
-        private static readonly Lazy<string> _path = new(() => PathHelper.BaBOutsideConfigPath + "lance_templates.xml");
+        private static readonly Lazy<string> _path = new(() => Path.Combine(PathHelper.OutsideConfigPath, "lance_templates.xml"));
         private static LanceTemplateManager? _instance;
         public static LanceTemplateManager Instance => _instance ??= new LanceTemplateManager();
         public Dictionary<string, Lance> Lances { get; private set; } = new();

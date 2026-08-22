@@ -2,8 +2,10 @@
 using HarmonyLib;
 using LanceSystem.CampaignBehaviors;
 using LanceSystem.Deserialization;
+using LanceSystem.DynamicTroops;
 using LanceSystem.MCM;
 using LanceSystem.Models;
+using System.IO;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
@@ -38,6 +40,9 @@ namespace LanceSystem
         {
             harmony.PatchAll();
             LanceTemplateManager.Instance.LoadFromFile();
+            DynamicTroopsXmlSaver xmlSaver = new(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_troops.xml"));
+            xmlSaver.CreateCharacterXmlIfNeeded();
+            xmlSaver.LoadAndMarkDynamic();
             CustomSettingsBootstrap.Initialize();
         }
         public override void OnGameInitializationFinished(Game game)

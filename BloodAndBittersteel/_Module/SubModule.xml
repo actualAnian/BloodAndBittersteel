@@ -71,6 +71,16 @@
 		  </IncludedGameTypes>
 	  </XmlNode>
 	  <XmlNode>
+		  <XmlName id="NPCCharacters" path="Configs/dynamic_troops"/>
+		  <IncludedGameTypes>
+			  <GameType value = "Campaign"/>
+			  <GameType value = "CampaignStoryMode"/>
+			  <GameType value = "CustomGame"/>
+			  <GameType value = "EditorGame"/>
+		  </IncludedGameTypes>
+	  </XmlNode>
+
+	  <XmlNode>
 		  <XmlName id="Heroes" path="heroes_BAB"/>
 		  <IncludedGameTypes>
 			  <GameType value = "Campaign"/>

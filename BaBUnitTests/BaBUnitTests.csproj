@@ -27,19 +27,9 @@
 			<HintPath>%(Identity)</HintPath>
 			<Private>False</Private>
 		</Reference>
-
-		<Reference Include="TaleWorlds.CampaignSystem">
-			<HintPath>$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.CampaignSystem.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-		
-		<Reference Include="TaleWorlds.CampaignSystem">
-			<HintPath>$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Core.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-		<Reference Include="TaleWorlds.CampaignSystem">
-			<HintPath>$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.CampaignSystem.dll</HintPath>
-			<Private>true</Private>
+		<Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
 		</Reference>
 		
 
@@ -75,11 +65,10 @@
 		<ModuleAssemblies Include="$(GameFolder)\Modules\**\bin\Win64_Shipping_Client\*.dll" />
 	</ItemGroup>
 
-	<!--<Target Name="CopyTaleWorldsAssemblies" AfterTargets="Build" Condition=" '$(GameFolder)' != '' ">
+	<Target Name="CopyTaleWorldsAssemblies" AfterTargets="Build" Condition=" '$(GameFolder)' != '' ">
 		<Message Text="Copying TaleWorlds assemblies from $(GameFolder) to $(TargetDir)" Importance="high" />
 		<Copy SourceFiles="@(GameAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(ModuleAssemblies)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
-	</Target>-->
+	</Target>
 
 	<ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
