@@ -57,9 +57,16 @@
 			<HintPath>%(Identity)</HintPath>
 			<Private>False</Private>
 		</Reference>
+
+		<Reference Include="$(GameFolder)\Modules\Bannerlord.UIExtenderEx\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="DynamicLances\UI\" />
+	  <Folder Include="ClanScreenUI\" />
 	  <Folder Include="_Module\Languages\" />
 	</ItemGroup>
 

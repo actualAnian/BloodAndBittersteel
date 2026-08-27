@@ -1,4 +1,5 @@
-﻿using BloodAndBittersteel;
+﻿using Bannerlord.UIExtenderEx;
+using BloodAndBittersteel;
 using HarmonyLib;
 using LanceSystem.CampaignBehaviors;
 using LanceSystem.Deserialization;
@@ -18,6 +19,7 @@ namespace LanceSystem
     public class SubModule : MBSubModuleBase
     {
         public static readonly Harmony harmony = new("bloodandbittersteel");
+        static UIExtender _extender;
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             LanceEvents.RemoveAllListeners();
@@ -39,6 +41,9 @@ namespace LanceSystem
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
+            _extender = UIExtender.Create("BloodAndBittersteel");
+            _extender.Register(typeof(SubModule).Assembly);
+            _extender.Enable();
             LanceTemplateManager.Instance.LoadFromFile();
             DynamicTroopsXmlSaver xmlSaver = new(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_troops.xml"));
             xmlSaver.CreateCharacterXmlIfNeeded();

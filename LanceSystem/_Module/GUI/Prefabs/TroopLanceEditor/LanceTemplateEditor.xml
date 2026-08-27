@@ -1,0 +1,252 @@
+<Prefab>
+	<!-- Prefab root - constants for encyclopedia frame and column sizing -->
+	<Constants>
+		<Constant Name="Encyclopedia.Frame.Width" BrushLayer="Default" BrushName="Encyclopedia.Frame" BrushValueType="Width" />
+		<Constant Name="Encyclopedia.Frame.Height" BrushLayer="Default" BrushName="Encyclopedia.Frame" BrushValueType="Height" />
+		<Constant Name="Text.Header.Size" Value="50" />
+		<Constant Name="Text.Standard.Size" Value="25" />
+		<Constant Name="TroopEditor.MediumButton.Height" Value="60" />
+		<Constant Name="TroopEditor.MediumButton.Width" Value="120" />
+		<Constant Name="ItemRows.MarginTop" Value="8" />
+		<Constant Name="Troop.Icon.Width" BrushName="Order.Troop.Icon" BrushLayer="Default" BrushValueType="Width" MultiplyResult="0.35" />
+		<Constant Name="Troop.Icon.Height" BrushName="Order.Troop.Icon" BrushLayer="Default" BrushValueType="Height" MultiplyResult="0.35" />
+		<Constant Name="Header.Column.TroopEditor.Width" Value="110" />
+		<Constant Name="Header.Column.Category.Width" Value="110" />
+		<Constant Name="Header.Column.Troop.Width" Value="210" />
+		<Constant Name="Header.Column.Likelihood.Width" Value="120" />
+		<Constant Name="Header.Column.Remove.Width" Value="80" />
+		<Constant Name="Header.Column.Gap" Value="30" />
+
+		<Constant Name="TemplateEditor.SmallButton.Height" Value="16" />
+		<Constant Name="TemplateEditor.SmallButton.Width" Value="60" />
+
+	</Constants>
+	<!-- Window root -->
+	<Window>
+		<!-- root overlay - semi-transparent fullscreen background -->
+		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000CC">
+			<Children>
+				<!-- popup frame - encyclopedia styled window fixed to frame brush -->
+				<BrushWidget Id="LanceEditorPopup" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Encyclopedia.Frame.Width" SuggestedHeight="!Encyclopedia.Frame.Height" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Encyclopedia.Frame">
+					<Children>
+						<!-- main vertical stack -->
+						<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="VerticalTopToBottom">
+							<Children>
+								<!-- title bar -->
+								<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="590" SuggestedHeight="140" HorizontalAlignment="Center" VerticalAlignment="Top" PositionXOffset="6" PositionYOffset="-18" Sprite="StdAssets\tabbar_popup" IsDisabled="true">
+									<Children>
+										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" PositionYOffset="-25" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="46" IsDisabled="true" Text="Lance Template Editor" />
+									</Children>
+								</Widget>
+								<!-- main content area - three columns: banner | lance panel | info -->
+								<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" StackLayout.LayoutMethod="HorizontalLeftToRight">
+									<Children>
+										<!-- banner - left column - template banner preview and edit -->
+										<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Left" VerticalAlignment="Center" StackLayout.LayoutMethod="VerticalTopToBottom" MarginLeft="200">
+											<Children>
+												<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Template Banner" />
+												<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="232" SuggestedHeight="272" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="10" Brush="Encyclopedia.Frame">
+													<Children>
+														<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="6" MarginBottom="6" MarginLeft="6" MarginRight="6" Brush="Encyclopedia.SubPage.Element">
+															<Children>
+																<ImageIdentifierWidget DataSource="{TemplateBannerVisual}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginTop="4" MarginBottom="4" MarginLeft="4" MarginRight="4" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" />
+															</Children>
+														</Widget>
+													</Children>
+												</Widget>
+												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="120" SuggestedHeight="32" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="14" Brush="ButtonBrush2" Command.Click="ExecuteEditBanner">
+													<Children>
+														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="Edit Banner" />
+													</Children>
+												</ButtonWidget>
+											</Children>
+										</ListPanel>
+										<!-- lance panel - center column - template name, column headers, troop rows, add/save -->
+										<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
+											<Children>
+												<!-- lance panel - template name button (scales dynamically) -->
+												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="300" SuggestedHeight="80" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="ButtonGoldBrush" Command.Click="ExecuteRenameTemplate" MinWidth="200" MaxWidth="600">
+													<Children>
+														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="@TemplateNameFontSize" Text="@TemplateName" />
+													</Children>
+												</ButtonWidget>
+												<!-- lance panel - column headers - troop editor | category | basic troop (dynamic) | likelihood | remove -->
+												<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="30" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="12" StackLayout.LayoutMethod="HorizontalLeftToRight">
+													<Children>
+														<!-- header - troop editor column -->
+														<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Header.Column.TroopEditor.Width" SuggestedHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+															<Children>
+																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Standard.Size" Text="Troop Editor" />
+															</Children>
+														</Widget>
+														<!-- header - category column -->
+														<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Header.Column.Category.Width" SuggestedHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+															<Children>
+																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Standard.Size" Text="Category" />
+															</Children>
+														</Widget>
+														<!-- header - basic troop column - dynamic width via LongestTroopName hidden measure -->
+														<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+															<Children>
+																<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="HorizontalLeftToRight">
+																	<Children>
+																		<!-- header - portrait spacer -->
+																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="123" SuggestedHeight="30" />
+																		<!-- header - troop name - visible + hidden longest for dynamic scaling -->
+																		<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" MarginLeft="6">
+																			<Children>
+																				<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Standard.Size" Text="@LongestTroopName" />
+																			</Children>
+																		</Widget>
+																	</Children>
+																</ListPanel>
+															</Children>
+														</Widget>
+														<!-- header - likelihood column -->
+														<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Header.Column.Likelihood.Width" SuggestedHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+															<Children>
+																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Standard.Size" Text="Likelihood" />
+															</Children>
+														</Widget>
+														<!-- header - remove column -->
+														<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Header.Column.Remove.Width" SuggestedHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+															<Children>
+																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="18" Text="" />
+															</Children>
+														</Widget>
+													</Children>
+												</ListPanel>
+												<!-- lance panel - scrollable troop rows area -->
+												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="1000" SuggestedHeight="500" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="4" StackLayout.LayoutMethod="HorizontalLeftToRight">
+													<Children>
+														<!-- lance panel - scrollable panel - clips TroopList and auto-hides scrollbar -->
+														<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" VerticalAlignment="Top" ClipRect="TroopClipRect" InnerPanel="TroopClipRect\TroopList" VerticalScrollbar="..\TroopScrollbar" AutoHideScrollBars="true">
+															<Children>
+																<!-- lance panel - clip rect - masks overflowing rows -->
+																<Widget Id="TroopClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" ClipContents="true">
+																	<Children>
+																		<!-- lance panel - troop rows list - vertical stack of TroopData rows -->
+																		<ListPanel Id="TroopList" DataSource="{TroopRows}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom">
+																			<ItemTemplate>
+																				<!-- lance panel - single troop row - troop editor | category icon | portrait+name | likelihood | remove -->
+																				<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="96" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
+																					<Children>
+																						<!-- row - troop editor button column -->
+																						<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Header.Column.TroopEditor.Width" SuggestedHeight="89" HorizontalAlignment="Center" VerticalAlignment="Center">
+																							<Children>
+																								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="ButtonBrush2" Command.Click="ExecuteOpenTroopEditor">
+																									<Children>
+																										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="14" Text="Open" />
+																									</Children>
+																								</ButtonWidget>
+																							</Children>
+																						</Widget>
+																						<!-- row - category icon button column - entombed OrderFormation sprite -->
+																						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap" Brush="ButtonBrush2" Command.Click="ExecuteFormationClicked">
+																							<Children>
+																								<OrderFormationClassVisualBrushWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Troop.Icon.Width" SuggestedHeight="!Troop.Icon.Height" HorizontalAlignment="Center" VerticalAlignment="Center" FormationClassValue="@FormationClassValue" Brush="Order.Troop.Icon" />
+																							</Children>
+																						</ButtonWidget>
+																						<!-- row - portrait + name column - portrait button with frame + dynamic name (hidden LongestTroopName for scaling) -->
+																						<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="89" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap" StackLayout.LayoutMethod="HorizontalLeftToRight">
+																							<Children>
+																								<ButtonWidget Command.Click="ExecuteLink" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="123" SuggestedHeight="89" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Encyclopedia.SubPage.Element" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint">
+																									<Children>
+																										<ImageIdentifierWidget DataSource="{TroopVisual}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" HorizontalAlignment="Center" MarginRight="3" MarginLeft="3" MarginBottom="3" MarginTop="3" />
+																									</Children>
+																								</ButtonWidget>
+																								<Widget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" MarginLeft="6">
+																									<Children>
+																										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush.FontSize="Text.Standard.Size" Text="@BasicTroopId" />
+																										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" Brush.FontSize="Text.Standard.Size" Text="@LongestTroopName" Brush.FontColor="#00000000" />
+																									</Children>
+																								</Widget>
+																							</Children>
+																						</ListPanel>
+																						<!-- row - likelihood column -->
+																						<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+																							<Children>
+																								<ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="ButtonBrush2" Command.Click="ExecuteEditLikelihood">
+																									<Children>
+																										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@LikelihoodText" />
+																									</Children>
+																								</ButtonWidget>
+																							</Children>
+																						</Widget>
+																						<!-- row - remove button column -->
+																						<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap">
+																							<Children>
+																								<ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="ButtonBrush3" Command.Click="ExecuteRemove">
+																									<Children>
+																										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="Remove" />
+																									</Children>
+																								</ButtonWidget>
+																							</Children>
+																						</Widget>
+																					</Children>
+																				</ListPanel>
+																			</ItemTemplate>
+																		</ListPanel>
+																	</Children>
+																</Widget>
+															</Children>
+														</ScrollablePanel>
+														<!-- lance panel - vertical scrollbar for troop rows -->
+														<ScrollbarWidget Id="TroopScrollbar" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="12" SuggestedHeight="380" VerticalAlignment="Top" MarginLeft="8" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" Handle="TroopScrollbarHandle">
+															<Children>
+																<ImageWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" VerticalAlignment="Top" Brush="Encyclopedia.Scrollbar.Flat.Bed" />
+																<ImageWidget Id="TroopScrollbarHandle" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="8" SuggestedHeight="50" VerticalAlignment="Top" Brush="Encyclopedia.Scrollbar.Flat.Handle" />
+															</Children>
+														</ScrollbarWidget>
+													</Children>
+												</ListPanel>
+												<!-- lance panel - add new troop row button -->
+												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="120" SuggestedHeight="40" Brush="ButtonBrush1" Command.Click="ExecuteAddTroop" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="10">
+													<Children>
+														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="Add New" />
+													</Children>
+												</ButtonWidget>
+											</Children>
+										</ListPanel>
+										<!-- info - right column - likelihood explanation and sum -->
+										<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="320" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
+											<Children>
+												<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="22" Text="Info" />
+												<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="12" Brush="Encyclopedia.EncyclopediaText" Brush.FontSize="18" Text="Likelihood has to sum to 1. Values are normalized automatically when saved. Each value must be between 0 and 1." />
+												<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="20" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="18" Text="@LikelihoodSumText" />
+												<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="12" Brush="Encyclopedia.EncyclopediaText" Brush.FontSize="16" Text="Use Add New to append a TroopData row. Category maps to Infantry / Ranged / Cavalry / HorseArcher." />
+											</Children>
+										</ListPanel>
+									</Children>
+								</ListPanel>
+							</Children>
+						</ListPanel>
+						<!-- top bar - switch/create template buttons -->
+						<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" PositionXOffset="100" PositionYOffset="60" StackLayout.LayoutMethod="HorizontalLeftToRight">
+							<Children>
+								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TroopEditor.MediumButton.Width" SuggestedHeight="!TroopEditor.MediumButton.Height" Brush="ButtonBrush1" Command.Click="ExecuteSwitchTemplate">
+									<Children>
+										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="Switch Template" />
+									</Children>
+								</ButtonWidget>
+								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TroopEditor.MediumButton.Width" SuggestedHeight="!TroopEditor.MediumButton.Height" Brush="ButtonBrush2" Command.Click="ExecuteCreateNewTemplate" MarginLeft="55">
+									<Children>
+										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="New Template" />
+									</Children>
+								</ButtonWidget>
+							</Children>
+						</ListPanel>
+						<!-- close button -->
+						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="90" SuggestedHeight="90" HorizontalAlignment="Right" VerticalAlignment="Top" PositionXOffset="-25" PositionYOffset="18" Brush="Popup.CloseButton" Command.Click="ExecuteClose" />
+						<!-- save button -->
+						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="260" SuggestedHeight="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" Brush="ButtonGreenBrush" Command.Click="ExecuteSaveTemplate" MarginBottom="20">
+							<Children>
+								<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="22" Text="Save Template" />
+							</Children>
+						</ButtonWidget>
+					</Children>
+				</BrushWidget>
+			</Children>
+		</Widget>
+	</Window>
+</Prefab>

@@ -1,0 +1,10 @@
+<Prefab>
+	<Window>
+		<ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="52" Brush="ButtonBrush2" Command.Click="ExecuteFilter">
+			<Children>
+				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="130" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@Title" />
+				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Right" VerticalAlignment="Center" MarginRight="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="14" Text="@DisplayValue" />
+			</Children>
+		</ButtonWidget>
+	</Window>
+</Prefab>
