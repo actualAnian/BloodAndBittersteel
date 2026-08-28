@@ -1,9 +1,8 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Core;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.WeaponTypeFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.WeaponTypeFilters
 {
     public class WeaponTypeContext : MultiSelectionContext
     {
@@ -42,7 +41,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.WeaponTy
             _selected = new HashSet<ItemObject.ItemTypeEnum>(values);
         }
 
-        protected override void OnReset()
+        protected override void OnResetInternal()
         {
             _selected = new HashSet<ItemObject.ItemTypeEnum>();
         }

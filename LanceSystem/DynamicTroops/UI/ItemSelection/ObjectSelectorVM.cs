@@ -1,9 +1,9 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Library;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection
+namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
     public class ObjectSelectorVM : ViewModel
     {

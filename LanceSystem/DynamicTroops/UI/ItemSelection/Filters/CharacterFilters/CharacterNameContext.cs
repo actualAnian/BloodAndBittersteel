@@ -1,14 +1,18 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
+using System;
 using TaleWorlds.Library;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.CharacterFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.CharacterFilters
 {
     public class CharacterNameContext : IFilterContext
     {
         string _text = "";
+        public event Action? OnChanged;
+        public event Action? OnReset;
+
         public string Title => "Name";
         public string DisplayText => _text;
         public string Query => DisplayText;
+
 
         public void OnEventClicked()
         {
@@ -18,11 +22,13 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.Characte
         void OnTextEntered(string text)
         {
             _text = text;
+            OnChanged?.Invoke();
         }
 
         public void Reset()
         {
             _text = "";
+            OnReset?.Invoke();
         }
     }
 }

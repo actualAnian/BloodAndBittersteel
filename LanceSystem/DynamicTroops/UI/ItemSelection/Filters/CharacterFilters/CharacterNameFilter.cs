@@ -1,10 +1,9 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.CharacterFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.CharacterFilters
 {
     public class CharacterNameFilter : IDataFilter<CharacterObject>
     {
@@ -15,7 +14,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.Characte
             _context = context;
             _nameSelector = nameSelector;
         }
-        public IList<CharacterObject> Filter(IList<CharacterObject> data)
+        public IList<CharacterObject> GetFilteredItems(IList<CharacterObject> data)
         {
             if (string.IsNullOrWhiteSpace(_context.Query)) return data;
             return data.Where(c => (_nameSelector(c) ?? "").IndexOf(_context.Query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();

@@ -1,9 +1,18 @@
 <Prefab>
+	<Constants>
+		<Constant Name="Text.Standard.Size" Value="25" />
+
+	</Constants>
+
+	<!-- ObjectFilterEntry: single filter button in the sidebar - shows title on left, current value on right -->
 	<Window>
+		<!-- Filter button: click opens the filter selection dialog -->
 		<ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="52" Brush="ButtonBrush2" Command.Click="ExecuteFilter">
 			<Children>
-				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="130" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@Title" />
-				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Right" VerticalAlignment="Center" MarginRight="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="14" Text="@DisplayValue" />
+				<!-- Filter name: e.g. "Tier", "Weapon", "Culture" -->
+				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="130" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@Title" />
+				<!-- Current selection: e.g. "All", "1, 2, 3" -->
+				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Right" VerticalAlignment="Center" MarginRight="12" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@DisplayValue" />
 			</Children>
 		</ButtonWidget>
 	</Window>

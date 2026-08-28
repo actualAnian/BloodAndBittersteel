@@ -3,9 +3,8 @@ using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Core;
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.CultureFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.CultureFilters
 {
     public class CultureContext : MultiSelectionContext
     {
@@ -38,7 +37,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.CultureF
             return elements;
         }
 
-        protected override void OnReset()
+        protected override void OnResetInternal()
         {
             _selected = new HashSet<CultureObject>();
         }

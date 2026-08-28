@@ -1,7 +1,6 @@
 using TaleWorlds.Library;
-using LanceSystem.DynamicTroops.UI.ItemSelection;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection
+namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
     public class ObjectRowVM : ViewModel
     {

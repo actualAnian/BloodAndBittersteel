@@ -2,7 +2,7 @@ using System;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
-namespace LanceSystem.DynamicTroops.TroopCreation
+namespace LanceSystem.DynamicTroops.UI
 {
     public class SkillRowVM : ViewModel
     {

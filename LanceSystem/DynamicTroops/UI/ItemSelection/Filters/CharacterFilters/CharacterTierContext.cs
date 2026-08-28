@@ -1,8 +1,7 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 using System.Collections.Generic;
 using TaleWorlds.Core;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.CharacterFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.CharacterFilters
 {
     public class CharacterTierContext : MultiSelectionContext
     {
@@ -27,7 +26,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.Characte
             _selected = new HashSet<int>(values);
         }
 
-        protected override void OnReset()
+        protected override void OnResetInternal()
         {
             _selected = new HashSet<int> { 0, 1, 2, 3, 4, 5, 6 };
         }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace LanceSystem.DynamicTroops
 {
     public static class TierToLevelMapper

@@ -28,7 +28,7 @@
 		<!-- Root overlay: semi-transparent fullscreen background -->
 		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000CC">
 			<Children>
-				<!-- Main popup frame: Encyclopedia styled window - Fixed size anchored to frame brush -->
+				<!-- Main popup frame: Encyclopedia styled window -->
 				<BrushWidget Id="TroopEditorPopup" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Encyclopedia.Frame.Width" SuggestedHeight="!Encyclopedia.Frame.Height" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="Encyclopedia.Frame">
 					<Children>
 						<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="VerticalTopToBottom">
@@ -39,33 +39,33 @@
 										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" PositionYOffset="-25" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="46" IsDisabled="true" Text="Troop Editor" />
 									</Children>
 								</Widget>
-								<!-- Main content area: Fixed main panel to span frame width, contains 3 columns -->
+								<!-- Main content: 3 columns - skills, character preview, equipment editors -->
 								<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="1480" SuggestedHeight="560" HorizontalAlignment="Center" VerticalAlignment="Top" StackLayout.LayoutMethod="HorizontalLeftToRight">
 									<Children>
-										<!-- LEFT SECTION: Skills menu - Fixed width column, CoverChildren height to hug dynamic rows -->
+										<!-- LEFT SECTION: Skills menu -->
 										<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Left" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom">
 											<Children>
-												<!-- Skills header: CoverChildren -->
+												<!-- Skills header -->
 												<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Skills" />
-												<!-- Skills list: CoverChildren height so it grows/shrinks with SkillRowVM count -->
+												<!-- Skills list: grows/shrinks with SkillRowVM count -->
 												<ListPanel DataSource="{SkillRows}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="10" MarginLeft="!SkillRows.MarginLeft" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<ItemTemplate>
-														<!-- SkillRow object: Fixed width row to keep icon+buttons aligned, CoverChildren height if needed but Fixed 52 keeps rows uniform -->
+														<!-- SkillRow: icon + value + plus/minus buttons -->
 														<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="280" SuggestedHeight="52" HorizontalAlignment="Left" MarginTop="10" StackLayout.LayoutMethod="HorizontalLeftToRight">
 															<Children>
-																<!-- Skill icon + value: Fixed size icon -->
+																<!-- Skill icon + value -->
 																<SkillIconVisualWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="45" SuggestedHeight="45" SkillId="@SkillId" UseSmallestVariation="true" VerticalAlignment="Center" >
 																	<Children>
 																		<TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="16" IntText="@SkillValue" VerticalAlignment="Bottom" HorizontalAlignment="Center" Brush="Encyclopedia.Skill.Text" Brush.FontSize="!Text.Standard.Size" PositionYOffset="14" ClipContents="false" />
 																	</Children>
 																</SkillIconVisualWidget>
-																<!-- Plus button: Fixed size -->
+																<!-- Plus button -->
 																<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="28" SuggestedHeight="32" Brush="ButtonBrush1" Command.Click="ExecutePlus" MarginLeft="!SkillRows.MarginLeft" VerticalAlignment="Center">
 																	<Children>
 																		<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="60" Text="+" />
 																	</Children>
 																</ButtonWidget>
-																<!-- Minus button: Fixed size -->
+																<!-- Minus button -->
 																<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="28" SuggestedHeight="32" Brush="ButtonBrush3" Command.Click="ExecuteMinus" MarginLeft="!SkillRows.MarginLeft" VerticalAlignment="Center">
 																	<Children>
 																		<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="60" Text="-" />
@@ -75,21 +75,22 @@
 														</ListPanel>
 													</ItemTemplate>
 												</ListPanel>
-												<!-- Points left footer: CoverChildren to hug text -->
+												<!-- Points left footer -->
 												<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Standard.Size" Text="@TotalSkillSum" MarginLeft="5" MarginTop="10" />
 											</Children>
 										</ListPanel>
 
-										<!-- CENTER SECTION: Troop name + character preview - Fixed width column, CoverChildren height -->
+										<!-- CENTER SECTION: Troop name + character preview -->
 										<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" SuggestedWidth="400" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
 											<Children>
-												<!-- troop name -->
+												<!-- Troop name -->
 												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="200" SuggestedHeight="90" Brush="ButtonGoldBrush" Command.Click="Rename" MarginLeft="10" VerticalAlignment="Top" HorizontalAlignment="Center">
 													<Children>
 														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Header.Size" Text="@Name" />
 													</Children>
 												</ButtonWidget>
 
+												<!-- Tier selector -->
 												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="45" SuggestedHeight="16" Brush="ButtonBrush1" Command.Click="ChangeTier">
 													<Children>
 														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@TierText" />
@@ -98,18 +99,18 @@
 
 												<!-- Character viewmodel -->
 												<CharacterTableauWidget DataSource="{UnitCharacter}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="300" SuggestedHeight="500" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="-100" BodyProperties="@BodyProperties" IsFemale="@IsFemale" EquipmentCode="@EquipmentCode" CharStringId="@CharStringId" StanceIndex="@StanceIndex" BannerCodeText="@BannerCodeText" MountCreationKey="@MountCreationKey" IsEnabled="false" ArmorColor1="@ArmorColor1" ArmorColor2="@ArmorColor2" />
-												<!-- Equipment set selector: CoverChildren to hug arrows + label -->
+												<!-- Equipment set selector -->
 												<ListPanel DataSource="{ItemSetSelector}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="HorizontalLeftToRight">
 													<Children>
-														<!-- Previous set: CoverChildren to hug arrow -->
+														<!-- Previous set -->
 														<ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteSelectPreviousItem" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center">
 															<Children>
 																<ImageWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="41" SuggestedHeight="48" Brush="ButtonRightBigArrowBrush1" />
 															</Children>
 														</ButtonWidget>
-														<!-- Current set label: Fixed width to keep centered -->
+														<!-- Current set label -->
 														<TextWidget DataSource="{..}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="180" VerticalAlignment="Center" HorizontalAlignment="Center" Brush="Encyclopedia.EquipmentSet.Text" Text="@ItemSetText" />
-														<!-- Next set: CoverChildren -->
+														<!-- Next set -->
 														<ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteSelectNextItem" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center">
 															<Children>
 																<ImageWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="41" SuggestedHeight="48" Brush="ButtonLeftBigArrowBrush1" />
@@ -120,10 +121,10 @@
 											</Children>
 										</ListPanel>
 
-										<!-- RIGHT SECTION: Two columns - Fixed width main panel, CoverChildren height -->
+										<!-- RIGHT SECTION: Equipment editors + Appearance -->
 										<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="700" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="HorizontalLeftToRight">
 											<Children>
-												<!-- LEFT COLUMN: Armor editor + Mount editor - Fixed width, CoverChildren height to stack dynamically -->
+												<!-- LEFT COLUMN: Armor + Mount editors -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
 														<!-- Armor header -->
@@ -131,33 +132,33 @@
 														<!-- Armor slots -->
 														<ListPanel DataSource="{ArmorSlots}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- ArmorSlot object: Fixed width row, CoverChildren height -->
+																<!-- ArmorSlot: icon + Edit button + name -->
 																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<Children>
-																		<!-- Fixed icon placeholder: always 36px wide so Edit button stays anchored even when HasItem=false -->
+																		<!-- Icon placeholder: always 36px so Edit button stays anchored -->
 																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
 																			<Children>
 																				<EquipmentTypeVisualBrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="EquipmentType.Image" Type="@Type" IsVisible="@HasItem" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
 																			</Children>
 																		</Widget>
-																		<!-- Edit button: Fixed size, anchored at fixed offset -->
+																		<!-- Edit button -->
 																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ExecuteChange" MarginLeft="!ItemRows.Button.MarginLeft" VerticalAlignment="Center" HorizontalAlignment="Left">
 																			<Children>
 																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="Edit" />
 																			</Children>
 																		</ButtonWidget>
-																		<!-- Item name: CoverChildren to hug text length -->
+																		<!-- Item name -->
 																		<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@DisplayName" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" HorizontalAlignment="Left" />
 																	</Children>
 																</ListPanel>
 															</ItemTemplate>
 														</ListPanel>
-														<!-- Mount header: CoverChildren -->
+														<!-- Mount header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Mount" MarginTop="10" />
-														<!-- Mount slots: CoverChildren height for 2 slots -->
+														<!-- Mount slots: 2 slots (horse + harness) -->
 														<ListPanel DataSource="{MountSlots}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- MountSlot object: fixed icon placeholder + anchored Edit + CoverChildren text -->
+																<!-- MountSlot: icon + Edit button + name -->
 																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<Children>
 																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
@@ -178,15 +179,15 @@
 													</Children>
 												</ListPanel>
 
-												<!-- RIGHT COLUMN: Weapons editor + Appearance editor - Fixed width, CoverChildren height -->
+												<!-- RIGHT COLUMN: Weapons + Appearance editors -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
-														<!-- Weapons header: CoverChildren -->
+														<!-- Weapons header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Weapons" />
-														<!-- Weapon slots: CoverChildren height for 4 weapons -->
+														<!-- Weapon slots: 4 weapons -->
 														<ListPanel DataSource="{WeaponSlots}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- WeaponSlot object: fixed icon placeholder + anchored Edit + CoverChildren text -->
+																<!-- WeaponSlot: icon + Edit button + name -->
 																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<Children>
 																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
@@ -204,12 +205,12 @@
 																</ListPanel>
 															</ItemTemplate>
 														</ListPanel>
-														<!-- Appearance header: CoverChildren -->
+														<!-- Appearance header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Appearance" MarginTop="10" />
-														<!-- Appearance editor: CoverChildren height for 3 rows -->
+														<!-- Appearance editor: culture, gender, face -->
 														<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<Children>
-																<!-- Culture row: Fixed height row, CoverChildren list for text -->
+																<!-- Culture row -->
 																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<Children>
 																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ChangeCulture" VerticalAlignment="Center" HorizontalAlignment="Left" MarginLeft="!ItemRows.Icon.Appearance.MarginHorizontal">
@@ -239,7 +240,7 @@
 																		</ListPanel>
 																	</Children>
 																</ListPanel>
-																<!-- Face row  -->
+																<!-- Face row -->
 																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="40" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<Children>
 																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ChangeFace" VerticalAlignment="Center" HorizontalAlignment="Left" MarginLeft="!ItemRows.Icon.Appearance.MarginHorizontal">
@@ -263,33 +264,32 @@
 									</Children>
 								</ListPanel>
 
-								<!-- Bottom bar: Fixed main panel width, CoverChildren height to hug content -->
+								<!-- Bottom bar: upgrades, equipment sets, lances, template actions -->
 								<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" MarginTop="20" >
 									<Children>
-										<!-- Bottom horizontal split: CoverChildren height -->
 										<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="HorizontalLeftToRight">
 											<Children>
-												<!-- UpgradesTo section: Fixed width column, CoverChildren height -->
+												<!-- UpgradesTo section -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="500" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="50" MarginTop="10" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
-														<!-- UpgradesTo header: CoverChildren -->
+														<!-- UpgradesTo header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="22" Text="Upgrades To" />
-														<!-- Upgrade slots + Add button: CoverChildren height, Fixed rows inside -->
+														<!-- Upgrade slots + Add button -->
 														<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="HorizontalLeftToRight">
 															<Children>
-																<!-- Dynamic upgrade slots: CoverChildren to hug slot count -->
+																<!-- Upgrade slots -->
 																<ListPanel DataSource="{UpgradeSlots}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" StackLayout.LayoutMethod="HorizontalLeftToRight">
 																	<ItemTemplate>
-																		<!-- UpgradeSlot object: Fixed width, CoverChildren height (portrait + button stack) -->
+																		<!-- UpgradeSlot: portrait + remove button -->
 																		<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="123" HorizontalAlignment="Left" MarginRight="15" StackLayout.LayoutMethod="VerticalTopToBottom">
 																			<Children>
-																				<!-- Portrait: Fixed size button -->
+																				<!-- Portrait -->
 																				<ButtonWidget Command.Click="ExecuteLink" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="123" SuggestedHeight="89" HorizontalAlignment="Center" Brush="Encyclopedia.SubPage.Element" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint">
 																					<Children>
 																						<ImageIdentifierWidget DataSource="{ImageIdentifier}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" HorizontalAlignment="Center" MarginRight="3" MarginLeft="3" MarginBottom="3" MarginTop="3" />
 																					</Children>
 																				</ButtonWidget>
-																				<!-- Remove button  -->
+																				<!-- Remove button -->
 																				<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="ButtonBrush2" Command.Click="ExecuteRemove" MarginTop="30">
 																					<Children>
 																						<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="@ButtonText" />
@@ -299,7 +299,7 @@
 																		</ListPanel>
 																	</ItemTemplate>
 																</ListPanel>
-																<!-- Add new upgrade button: Fixed size, to the right of slots -->
+																<!-- Add new upgrade button -->
 																<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush1" Command.Click="AddUpgrade" MarginLeft="5" VerticalAlignment="Center" HorizontalAlignment="Left">
 																	<Children>
 																		<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="Add" />
@@ -310,7 +310,7 @@
 													</Children>
 												</ListPanel>
 
-												<!-- Equipment Set actions: AddSet / RemoveSet - between UpgradesTo and Lances, below troop VM -->
+												<!-- Equipment Set actions: AddSet / RemoveSet -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="130" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="15" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
 														<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush1" Command.Click="AddSet" HorizontalAlignment="Center">
@@ -326,12 +326,12 @@
 													</Children>
 												</ListPanel>
 
-												<!-- Lances section: Fixed width column, CoverChildren height -->
+												<!-- Lances section -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Center" VerticalAlignment="Top" MarginLeft="15" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
-														<!-- Lances header: CoverChildren -->
+														<!-- Lances header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Lance templates present in" />
-														<!-- Lances list: CoverChildren height to hug item count -->
+														<!-- Lances list -->
 														<ListPanel DataSource="{LanceNames}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="280" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
 																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@Item" MarginBottom="4" />
@@ -340,7 +340,7 @@
 													</Children>
 												</ListPanel>
 
-												<!-- Template actions -->
+												<!-- Template actions: Copy / Paste -->
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Right" VerticalAlignment="Center" MarginLeft="15" StackLayout.LayoutMethod="HorizontalLeftToRight">
 													<Children>
 														<!-- Copy template button -->
@@ -364,7 +364,7 @@
 
 							</Children>
 						</ListPanel>
-						<!-- Top-left actions: SwitchTroop / NewTroop - centered on title bar bottom edge (half on bar, half below) -->
+						<!-- Top-left actions: SwitchTroop / NewTroop -->
 						<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" PositionXOffset="100" PositionYOffset="60" StackLayout.LayoutMethod="HorizontalLeftToRight">
 							<Children>
 								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TroopEditor.MediumButton.Width" SuggestedHeight="!TroopEditor.MediumButton.Height" Brush="ButtonBrush1" Command.Click="SwitchTroop">
@@ -393,4 +393,3 @@
 		</Widget>
 	</Window>
 </Prefab>
-

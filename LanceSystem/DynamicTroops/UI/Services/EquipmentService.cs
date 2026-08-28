@@ -8,10 +8,9 @@ using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
 using LanceSystem.DynamicTroops.UI.ItemSelection;
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection;
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.Services
+namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class EquipmentService
     {
@@ -58,7 +57,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.Services
                 if (item.IsCraftedByPlayer) continue;
                 items.Add(item);
             }
-            var controller = new ObjectSelectorController<ItemObject>(items, _character, slotKey, item => FinalizeItem(slot, item), item => new ObjectCardVM(item, _character, slotKey, i => FinalizeItem(slot, i)), FilterFactory.CreateEquipmentFilters());
+            var controller = new ObjectSelectorController<ItemObject>(items, _character, slotKey, item => FinalizeItem(slot, item), (item, close) => new ObjectCardVM(item, _character, slotKey, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
             controller.Open();
         }
         public void FinalizeItem(EquipmentIndex equipmentIndex, ItemObject item)

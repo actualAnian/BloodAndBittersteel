@@ -1,7 +1,7 @@
 using System;
 using TaleWorlds.Library;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
 {
     public class FilterViewModel : ViewModel
     {
@@ -30,7 +30,6 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters
         public void ExecuteFilter()
         {
             _context.OnEventClicked();
-            Refresh();
         }
     }
 }

@@ -1,9 +1,12 @@
 <Prefab>
+	<!-- ObjectRow: horizontal row of ObjectCard items inside the selection grid -->
 	<Window>
-		<ListPanel Sprite="StdAssets\Popup\order_popup_canvas" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="425" MarginTop="20" MarginLeft="20">
+		<!-- Row container: fixed height, gradient background -->
+		<ListPanel Sprite="StdAssets\Popup\order_popup_canvas" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="760" SuggestedHeight="425" MarginTop="20" MarginLeft="20">
 			<Children>
 				<ListPanel Sprite="StdAssets\Popup\canvas_gradient" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
 					<Children>
+						<!-- Cards: horizontal layout of 3 ObjectCard items per row -->
 						<ListPanel Sprite="frame_9" DataSource="{Cards}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="-20" MarginTop="-20" MarginRight="-20" MarginBottom="-20" StackLayout.LayoutMethod="HorizontalLeftToRight">
 							<ItemTemplate>
 								<ObjectCard ButtonType="Radio" />
@@ -15,4 +18,3 @@
 		</ListPanel>
 	</Window>
 </Prefab>
-

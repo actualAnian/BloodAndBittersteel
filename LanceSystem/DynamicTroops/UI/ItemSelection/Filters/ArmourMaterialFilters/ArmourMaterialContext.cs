@@ -1,9 +1,8 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Core;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.ArmourMaterialFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.ArmourMaterialFilters
 {
     public class ArmourMaterialContext : MultiSelectionContext
     {
@@ -34,7 +33,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.ArmourMa
             _selected = new HashSet<ArmorComponent.ArmorMaterialTypes>(values);
         }
 
-        protected override void OnReset()
+        protected override void OnResetInternal()
         {
             _selected = new HashSet<ArmorComponent.ArmorMaterialTypes>();
         }

@@ -1,8 +1,9 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
+using LanceSystem.SimpleFuzzySearch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.NameFilters
+using TaleWorlds.Core;
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.NameFilters
 {
     public class NameFilter<T> : IDataFilter<T>
     {
@@ -13,10 +14,10 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.NameFilt
             _context = context;
             _nameSelector = nameSelector;
         }
-        public IList<T> Filter(IList<T> data)
+        public IList<T> GetFilteredItems(IList<T> data)
         {
             if (string.IsNullOrWhiteSpace(_context.Query)) return data;
-            return data.Where(item => (_nameSelector(item) ?? "").IndexOf(_context.Query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            return FuzzySearchManager.TrySearchOrdered<T>(_context.Query, item => _nameSelector(item));
         }
     }
 }

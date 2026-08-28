@@ -3,7 +3,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
-namespace LanceSystem.DynamicTroops.TroopCreation
+namespace LanceSystem.DynamicTroops.UI
 {
     public class UpgradeSlotVM : ViewModel
     {

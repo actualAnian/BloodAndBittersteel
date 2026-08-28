@@ -1,5 +1,3 @@
-using LanceSystem.DynamicTroops.TroopCreation;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +6,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
-namespace LanceSystem.DynamicTroops.TroopCreation.Services
+namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class UpgradeService
     {

@@ -1,9 +1,8 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Core;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.ArmourMaterialFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.ArmourMaterialFilters
 {
     public class ArmourMaterialFilter : IDataFilter<ItemObject>
     {
@@ -12,10 +11,10 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.ArmourMa
         {
             _context = context;
         }
-        public IList<ItemObject> Filter(IList<ItemObject> data)
+        public IList<ItemObject> GetFilteredItems(IList<ItemObject> data)
         {
             if (_context.Selected.Count == 0) return data;
-            return data.Where(item => item?.ArmorComponent == null || _context.Selected.Contains(item.ArmorComponent.MaterialType)).ToList();
+            return data.Where(item => item.ArmorComponent != null && _context.Selected.Contains(item.ArmorComponent.MaterialType)).ToList();
         }
     }
 }

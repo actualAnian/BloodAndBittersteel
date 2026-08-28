@@ -1,8 +1,7 @@
-using LanceSystem.DynamicTroops.TroopCreation;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.ScreenSystem;
-namespace LanceSystem.DynamicTroops.TroopCreation.Services
+namespace LanceSystem.DynamicTroops.UI.Services
 {
     public static class TroopEditorViewService
     {

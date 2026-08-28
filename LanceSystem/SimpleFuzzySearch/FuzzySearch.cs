@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.SimpleFuzzySearch;
 
-public sealed record SearchResult<T>(T Item, SearchScore Score);
+public sealed record SearchResult<T>(T Item, SearchScore Score) : IComparable<SearchResult<T>>
+{
+    public int CompareTo(SearchResult<T>? other)
+    {
+        if (other is null) return 1;
+        return other.Score.Combined.CompareTo(Score.Combined);
+    }
+}
 public static class FuzzySearchManager
 {
     private static readonly SearchScorer Scorer = new(new TextNormalizer(), new LevenshteinMatcher());
 
-    public static IReadOnlyList<SearchResult<T>> TrySearch<T>(
+    public static IList<SearchResult<T>> TrySearch<T>(
         string query, Func<T, string> selector)
     {
         IEnumerable<T> items = MBObjectManager.Instance
@@ -22,6 +28,15 @@ public static class FuzzySearchManager
 
         return engine.Search(items, query, selector);
     }
+    public static IList<T> TrySearchOrdered<T>(
+        string query,
+        Func<T, string> selector)
+    {
+        return TrySearch(query, selector)
+        .OrderByDescending(x => x.Score)
+        .Select(x => x.Item)
+        .ToList();
+    }
 }
 public sealed class FuzzySearch<T>
 {
@@ -31,7 +46,7 @@ public sealed class FuzzySearch<T>
         _scorer = scorer;
     }
 
-    public IReadOnlyList<SearchResult<T>> Search(
+    public IList<SearchResult<T>> Search(
         IEnumerable<T> items,
         string query,
         Func<T, string> selector,

@@ -1,8 +1,8 @@
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using LanceSystem.DynamicTroops.TroopCreation.Services;
+using LanceSystem.DynamicTroops.UI.Services;
 
-namespace LanceSystem.DynamicTroops.TroopCreation
+namespace LanceSystem.DynamicTroops.UI
 {
     public class TroopEditorController
     {

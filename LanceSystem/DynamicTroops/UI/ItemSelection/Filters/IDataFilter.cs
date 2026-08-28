@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
 {
     public interface IDataFilter<T>
     {
-        IList<T> Filter(IList<T> data);
+        IList<T> GetFilteredItems(IList<T> data);
     }
 }

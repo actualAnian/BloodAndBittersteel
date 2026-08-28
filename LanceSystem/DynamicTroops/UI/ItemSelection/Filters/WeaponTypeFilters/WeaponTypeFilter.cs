@@ -1,9 +1,7 @@
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.WeaponTypeFilters;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.Core;
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.WeaponTypeFilters
+namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.WeaponTypeFilters
 {
     public class WeaponTypeFilter : IDataFilter<ItemObject>
     {
@@ -14,7 +12,7 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.WeaponTy
             _context = context;
         }
 
-        public IList<ItemObject> Filter(IList<ItemObject> data)
+        public IList<ItemObject> GetFilteredItems(IList<ItemObject> data)
         {
             if (_context.Selected.Count == 0) return data;
             return data.Where(item => item == null || !IsWeaponType(item.Type) || _context.Selected.Contains(item.Type)).ToList();

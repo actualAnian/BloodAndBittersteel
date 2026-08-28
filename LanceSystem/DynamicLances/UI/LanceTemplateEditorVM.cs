@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using LanceSystem.Deserialization;
 using TaleWorlds.CampaignSystem;
@@ -7,10 +5,9 @@ using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.TwoDimension;
-using LanceSystem.DynamicTroops.TroopCreation;
-using LanceSystem.DynamicTroops.TroopCreation.Services;
+using LanceSystem.DynamicTroops.UI.Services;
+using LanceSystem.DynamicTroops.UI;
 
 namespace LanceSystem.DynamicLances.UI
 {

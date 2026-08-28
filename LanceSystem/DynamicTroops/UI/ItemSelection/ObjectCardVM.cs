@@ -19,6 +19,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         readonly CharacterObject _troop;
         readonly string _slotKey;
         readonly Action<ItemObject> _apply;
+        readonly Action? _close;
 
         string _itemName = "";
         MBBindingList<ItemFlagVM> _itemFlagList = new();
@@ -73,21 +74,13 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             }
         }
 
-        public ObjectCardVM(ItemObject item, CharacterObject troop, string slotKey, Action<ItemObject> apply)
+        public ObjectCardVM(ItemObject item, CharacterObject troop, string slotKey, Action<ItemObject> apply, Action? close = null)
         {
             _item = item;
             _troop = troop;
             _slotKey = slotKey;
             _apply = apply;
-            InitializeNameAndImage();
-            InitializeFlags();
-            InitializeProperties();
-        }
-
-        public void Apply() => _apply?.Invoke(_item);
-
-        void InitializeNameAndImage()
-        {
+            _close = close;
             ItemFlagList = new MBBindingList<ItemFlagVM>();
             ItemProperties = new MBBindingList<ItemMenuTooltipPropertyVM>();
             if (_item == null)
@@ -97,8 +90,15 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             }
             ItemName = _item.Name.ToString();
             Image = new ItemImageIdentifierVM(_item, "");
+            InitializeFlags();
+            InitializeProperties();
         }
 
+        public void Apply()
+        {
+            _apply?.Invoke(_item);
+            _close?.Invoke();
+        }
         void InitializeFlags()
         {
             if (_item == null) return;
@@ -329,9 +329,9 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
                 list.Add(new ItemFlagVM("GeneralFlagIcons\\unique", GameTexts.FindText("str_inventory_flag_unique")));
             if (item.IsCivilian)
                 list.Add(new ItemFlagVM("GeneralFlagIcons\\civillian", GameTexts.FindText("str_inventory_flag_civillian")));
-            if (item.ItemFlags.HasAnyFlag((ItemFlags)1024))
+            if (item.ItemFlags.HasAnyFlag(ItemFlags.NotUsableByFemale))
                 list.Add(new ItemFlagVM("GeneralFlagIcons\\male_only", GameTexts.FindText("str_inventory_flag_male_only")));
-            if (item.ItemFlags.HasAnyFlag((ItemFlags)2048))
+            if (item.ItemFlags.HasAnyFlag(ItemFlags.NotUsableByMale))
                 list.Add(new ItemFlagVM("GeneralFlagIcons\\female_only", GameTexts.FindText("str_inventory_flag_female_only")));
         }
 

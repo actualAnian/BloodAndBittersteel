@@ -1,21 +1,17 @@
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.Core;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.ScreenSystem;
-using static LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters.FilterFactory;
-using LanceSystem.DynamicTroops.TroopCreation.ItemSelection.Filters;
-using LanceSystem.DynamicTroops.UI.ItemSelection;
+using static LanceSystem.DynamicTroops.UI.ItemSelection.Filters.FilterFactory;
 
-namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection
+namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
     public class ObjectSelectorController<T> where T : MBObjectBase
     {
-        public static ObjectSelectorController<T>? Current;
         const int ItemsPerRow = 3;
         readonly List<T> _allItems;
         readonly CharacterObject _troop;
@@ -27,19 +23,19 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection
         GauntletMovieIdentifier? _movie;
         public ObjectSelectorVM? Vm { get; private set; }
 
-        public ObjectSelectorController(List<T> items, CharacterObject troop, string slotKey, Action<T> apply, Func<T, ObjectCardVM> cardFactory, List<FilterDefinition<T>> filters)
+        public ObjectSelectorController(List<T> items, CharacterObject troop, string slotKey, Action<T> apply, Func<T, Action?, ObjectCardVM> cardFactory, List<FilterDefinition<T>> filters)
         {
             _allItems = new List<T>(items);
             _troop = troop;
             _slotKey = slotKey;
             _apply = apply;
-            _cardFactory = cardFactory;
+            _cardFactory = (item) => cardFactory(item, Close);
             _filters = filters;
+            foreach (var filter in _filters)
+                filter.Context.OnChanged += ApplyFilters;
         }
-
         public void Open()
         {
-            Current = this;
             var rows = BuildRows(GetFilteredItems());
             var filterVms = GetFilterViewModels();
             Vm = new ObjectSelectorVM(rows, filterVms, _troop, _slotKey, ClearFilters, ApplyFilters, Close);
@@ -61,17 +57,15 @@ namespace LanceSystem.DynamicTroops.TroopCreation.ItemSelection
             _layer = null;
             _movie = null;
             Vm = null;
-            if (Current == this) Current = null;
         }
 
         public IList<T> GetFilteredItems()
         {
             IList<T> result = _allItems;
-            foreach (var filter in _filters)
-                result = filter.Filter.Filter(result);
+            for (int i = _filters.Count - 1; i >= 0; i--)
+                result = _filters[i].Filter.GetFilteredItems(result);
             return result;
         }
-
         MBBindingList<ObjectRowVM> BuildRows(IList<T> items)
         {
             MBBindingList<ObjectRowVM> rows = new();

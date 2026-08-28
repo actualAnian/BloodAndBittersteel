@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using System.Reflection;
 using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
-using LanceSystem.DynamicTroops.TroopCreation;
-namespace LanceSystem.DynamicTroops.TroopCreation.Services
+namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class SkillService
     {
