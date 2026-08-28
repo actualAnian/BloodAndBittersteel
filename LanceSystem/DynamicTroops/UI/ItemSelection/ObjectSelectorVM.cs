@@ -1,25 +1,19 @@
 using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 using System;
-using TaleWorlds.CampaignSystem;
 using TaleWorlds.Library;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
     public class ObjectSelectorVM : ViewModel
     {
-        const int ItemsPerRow = 3;
-        readonly CharacterObject _troop;
-        readonly string _slotKey;
         readonly Action _clearFilters;
         readonly Action _applyFilters;
         readonly Action _close;
         MBBindingList<ObjectRowVM> _rows = new();
         MBBindingList<FilterViewModel> _filters = new();
 
-        public ObjectSelectorVM(MBBindingList<ObjectRowVM> rows, MBBindingList<FilterViewModel> filters, CharacterObject troop, string slotKey, Action clearFilters, Action applyFilters, Action close)
+        public ObjectSelectorVM(MBBindingList<ObjectRowVM> rows, MBBindingList<FilterViewModel> filters, Action clearFilters, Action applyFilters, Action close)
         {
-            _troop = troop;
-            _slotKey = slotKey;
             _clearFilters = clearFilters;
             _applyFilters = applyFilters;
             _close = close;

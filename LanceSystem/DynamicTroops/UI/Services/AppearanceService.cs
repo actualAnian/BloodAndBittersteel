@@ -1,3 +1,6 @@
+using LanceSystem.DynamicTroops.UI.ItemSelection;
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,8 +15,8 @@ namespace LanceSystem.DynamicTroops.UI.Services
     public class AppearanceService
     {
         readonly CharacterObject _character;
-        readonly System.Action _refresh;
-        public AppearanceService(CharacterObject character, System.Action refresh)
+        readonly Action _refresh;
+        public AppearanceService(CharacterObject character, Action refresh)
         {
             _character = character;
             _refresh = refresh;
@@ -51,26 +54,38 @@ namespace LanceSystem.DynamicTroops.UI.Services
             UpdateAppearance();
             _refresh();
         }
+        public void OpenAppearanceSelector()
+        {
+            var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
+                .Where(c => c.Occupation == Occupation.Soldier || c.Occupation == Occupation.Lord)
+                .ToList();
+            var controller = new ObjectSelectorController<CharacterObject>(allCharacters,
+                (selectedCharacter) => { UpdateAppearance(selectedCharacter.BodyPropertyRange); _refresh(); },
+                (character, close) => new CharacterCardVM(character, (selectedCharacter) => { UpdateAppearance(selectedCharacter.BodyPropertyRange); _refresh(); }, 
+                close), FilterFactory.CreateCharacterFilters());
+            controller.Open();
+        }
         public void ChangeGender()
         {
             _character.IsFemale = !_character.IsFemale;
             UpdateAppearance();
             _refresh();
         }
+        public void UpdateAppearance(MBBodyProperty newProperty)
+        {
+            typeof(CharacterObject).GetProperty("BodyPropertyRange")?.SetValue(_character, newProperty, null);
+        }
         public void UpdateAppearance()
         {
-            try
-            {
-                MBBodyProperty property = GetBodyProperty();
-                typeof(CharacterObject).GetProperty("BodyPropertyRange")?.SetValue(_character, property, null);
-            }
-            catch { }
+            MBBodyProperty property = _character.BodyPropertyRange;
+            typeof(CharacterObject).GetProperty("BodyPropertyRange")?.SetValue(_character, property, null);
         }
-        MBBodyProperty GetBodyProperty()
-        {
-            if ((_character.IsFemale ? _character.Culture.Townswoman : _character.Culture.Townsman) != null) return _character.IsFemale ? _character.Culture.FemaleDancer.BodyPropertyRange : _character.Culture.BasicTroop.BodyPropertyRange;
-            return _character.IsFemale ? MBObjectManager.Instance.GetObject<CharacterObject>("female_dancer_empire").BodyPropertyRange : MBObjectManager.Instance.GetObject<CharacterObject>("imperial_recruit").BodyPropertyRange;
-        }
+        //MBBodyProperty GetBodyProperty()
+        //{
+        //    return ;
+            //if ((_character.IsFemale ? _character.Culture.Townswoman : _character.Culture.Townsman) != null) return _character.IsFemale ? _character.Culture.FemaleDancer.BodyPropertyRange : _character.Culture.BasicTroop.BodyPropertyRange;
+            //return _character.IsFemale ? MBObjectManager.Instance.GetObject<CharacterObject>("female_dancer_empire").BodyPropertyRange : MBObjectManager.Instance.GetObject<CharacterObject>("imperial_recruit").BodyPropertyRange;
+        //}
     }
 }
 

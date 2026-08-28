@@ -13,92 +13,27 @@ using static TaleWorlds.Core.ViewModelCollection.Information.TooltipProperty;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
-    public class ObjectCardVM : ViewModel
+    public class ItemCardVM : CardVM
     {
         readonly ItemObject _item;
         readonly CharacterObject _troop;
-        readonly string _slotKey;
-        readonly Action<ItemObject> _apply;
-        readonly Action? _close;
 
-        string _itemName = "";
-        MBBindingList<ItemFlagVM> _itemFlagList = new();
-        MBBindingList<ItemMenuTooltipPropertyVM> _itemProperties = new();
-        ImageIdentifierVM _image;
-
-        [DataSourceProperty]
-        public MBBindingList<ItemMenuTooltipPropertyVM> ItemProperties
-        {
-            get => _itemProperties;
-            set
-            {
-                if (value == _itemProperties) return;
-                _itemProperties = value;
-                OnPropertyChangedWithValue(value, "ItemProperties");
-            }
-        }
-
-        [DataSourceProperty]
-        public string ItemName
-        {
-            get => _itemName;
-            set
-            {
-                if (value == _itemName) return;
-                _itemName = value;
-                OnPropertyChanged("ItemName");
-            }
-        }
-
-        [DataSourceProperty]
-        public ImageIdentifierVM Image
-        {
-            get => _image;
-            set
-            {
-                if (value == _image) return;
-                _image = value;
-                OnPropertyChangedWithValue(value, "Image");
-            }
-        }
-
-        [DataSourceProperty]
-        public MBBindingList<ItemFlagVM> ItemFlagList
-        {
-            get => _itemFlagList;
-            set
-            {
-                if (value == _itemFlagList) return;
-                _itemFlagList = value;
-                OnPropertyChangedWithValue(value, "ItemFlagList");
-            }
-        }
-
-        public ObjectCardVM(ItemObject item, CharacterObject troop, string slotKey, Action<ItemObject> apply, Action? close = null)
+        public ItemCardVM(ItemObject item, CharacterObject troop, Action<ItemObject> apply, Action? close = null)
+            : base(() => apply(item), close)
         {
             _item = item;
             _troop = troop;
-            _slotKey = slotKey;
-            _apply = apply;
-            _close = close;
-            ItemFlagList = new MBBindingList<ItemFlagVM>();
-            ItemProperties = new MBBindingList<ItemMenuTooltipPropertyVM>();
             if (_item == null)
             {
-                ItemName = "Empty";
+                CardName = "Empty";
                 return;
             }
-            ItemName = _item.Name.ToString();
+            CardName = _item.Name.ToString();
             Image = new ItemImageIdentifierVM(_item, "");
             InitializeFlags();
             InitializeProperties();
         }
 
-        public void Apply()
-        {
-            _apply?.Invoke(_item);
-            _close?.Invoke();
-        }
         void InitializeFlags()
         {
             if (_item == null) return;
@@ -124,17 +59,17 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         void AddCoinProperty()
         {
             string coinValue = _item.Value + "<img src=\"General\\Icons\\Coin@2x\" extend=\"8\"/>";
-            CreateColoredProperty(ItemProperties, "", coinValue, UIColors.Gold, 1);
+            CreateColoredProperty(ObjectProperties, "", coinValue, UIColors.Gold, 1);
         }
 
         void BuildCultureProperty()
         {
             if (_item?.Culture?.Name != null)
             {
-                CreateColoredProperty(ItemProperties, "Culture: ", _item.Culture.Name.ToString(), Color.FromUint(_item.Culture.Color));
+                CreateColoredProperty(ObjectProperties, "Culture: ", _item.Culture.Name.ToString(), Color.FromUint(_item.Culture.Color));
                 return;
             }
-            CreateColoredProperty(ItemProperties, "Culture: ", "No Culture", UIColors.Gold);
+            CreateColoredProperty(ObjectProperties, "Culture: ", "No Culture", UIColors.Gold);
         }
 
         void BuildHorseProperties()
@@ -272,7 +207,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             string value = skillName + " " + _item.Difficulty;
             bool meetsRequirement = _troop.GetSkillValue(_item.RelevantSkill) >= _item.Difficulty;
             var color = meetsRequirement ? UIColors.PositiveIndicator : UIColors.NegativeIndicator;
-            CreateColoredProperty(ItemProperties, new TextObject("{=154a34f8caccfc833238cc89d38861e8}Requires: ").ToString(), value, color);
+            CreateColoredProperty(ObjectProperties, new TextObject("{=154a34f8caccfc833238cc89d38861e8}Requires: ").ToString(), value, color);
         }
 
         EquipmentIndex GetItemTypeWithItemObject(ItemObject item)
@@ -307,12 +242,12 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
 
         void AddIntProperty(TextObject description, int value)
         {
-            CreateColoredProperty(ItemProperties, description.ToString(), value.ToString(), Colors.White);
+            CreateColoredProperty(ObjectProperties, description.ToString(), value.ToString(), Colors.White);
         }
 
         void AddTextProperty(object value, TextObject description)
         {
-            CreateProperty(ItemProperties, description.ToString(), value.ToString());
+            CreateProperty(ObjectProperties, description.ToString(), value.ToString());
         }
 
         void AddWeaponItemFlags(MBBindingList<ItemFlagVM> list, WeaponComponentData weapon)

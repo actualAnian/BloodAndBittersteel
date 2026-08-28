@@ -12,6 +12,8 @@ using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 using LanceSystem.DynamicTroops.UI.Services;
+using LanceSystem.DynamicTroops.UI.ItemSelection;
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 namespace LanceSystem.DynamicTroops.UI
 {
     public class TroopEditorVM : ViewModel
@@ -145,6 +147,8 @@ namespace LanceSystem.DynamicTroops.UI
             BuildAppearance();
             BuildUpgradeSlots();
             UnitCharacter.FillFrom(_character, -1);
+            if (CurrentSelectedItemSet != null)
+                UnitCharacter.SetEquipment(CurrentSelectedItemSet.EquipmentSet);
             TierText = "Tier " + _character.Tier;
             TotalSkillSum = BuildTotalSkillSumText();
             FaceString.Clear();
@@ -157,13 +161,7 @@ namespace LanceSystem.DynamicTroops.UI
         public int GetAvailableSkillPoints() => _manager.GetAvailablePoints();
         public void UpdateSkill(SkillObject skill, int amount) => _manager.UpdateSkill(skill, amount);
         void SelectItem(string slotKey) => _manager.SelectItem(slotKey);
-        void OnUpgradeLink(CharacterObject upgrade)
-        {
-            TroopEditorViewService.Delete();
-            CharacterObject character = MBObjectManager.Instance.GetObject<CharacterObject>(upgrade.StringId) ?? Game.Current.ObjectManager.GetObject<CharacterObject>(upgrade.StringId);
-            TroopEditorController next = new TroopEditorController(character);
-            TroopEditorViewService.Create(next.Vm);
-        }
+        void OnUpgradeLink(CharacterObject upgrade) => _manager.SelectUpgradeCharacter(upgrade);
         void RemoveUpgrade(CharacterObject upgrade)
         {
             _manager.RemoveUpgrade(upgrade);
@@ -174,7 +172,6 @@ namespace LanceSystem.DynamicTroops.UI
         void OnItemSetChange(SelectorVM<EncyclopediaUnitEquipmentSetSelectorItemVM> selector)
         {
             CurrentSelectedItemSet = selector.SelectedItem;
-            UnitCharacter.SetEquipment(CurrentSelectedItemSet.EquipmentSet);
             _itemSetTextObj.SetTextVariable("CURINDEX", selector.SelectedIndex + 1);
             _itemSetTextObj.SetTextVariable("COUNT", selector.ItemList.Count);
             ItemSetText = _itemSetTextObj.ToString();
@@ -195,13 +192,7 @@ namespace LanceSystem.DynamicTroops.UI
                 _manager.Refresh();
             }, null, "", false), false, false);
         }
-        public void ChangeFace()
-        {
-            FaceString.Clear();
-            FaceString.Add(new BindingListStringItem("Face : Randomized " + DateTime.Now.Second));
-            InformationManager.DisplayMessage(new InformationMessage("Face editor opened (placeholder)"));
-            _manager.Refresh();
-        }
+        public void ChangeFace() => _manager.SelectAppearance();
         public void AddUpgrade() => _manager.AddUpgrade();
         public void CopyTemplate() => _manager.CopyTemplate();
         public void PasteTemplate() => InformationManager.DisplayMessage(new InformationMessage("Paste template: placeholder - use Copy Template first"));

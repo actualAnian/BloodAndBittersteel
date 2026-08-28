@@ -1,6 +1,13 @@
+using LanceSystem.DynamicTroops.UI.ItemSelection;
+using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
+using LanceSystem.DynamicTroops.UI.Services;
+using System;
+using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using LanceSystem.DynamicTroops.UI.Services;
+using TaleWorlds.Core.ViewModelCollection.Generic;
+using TaleWorlds.Library;
+using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops.UI
 {
@@ -36,6 +43,34 @@ namespace LanceSystem.DynamicTroops.UI
         public void Rename() => _appearanceService.Rename();
         public void ChangeCulture() => _appearanceService.ChangeCulture();
         public void ChangeGender() => _appearanceService.ChangeGender();
+        public void SelectAppearance()
+        {
+            var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
+                .Where(c => c.Occupation == Occupation.Soldier || c.Occupation == Occupation.Lord)
+                .ToList();
+            var controller = new ObjectSelectorController<CharacterObject>(allCharacters,
+                (selectedCharacter) => { _appearanceService.UpdateAppearance(selectedCharacter.BodyPropertyRange); },
+                (character, close) => new CharacterCardVM(character, (selectedCharacter) => { Vm.FaceString = new MBBindingList<BindingListStringItem>() { new(selectedCharacter.Name.ToString()) }; _appearanceService.UpdateAppearance(selectedCharacter.BodyPropertyRange); },
+                close), FilterFactory.CreateCharacterFilters());
+            controller.Open();
+
+            _appearanceService.OpenAppearanceSelector();
+        }
+        public void SelectUpgradeCharacter(CharacterObject previouscharacter)
+        {
+            var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
+            .Where(c => c.Occupation == Occupation.Soldier)
+            .ToList();
+            Action<CharacterObject> onSelect = (newCharacter =>
+            {
+                var slotToUpdate = Vm.UpgradeSlots.FirstOrDefault(slot => slot.Upgrade == previouscharacter);
+                var slotWithNewCharacter = Vm.UpgradeSlots.Where(slot => slot.Upgrade == newCharacter);
+                if (slotWithNewCharacter.Count() != 0) return;
+                slotToUpdate.ChangeCharacter(newCharacter);
+            }); 
+            var controller = new ObjectSelectorController<CharacterObject>(allCharacters, onSelect, (character, close) => new CharacterCardVM(character, onSelect, close), FilterFactory.CreateCharacterFilters());
+            controller.Open();
+        }
         public void SelectItem(string slotKey) => _equipmentService.SelectItem(slotKey);
         public void FinalizeItem(EquipmentIndex index, ItemObject item) => _equipmentService.FinalizeItem(index, item);
         public void SetDefaultGroup() => _equipmentService.SetDefaultGroup();

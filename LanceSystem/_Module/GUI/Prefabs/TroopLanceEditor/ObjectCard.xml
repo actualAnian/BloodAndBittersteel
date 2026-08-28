@@ -16,10 +16,10 @@
 								</ButtonWidget>
 
 								<!-- Item name -->
-								<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" MarginTop="140" MarginLeft="0" SuggestedWidth="250" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="16" Text="@ItemName"/>
+								<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" MarginTop="140" MarginLeft="0" SuggestedWidth="250" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="16" Text="@CardName"/>
 
 								<!-- Item stats: flags + tooltip properties -->
-								<InventoryTooltipInnerContent Parameter.ItemFlagsDataSource="{ItemFlagList}" Parameter.PropertiesDataSource="{ItemProperties}" HorizontalAlignment="Center" MarginTop="160" MarginLeft="0"/>
+								<InventoryTooltipInnerContent Parameter.ItemFlagsDataSource="{ItemFlagList}" Parameter.PropertiesDataSource="{ObjectProperties}" HorizontalAlignment="Center" MarginTop="160" MarginLeft="0"/>
 
 								<!-- Select button: applies item and closes selector -->
 								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedHeight="40" SuggestedWidth="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Brush="ButtonBrush1" Command.Click="Apply"  MarginBottom="25" IsEnabled="true">

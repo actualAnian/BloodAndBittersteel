@@ -14,31 +14,28 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
     {
         const int ItemsPerRow = 3;
         readonly List<T> _allItems;
-        readonly CharacterObject _troop;
-        readonly string _slotKey;
         readonly Action<T> _apply;
-        readonly Func<T, ObjectCardVM> _cardFactory;
+        readonly Func<T, CardVM> _cardFactory;
         readonly List<FilterDefinition<T>> _filters;
         GauntletLayer? _layer;
         GauntletMovieIdentifier? _movie;
         public ObjectSelectorVM? Vm { get; private set; }
 
-        public ObjectSelectorController(List<T> items, CharacterObject troop, string slotKey, Action<T> apply, Func<T, Action?, ObjectCardVM> cardFactory, List<FilterDefinition<T>> filters)
+        public ObjectSelectorController(List<T> items, Action<T> apply, Func<T, Action?, CardVM> cardFactory, List<FilterDefinition<T>> filters)
         {
             _allItems = new List<T>(items);
-            _troop = troop;
-            _slotKey = slotKey;
             _apply = apply;
             _cardFactory = (item) => cardFactory(item, Close);
             _filters = filters;
             foreach (var filter in _filters)
                 filter.Context.OnChanged += ApplyFilters;
         }
+
         public void Open()
         {
             var rows = BuildRows(GetFilteredItems());
             var filterVms = GetFilterViewModels();
-            Vm = new ObjectSelectorVM(rows, filterVms, _troop, _slotKey, ClearFilters, ApplyFilters, Close);
+            Vm = new ObjectSelectorVM(rows, filterVms, ClearFilters, ApplyFilters, Close);
             _layer = new GauntletLayer("ObjectSelectorLayer", 1001);
             _movie = _layer.LoadMovie("ObjectSelection", Vm);
             _layer.InputRestrictions.SetInputRestrictions(true, InputUsageMask.All);
@@ -66,18 +63,18 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
                 result = _filters[i].Filter.GetFilteredItems(result);
             return result;
         }
+
         MBBindingList<ObjectRowVM> BuildRows(IList<T> items)
         {
             MBBindingList<ObjectRowVM> rows = new();
-            MBBindingList<ObjectCardVM> current = new();
-            current.Add(_cardFactory(default));
+            MBBindingList<CardVM> current = new();
             foreach (T item in items)
             {
                 current.Add(_cardFactory(item));
                 if (current.Count == ItemsPerRow)
                 {
                     rows.Add(new ObjectRowVM(current));
-                    current = new MBBindingList<ObjectCardVM>();
+                    current = new MBBindingList<CardVM>();
                 }
             }
             if (current.Count > 0) rows.Add(new ObjectRowVM(current));

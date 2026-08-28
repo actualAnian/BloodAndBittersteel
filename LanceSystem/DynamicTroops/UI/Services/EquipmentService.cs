@@ -57,7 +57,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 if (item.IsCraftedByPlayer) continue;
                 items.Add(item);
             }
-            var controller = new ObjectSelectorController<ItemObject>(items, _character, slotKey, item => FinalizeItem(slot, item), (item, close) => new ObjectCardVM(item, _character, slotKey, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
+            var controller = new ObjectSelectorController<ItemObject>(items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, _character, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
             controller.Open();
         }
         public void FinalizeItem(EquipmentIndex equipmentIndex, ItemObject item)

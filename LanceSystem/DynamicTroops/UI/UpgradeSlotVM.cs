@@ -1,3 +1,4 @@
+using NetworkMessages.FromClient;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -7,7 +8,8 @@ namespace LanceSystem.DynamicTroops.UI
 {
     public class UpgradeSlotVM : ViewModel
     {
-        readonly CharacterObject _upgrade;
+        CharacterObject _upgrade;
+        public CharacterObject Upgrade => _upgrade;
         readonly Action<CharacterObject> _onLink;
         readonly Action _onAdd;
         readonly Action<CharacterObject> _onRemove;
@@ -21,6 +23,11 @@ namespace LanceSystem.DynamicTroops.UI
             _onRemove = onRemove;
             _imageIdentifier = upgrade != null ? new CharacterImageIdentifierVM(CharacterCode.CreateFrom(upgrade)) : new ItemImageIdentifierVM(null);
             _buttonText = upgrade != null ? "Remove" : "Add";
+        }
+        public void ChangeCharacter(CharacterObject newCharacter)
+        {
+            _upgrade = newCharacter;
+            ImageIdentifier = new CharacterImageIdentifierVM(CharacterCode.CreateFrom(newCharacter));
         }
         [DataSourceProperty] public ImageIdentifierVM ImageIdentifier { get => _imageIdentifier; set { if (value != _imageIdentifier) { _imageIdentifier = value; OnPropertyChangedWithValue(value, "ImageIdentifier"); } } }
         [DataSourceProperty] public string ButtonText { get => _buttonText; set { if (value != _buttonText) { _buttonText = value; OnPropertyChangedWithValue(value, "ButtonText"); } } }
