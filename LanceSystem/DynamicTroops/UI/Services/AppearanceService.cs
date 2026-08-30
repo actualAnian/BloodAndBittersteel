@@ -3,31 +3,41 @@ using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
+
 namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class AppearanceService
     {
-        readonly CharacterObject _character;
         readonly Action _refresh;
+        string _name;
+        bool _isFemale;
+        CultureObject _culture;
+        MBBodyProperty? _bodyProperty;
         public AppearanceService(CharacterObject character, Action refresh)
         {
-            _character = character;
             _refresh = refresh;
+            _name = character.Name?.ToString() ?? "";
+            _isFemale = character.IsFemale;
+            _culture = character.Culture;
+            _bodyProperty = character.BodyPropertyRange;
         }
+        public string GetName() => _name;
+        public bool GetIsFemale() => _isFemale;
+        public CultureObject GetCulture() => _culture;
+        public MBBodyProperty? GetBodyProperty() => _bodyProperty;
         public void Rename()
         {
             InformationManager.ShowTextInquiry(new TextInquiryData("Rename", "Enter new name", true, true, "Proceed", "Cancel", text => SetName(text), null, false, null, "", ""), false, false);
         }
         void SetName(string text)
         {
-            typeof(BasicCharacterObject).GetMethod("SetName", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_character, new object[] { new TextObject(text) });
+            _name = text;
             _refresh();
         }
         public void ChangeCulture()
@@ -45,14 +55,9 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 if (args == null || !args.Any()) return;
                 InformationManager.HideInquiry();
                 CultureObject culture = args.Select(e => e.Identifier as CultureObject).First();
-                SetCulture(culture);
+                _culture = culture;
+                _refresh();
             }, null, "", false), false, false);
-        }
-        void SetCulture(CultureObject culture)
-        {
-            typeof(BasicCharacterObject).GetProperty("Culture", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.SetValue(_character, culture);
-            UpdateAppearance();
-            _refresh();
         }
         public void OpenAppearanceSelector()
         {
@@ -60,32 +65,15 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 .Where(c => c.Occupation == Occupation.Soldier || c.Occupation == Occupation.Lord)
                 .ToList();
             var controller = new ObjectSelectorController<CharacterObject>(allCharacters,
-                (selectedCharacter) => { UpdateAppearance(selectedCharacter.BodyPropertyRange); _refresh(); },
-                (character, close) => new CharacterCardVM(character, (selectedCharacter) => { UpdateAppearance(selectedCharacter.BodyPropertyRange); _refresh(); }, 
+                (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
+                (character, close) => new CharacterCardVM(character, (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
                 close), FilterFactory.CreateCharacterFilters());
             controller.Open();
         }
-        public void ChangeGender()
+        public void ToggleGender()
         {
-            _character.IsFemale = !_character.IsFemale;
-            UpdateAppearance();
+            _isFemale = !_isFemale;
             _refresh();
         }
-        public void UpdateAppearance(MBBodyProperty newProperty)
-        {
-            typeof(CharacterObject).GetProperty("BodyPropertyRange")?.SetValue(_character, newProperty, null);
-        }
-        public void UpdateAppearance()
-        {
-            MBBodyProperty property = _character.BodyPropertyRange;
-            typeof(CharacterObject).GetProperty("BodyPropertyRange")?.SetValue(_character, property, null);
-        }
-        //MBBodyProperty GetBodyProperty()
-        //{
-        //    return ;
-            //if ((_character.IsFemale ? _character.Culture.Townswoman : _character.Culture.Townsman) != null) return _character.IsFemale ? _character.Culture.FemaleDancer.BodyPropertyRange : _character.Culture.BasicTroop.BodyPropertyRange;
-            //return _character.IsFemale ? MBObjectManager.Instance.GetObject<CharacterObject>("female_dancer_empire").BodyPropertyRange : MBObjectManager.Instance.GetObject<CharacterObject>("imperial_recruit").BodyPropertyRange;
-        //}
     }
 }
-

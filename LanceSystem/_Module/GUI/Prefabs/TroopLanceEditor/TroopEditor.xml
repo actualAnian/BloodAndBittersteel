@@ -84,7 +84,7 @@
 										<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" SuggestedWidth="400" HorizontalAlignment="Left" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
 											<Children>
 												<!-- Troop name -->
-												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="200" SuggestedHeight="90" Brush="ButtonGoldBrush" Command.Click="Rename" MarginLeft="10" VerticalAlignment="Top" HorizontalAlignment="Center">
+												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="400" SuggestedHeight="90" Brush="ButtonGoldBrush" Command.Click="Rename" MarginLeft="10" VerticalAlignment="Top" HorizontalAlignment="Center">
 													<Children>
 														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Header.Size" Text="@Name" />
 													</Children>
@@ -218,11 +218,7 @@
 																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="Edit" />
 																			</Children>
 																		</ButtonWidget>
-																		<ListPanel DataSource="{CultureString}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" StackLayout.LayoutMethod="VerticalBottomToTop">
-																			<ItemTemplate>
-																				<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@Item" />
-																			</ItemTemplate>
-																		</ListPanel>
+																		<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" Brush.FontSize="!Text.Standard.Size" Text="@CultureString" />
 																	</Children>
 																</ListPanel>
 																<!-- Gender row -->
@@ -233,11 +229,7 @@
 																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="Edit" />
 																			</Children>
 																		</ButtonWidget>
-																		<ListPanel DataSource="{GenderString}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" StackLayout.LayoutMethod="VerticalBottomToTop">
-																			<ItemTemplate>
-																				<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@Item" />
-																			</ItemTemplate>
-																		</ListPanel>
+																		<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" Brush.FontSize="!Text.Standard.Size" Text="@GenderString" />
 																	</Children>
 																</ListPanel>
 																<!-- Face row -->
@@ -248,11 +240,7 @@
 																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="Edit" />
 																			</Children>
 																		</ButtonWidget>
-																		<ListPanel DataSource="{FaceString}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" StackLayout.LayoutMethod="VerticalBottomToTop">
-																			<ItemTemplate>
-																				<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@Item" />
-																			</ItemTemplate>
-																		</ListPanel>
+																		<TextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" Brush.FontSize="!Text.Standard.Size" Text="@FaceString" />
 																	</Children>
 																</ListPanel>
 															</Children>

@@ -205,7 +205,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         {
             string skillName = _item.RelevantSkill.Name.ToString();
             string value = skillName + " " + _item.Difficulty;
-            bool meetsRequirement = _troop.GetSkillValue(_item.RelevantSkill) >= _item.Difficulty;
+            bool meetsRequirement = _troop != null && _troop.GetSkillValue(_item.RelevantSkill) >= _item.Difficulty;
             var color = meetsRequirement ? UIColors.PositiveIndicator : UIColors.NegativeIndicator;
             CreateColoredProperty(ObjectProperties, new TextObject("{=154a34f8caccfc833238cc89d38861e8}Requires: ").ToString(), value, color);
         }

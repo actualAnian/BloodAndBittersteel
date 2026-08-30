@@ -14,19 +14,42 @@ namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class EquipmentService
     {
-        readonly CharacterObject _character;
         readonly Action _refresh;
+        List<Equipment> _battleEquipments;
+        List<Equipment> _civilianEquipments;
+        FormationClass _defaultGroup;
         public List<int> UpdateSlots { get; private set; } = new();
         public EquipmentService(CharacterObject character, Action refresh)
         {
-            _character = character;
             _refresh = refresh;
+            _battleEquipments = character.BattleEquipments.Select(DeepCopy).ToList();
+            _civilianEquipments = character.CivilianEquipments.Select(DeepCopy).ToList();
+            _defaultGroup = ComputeDefaultGroup();
+        }
+        Equipment DeepCopy(Equipment original)
+        {
+            Equipment copy = new();
+            for (int i = 0; i < Equipment.EquipmentSlotLength; i++)
+                copy[(EquipmentIndex)i] = original[(EquipmentIndex)i];
+            return copy;
+        }
+        public List<Equipment> GetBattleEquipments() => _battleEquipments;
+        public List<Equipment> GetCivilianEquipments() => _civilianEquipments;
+        public FormationClass GetDefaultGroup() => _defaultGroup;
+        public MBEquipmentRoster BuildRoster()
+        {
+            List<Equipment> combined = new();
+            combined.AddRange(_battleEquipments);
+            combined.AddRange(_civilianEquipments);
+            MBEquipmentRoster roster = new();
+            typeof(MBEquipmentRoster).GetField("_equipments", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                ?.SetValue(roster, new MBList<Equipment>(combined));
+            return roster;
         }
         public void SelectItem(string slotKey)
         {
-            List<Equipment> battleEquipments = _character.BattleEquipments.ToList();
-            List<InquiryElement> elements = BuildItemSetElements(battleEquipments, slotKey);
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select variations sets to change", "", elements, true, 1, battleEquipments.Count, "Continue", null, args =>
+            List<InquiryElement> elements = BuildItemSetElements(_battleEquipments, slotKey);
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select variations sets to change", "", elements, true, 1, _battleEquipments.Count, "Continue", null, args =>
             {
                 if (args == null || !args.Any()) return;
                 InformationManager.HideInquiry();
@@ -57,54 +80,51 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 if (item.IsCraftedByPlayer) continue;
                 items.Add(item);
             }
-            var controller = new ObjectSelectorController<ItemObject>(items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, _character, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
+            var controller = new ObjectSelectorController<ItemObject>(items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, null, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
             controller.Open();
         }
         public void FinalizeItem(EquipmentIndex equipmentIndex, ItemObject item)
         {
-            foreach (int slot in UpdateSlots) ChangeUnitEquipment((int)equipmentIndex, item, slot);
+            foreach (int slot in UpdateSlots) ApplyItem((int)equipmentIndex, item, slot);
             _refresh();
-            SetDefaultGroup();
         }
-        void ChangeUnitEquipment(int slot, ItemObject item, int set, bool isCivilian = false)
+        void ApplyItem(int slot, ItemObject item, int set)
         {
-            List<Equipment> civilian = _character.CivilianEquipments.ToList();
-            List<Equipment> battle = _character.BattleEquipments.ToList();
             EquipmentElement value = item == null ? default : new EquipmentElement(item, null, null, false);
-            if (isCivilian) civilian[set][slot] = value;
-            else battle[set][slot] = value;
-            List<Equipment> combined = new();
-            combined.AddRange(battle);
-            combined.AddRange(civilian);
-            UpdateSelectedUnitEquipment(combined);
+            _battleEquipments[set][slot] = value;
         }
-        void UpdateSelectedUnitEquipment(List<Equipment> equipments)
+        public void AddSet()
         {
-            MBEquipmentRoster roster = new();
-            ((FieldInfo)GetInstanceField<MBEquipmentRoster>(roster, "_equipments")).SetValue(roster, new MBList<Equipment>(equipments));
-            ((FieldInfo)GetInstanceField<BasicCharacterObject>(_character, "_equipmentRoster")).SetValue(_character, roster);
-            _character.InitializeEquipmentsOnLoad(_character);
+            Equipment lastSet = _battleEquipments.Last();
+            Equipment newSet = new();
+            EquipmentIndex[] indices = new[] { EquipmentIndex.Weapon0, EquipmentIndex.Weapon1, EquipmentIndex.Weapon2, EquipmentIndex.Weapon3, EquipmentIndex.Head, EquipmentIndex.Body, EquipmentIndex.Leg, EquipmentIndex.Gloves, EquipmentIndex.Cape, EquipmentIndex.Horse, EquipmentIndex.HorseHarness };
+            foreach (EquipmentIndex index in indices) newSet[index] = lastSet[index];
+            _battleEquipments.Add(newSet);
         }
-        object GetInstanceField<T>(T instance, string fieldName)
+        public void RemoveSets(List<int> indicesToRemove)
         {
-            return typeof(T).GetField(fieldName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            foreach (int index in indicesToRemove) _battleEquipments.RemoveAt(index);
         }
-        public void SetDefaultGroup()
+        public void RecalculateDefaultGroup()
         {
-            bool hasMount = _character.Equipment[EquipmentIndex.Horse].Item != null;
-            bool isRanged = IsRanged();
-            FormationClass formation = FormationClass.Infantry;
-            if (isRanged && hasMount) formation = FormationClass.Cavalry;
-            else if (hasMount) formation = FormationClass.Cavalry;
-            else if (isRanged) formation = FormationClass.Ranged;
-            typeof(CharacterObject).GetProperty("DefaultFormationClass").SetValue(_character, formation, null);
-            typeof(CharacterObject).GetProperty("DefaultFormationGroup")?.SetValue(_character, formation, null);
+            _defaultGroup = ComputeDefaultGroup();
         }
-        bool IsRanged()
+        FormationClass ComputeDefaultGroup()
+        {
+            if (_battleEquipments.Count == 0) return FormationClass.Infantry;
+            Equipment first = _battleEquipments[0];
+            bool hasMount = first[EquipmentIndex.Horse].Item != null;
+            bool isRanged = HasRanged(first);
+            if (isRanged && hasMount) return FormationClass.Cavalry;
+            if (hasMount) return FormationClass.Cavalry;
+            if (isRanged) return FormationClass.Ranged;
+            return FormationClass.Infantry;
+        }
+        bool HasRanged(Equipment equipment)
         {
             for (int i = 0; i < 4; i++)
             {
-                EquipmentElement element = _character.Equipment[(EquipmentIndex)i];
+                EquipmentElement element = equipment[(EquipmentIndex)i];
                 if (element.Item != null && (element.Item.Type == ItemObject.ItemTypeEnum.Bow || element.Item.Type == ItemObject.ItemTypeEnum.Crossbow)) return true;
             }
             return false;
