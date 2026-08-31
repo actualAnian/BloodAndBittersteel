@@ -3,6 +3,7 @@ using BloodAndBittersteel;
 using HarmonyLib;
 using LanceSystem.CampaignBehaviors;
 using LanceSystem.Deserialization;
+using LanceSystem.DynamicLances;
 using LanceSystem.DynamicTroops;
 using LanceSystem.MCM;
 using LanceSystem.Models;
@@ -48,6 +49,9 @@ namespace LanceSystem
             DynamicTroopsXmlSaver xmlSaver = new(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_troops.xml"));
             xmlSaver.CreateCharacterXmlIfNeeded();
             xmlSaver.LoadAndMarkDynamic();
+            DynamicLancesXmlSaver lanceSaver = new(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_lances.xml"));
+            lanceSaver.CreateLanceXmlIfNeeded();
+            DynamicLancesService.Instance.LoadLances();
             CustomSettingsBootstrap.Initialize();
         }
         public override void OnGameInitializationFinished(Game game)

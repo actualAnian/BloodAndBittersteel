@@ -180,7 +180,7 @@ namespace LanceSystem.DynamicLances.UI
             if (string.IsNullOrWhiteSpace(troopId)) { InformationManager.DisplayMessage(new InformationMessage("TroopId empty")); return; }
             void DoOpen()
             {
-                LanceTemplateEditorManager.DeleteLayer();
+                LanceTemplateEditorController.DeleteLayer();
                 CharacterObject character = MBObjectManager.Instance.GetObject<CharacterObject>(troopId) ?? Game.Current.ObjectManager.GetObject<CharacterObject>(troopId);
                 if (character == null) return;
                 TroopEditorController manager = new TroopEditorController(character);
@@ -273,8 +273,10 @@ namespace LanceSystem.DynamicLances.UI
         {
             InformationManager.DisplayMessage(new InformationMessage("SaveTemplate clicked"));
             var lance = BuildLance();
-            //LanceTemplateManager.Instance.Lances[lance.StringId] = lance;
-            //InformationManager.DisplayMessage(new InformationMessage($"Template '{lance.Name}' saved with {lance.TroopsTemplate.TroopTypes.Count} troops"));
+            if (DynamicLancesService.Instance.IsDynamic(lance.StringId))
+                DynamicLancesService.Instance.UpdateLanceFromData(lance.StringId, lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
+            else
+                DynamicLancesService.Instance.CreateLanceFromData(lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
             _isDirty = false;
             _originalSnapshot = lance;
             RefreshLikelihoodSum();
@@ -283,7 +285,7 @@ namespace LanceSystem.DynamicLances.UI
         public void ExecuteClose()
         {
             InformationManager.DisplayMessage(new InformationMessage("Close clicked"));
-            LanceTemplateEditorManager.DeleteLayer();
+            LanceTemplateEditorController.DeleteLayer();
         }
 
         public void ExecuteSaveAndClose()

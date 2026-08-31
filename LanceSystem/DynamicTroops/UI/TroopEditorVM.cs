@@ -57,7 +57,6 @@ namespace LanceSystem.DynamicTroops.UI
             BuildUpgradeSlots();
             BuildItemSetSelector();
             Name = _manager.GetName();
-            NameWidth = 200;
             BuildItemBindings();
             BuildAppearance();
             TierText = "Tier " + _manager.GetTier();

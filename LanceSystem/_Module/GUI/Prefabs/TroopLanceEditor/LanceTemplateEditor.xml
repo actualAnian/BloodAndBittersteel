@@ -142,7 +142,7 @@
 																							</Children>
 																						</Widget>
 																						<!-- row - category icon button column - entombed OrderFormation sprite -->
-																						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap" Brush="ButtonBrush2" Command.Click="ExecuteFormationClicked">
+																						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!TemplateEditor.SmallButton.Width" SuggestedHeight="!TemplateEditor.SmallButton.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="!Header.Column.Gap" Brush="ButtonBrush2" Command.Click="ExecuteChangeCategory">
 																							<Children>
 																								<OrderFormationClassVisualBrushWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Troop.Icon.Width" SuggestedHeight="!Troop.Icon.Height" HorizontalAlignment="Center" VerticalAlignment="Center" FormationClassValue="@FormationClassValue" Brush="Order.Troop.Icon" />
 																							</Children>

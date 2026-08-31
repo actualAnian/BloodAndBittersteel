@@ -163,12 +163,6 @@ namespace LanceSystem.DynamicLances.UI
         {
             InformationManager.DisplayMessage(new InformationMessage("ChangeCategory clicked"));
         }
-
-        public void ExecuteFormationClicked()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("ExecuteFormationClicked pressed"));
-        }
-
         public void ExecuteCategoryClicked()
         {
             InformationManager.DisplayMessage(new InformationMessage("ExecuteCategoryClicked pressed"));

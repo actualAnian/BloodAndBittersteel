@@ -89,7 +89,7 @@ namespace LanceSystem.ClanScreenUI
             var lances = LanceTemplateManager.Instance.Lances.Values.ToList();
             if (lances.Count == 0)
             {
-                LanceTemplateEditorManager.CreateLayer();
+                LanceTemplateEditorController.CreateLayer();
                 return;
             }
             List<InquiryElement> elements = lances.Select(l => new InquiryElement(l.StringId, l.Name, null)).OrderBy(e => e.Title).ToList();
@@ -99,8 +99,8 @@ namespace LanceSystem.ClanScreenUI
                 if (args == null || !args.Any()) return;
                 InformationManager.HideInquiry();
                 string id = args.First().Identifier.ToString();
-                if (id == "__new__") LanceTemplateEditorManager.CreateLayer();
-                else if (!string.IsNullOrWhiteSpace(id)) LanceTemplateEditorManager.CreateLayer(id);
+                if (id == "__new__") LanceTemplateEditorController.CreateLayer();
+                else if (!string.IsNullOrWhiteSpace(id)) LanceTemplateEditorController.CreateLayer(id);
             }, null, "", false), false, false);
         }
     }

@@ -5,7 +5,7 @@ using TaleWorlds.Library;
 
 namespace LanceSystem.DynamicLances.UI
 {
-    public static class LanceTemplateEditorManager
+    public static class LanceTemplateEditorController
     {
         static GauntletLayer _layer;
         static GauntletMovieIdentifier _movie;

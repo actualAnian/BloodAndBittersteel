@@ -1,8 +1,10 @@
-﻿using LanceSystem.Logger;
+﻿using LanceSystem.DynamicLances;
+using LanceSystem.Logger;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Settlements;
 
 namespace LanceSystem.Deserialization
@@ -31,6 +33,8 @@ namespace LanceSystem.Deserialization
                 (l.CultureId == null || l.CultureId == cultureId)
                 && (l.ClanId == null || l.ClanId == clanId)
                 && ((l.LanceOriginType == originType || l.LanceOriginType == LanceTemplateOriginType.All) || l.LanceOriginType == LanceTemplateOriginType.Settlement && (originType == LanceTemplateOriginType.Town || originType == LanceTemplateOriginType.Castle || originType == LanceTemplateOriginType.Village)));
+            if (clanId == Clan.PlayerClan?.StringId)
+                result = result.Concat(DynamicLancesService.Instance.GetAllLances());
             return result.Any() ? result : new List<Lance> { FallBackLance };
         }
         public IEnumerable<Lance> GetLances(string cultureId, Settlement settlement)

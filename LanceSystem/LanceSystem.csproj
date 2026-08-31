@@ -64,7 +64,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="DynamicLances\UI\" />
 	  <Folder Include="ClanScreenUI\" />
 	  <Folder Include="_Module\Languages\" />
 	</ItemGroup>

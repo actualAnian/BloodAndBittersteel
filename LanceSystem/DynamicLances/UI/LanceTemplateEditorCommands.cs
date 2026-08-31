@@ -18,7 +18,7 @@ namespace LanceSystem.DynamicLances.UI
             //}
             //if (!LanceTemplateManager.Instance.Lances.ContainsKey(lanceId)) return "Lance not found: " + lanceId;
             var lanceId = "aserai_all";
-            LanceTemplateEditorManager.CreateLayer(lanceId);
+            LanceTemplateEditorController.CreateLayer(lanceId);
             return "Opened lance template editor for " + lanceId;
         }
     }
