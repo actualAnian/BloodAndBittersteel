@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.ObjectSystem;
 namespace LanceSystem.SimpleFuzzySearch
 {
     public static class FuzzySearchCommands
@@ -10,7 +11,8 @@ namespace LanceSystem.SimpleFuzzySearch
         {
             if (args.Count != 1) return "Usage: try_fuzzy_search <item_id>";
             string itemId = args != null && args.Count > 0 ? args[0] : "looter";
-            var result = FuzzySearchManager.TrySearch<ItemObject>(itemId, item => item.Name.ToString());
+            var items = MBObjectManager.Instance.GetObjectTypeList<ItemObject>();
+            var result = FuzzySearchManager.TrySearch<ItemObject>(items, itemId, item => item.Name.ToString());
             var resultString = $"Found {result.Count} results for query '{itemId}':\n";
             foreach (var searchResult in result)
             {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.SimpleFuzzySearch;
 
@@ -17,22 +16,15 @@ public static class FuzzySearchManager
 {
     private static readonly SearchScorer Scorer = new(new TextNormalizer(), new LevenshteinMatcher());
 
-    public static IList<SearchResult<T>> TrySearch<T>(
-        string query, Func<T, string> selector)
+    public static IList<SearchResult<T>> TrySearch<T>(IEnumerable<T> items, string query, Func<T, string> selector)
     {
-        IEnumerable<T> items = MBObjectManager.Instance
-            .CreateObjectTypeList(typeof(T))
-            .Cast<T>();
-
         var engine = new FuzzySearch<T>(Scorer);
 
         return engine.Search(items, query, selector);
     }
-    public static IList<T> TrySearchOrdered<T>(
-        string query,
-        Func<T, string> selector)
+    public static IList<T> TrySearchOrdered<T>(IEnumerable<T> items, string query, Func<T, string> selector)
     {
-        return TrySearch(query, selector)
+        return TrySearch(items, query, selector)
         .OrderByDescending(x => x.Score)
         .Select(x => x.Item)
         .ToList();

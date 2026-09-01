@@ -1,7 +1,6 @@
 using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
 using System;
 using System.Collections.Generic;
-using TaleWorlds.CampaignSystem;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.ObjectSystem;
@@ -13,6 +12,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
     public class ObjectSelectorController<T> where T : MBObjectBase
     {
         const int ItemsPerRow = 3;
+        readonly string _title;
         readonly List<T> _allItems;
         readonly Action<T> _apply;
         readonly Func<T, CardVM> _cardFactory;
@@ -21,8 +21,9 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         GauntletMovieIdentifier? _movie;
         public ObjectSelectorVM? Vm { get; private set; }
 
-        public ObjectSelectorController(List<T> items, Action<T> apply, Func<T, Action?, CardVM> cardFactory, List<FilterDefinition<T>> filters)
+        public ObjectSelectorController(string title, List<T> items, Action<T> apply, Func<T, Action?, CardVM> cardFactory, List<FilterDefinition<T>> filters)
         {
+            _title = title;
             _allItems = new List<T>(items);
             _apply = apply;
             _cardFactory = (item) => cardFactory(item, Close);
@@ -35,7 +36,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         {
             var rows = BuildRows(GetFilteredItems());
             var filterVms = GetFilterViewModels();
-            Vm = new ObjectSelectorVM(rows, filterVms, ClearFilters, ApplyFilters, Close);
+            Vm = new ObjectSelectorVM(_title, rows, filterVms, ClearFilters, ApplyFilters, Close);
             _layer = new GauntletLayer("ObjectSelectorLayer", 1001);
             _movie = _layer.LoadMovie("ObjectSelection", Vm);
             _layer.InputRestrictions.SetInputRestrictions(true, InputUsageMask.All);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -16,9 +17,9 @@ namespace LanceSystem.DynamicTroops
             _persistence = new DynamicTroopsXmlSaver(_xmlPath);
         }
 
-        public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+        public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
         {
-            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate);
+            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
             XmlDocument doc = new();
             doc.LoadXml(xml);
             CharacterObject character = (CharacterObject)MBObjectManager.Instance.CreateObjectFromXmlNode(doc.DocumentElement, "NPCCharacter");
@@ -27,10 +28,10 @@ namespace LanceSystem.DynamicTroops
             return character;
         }
 
-        public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+        public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
         {
             CharacterObject existing = MBObjectManager.Instance.GetObject<CharacterObject>(name);
-            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate);
+            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
             XmlDocument doc = new();
             doc.LoadXml(xml);
             existing.Deserialize(MBObjectManager.Instance, doc.DocumentElement);

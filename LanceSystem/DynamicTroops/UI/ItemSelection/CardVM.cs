@@ -1,5 +1,4 @@
 using System;
-using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
@@ -70,7 +69,6 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
                 OnPropertyChangedWithValue(value, "ObjectProperties");
             }
         }
-
         public void Apply()
         {
             _apply?.Invoke();

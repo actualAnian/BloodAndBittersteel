@@ -7,7 +7,6 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
-using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops.UI.Services
@@ -64,7 +63,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier || c.Occupation == Occupation.Lord)
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>(allCharacters,
+            var controller = new ObjectSelectorController<CharacterObject>("Select Face", allCharacters,
                 (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
                 (character, close) => new CharacterCardVM(character, (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
                 close), FilterFactory.CreateCharacterFilters());

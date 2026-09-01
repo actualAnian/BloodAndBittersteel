@@ -1,4 +1,5 @@
 using LanceSystem.DynamicTroops;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -177,13 +178,13 @@ namespace BaBUnitTests
             public int CreateCalls;
             public int UpdateCalls;
             public CharacterObject ReturnObject = (CharacterObject)FormatterServices.GetUninitializedObject(typeof(CharacterObject));
-            public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+            public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
             {
                 CreateCalls++;
                 ReturnObject.StringId = name;
                 return ReturnObject;
             }
-            public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+            public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
             {
                 UpdateCalls++;
             }

@@ -87,11 +87,6 @@ namespace LanceSystem.ClanScreenUI
         void OpenLanceEditorWithPicker()
         {
             var lances = LanceTemplateManager.Instance.Lances.Values.ToList();
-            if (lances.Count == 0)
-            {
-                LanceTemplateEditorController.CreateLayer();
-                return;
-            }
             List<InquiryElement> elements = lances.Select(l => new InquiryElement(l.StringId, l.Name, null)).OrderBy(e => e.Title).ToList();
             elements.Insert(0, new InquiryElement("__new__", "Create New Template", null));
             MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select Lance Template", "Choose template to edit", elements, true, 1, 1, "Open", null, args =>

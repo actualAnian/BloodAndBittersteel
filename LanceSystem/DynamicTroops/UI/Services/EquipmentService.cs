@@ -22,16 +22,10 @@ namespace LanceSystem.DynamicTroops.UI.Services
         public EquipmentService(CharacterObject character, Action refresh)
         {
             _refresh = refresh;
-            _battleEquipments = character.BattleEquipments.Select(DeepCopy).ToList();
-            _civilianEquipments = character.CivilianEquipments.Select(DeepCopy).ToList();
+            _battleEquipments = character.BattleEquipments.Select(original => new Equipment(original)).ToList();
+            _civilianEquipments = character.CivilianEquipments.Select(original => new Equipment(original)).ToList();
+            //_battleEquipments.ForEach(e => e.IsBattle = true);
             _defaultGroup = ComputeDefaultGroup();
-        }
-        Equipment DeepCopy(Equipment original)
-        {
-            Equipment copy = new();
-            for (int i = 0; i < Equipment.EquipmentSlotLength; i++)
-                copy[(EquipmentIndex)i] = original[(EquipmentIndex)i];
-            return copy;
         }
         public List<Equipment> GetBattleEquipments() => _battleEquipments;
         public List<Equipment> GetCivilianEquipments() => _civilianEquipments;
@@ -80,8 +74,24 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 if (item.IsCraftedByPlayer) continue;
                 items.Add(item);
             }
-            var controller = new ObjectSelectorController<ItemObject>(items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, null, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
+            string title = GetSlotTitle(slot);
+            var controller = new ObjectSelectorController<ItemObject>(title, items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, null, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
             controller.Open();
+        }
+        static string GetSlotTitle(EquipmentIndex slot)
+        {
+            return slot switch
+            {
+                EquipmentIndex.Weapon0 or EquipmentIndex.Weapon1 or EquipmentIndex.Weapon2 or EquipmentIndex.Weapon3 => "Select Weapon",
+                EquipmentIndex.Head => "Select Helmet",
+                EquipmentIndex.Body => "Select Body Armor",
+                EquipmentIndex.Gloves => "Select Gloves",
+                EquipmentIndex.Leg => "Select Leg Armor",
+                EquipmentIndex.Cape => "Select Cape",
+                EquipmentIndex.Horse => "Select Horse",
+                EquipmentIndex.HorseHarness => "Select Horse Harness",
+                _ => "Select Item",
+            };
         }
         public void FinalizeItem(EquipmentIndex equipmentIndex, ItemObject item)
         {

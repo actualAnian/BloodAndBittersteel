@@ -1,4 +1,3 @@
-using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Encyclopedia.Items;
 using TaleWorlds.Core;
@@ -21,6 +20,8 @@ namespace LanceSystem.DynamicTroops.UI
         string _genderString = "";
         string _cultureString = "";
         string _faceString = "";
+        string _formationType;
+        bool _isDirty;
         MBBindingList<SkillRowVM> _skillRows = new();
         MBBindingList<ItemSlotVM> _weaponSlots = new();
         MBBindingList<ItemSlotVM> _armorSlots = new();
@@ -34,6 +35,7 @@ namespace LanceSystem.DynamicTroops.UI
         [DataSourceProperty] public CharacterViewModel UnitCharacter { get => _characterVM; set { if (value != _characterVM) { _characterVM = value; OnPropertyChangedWithValue(value, "UnitCharacter"); } } }
         [DataSourceProperty] public string Name { get => _name; set { if (value != _name) { _name = value; OnPropertyChanged("Name"); RefreshValues();} } }
         [DataSourceProperty] public string TierText { get => _tierText; set { if (value != _tierText) { _tierText = value; OnPropertyChangedWithValue(value, "TierText"); } } }
+        [DataSourceProperty] public string FormationType { get => _formationType; set { if (value != _formationType) { _formationType = value; OnPropertyChangedWithValue(value, "FormationType"); } } }
         [DataSourceProperty] public string TotalSkillSum { get => _totalSkillSum; set { if (value != _totalSkillSum) { _totalSkillSum = value; OnPropertyChangedWithValue(value, "TotalSkillSum"); } } }
         [DataSourceProperty] public string ItemSetText { get => _itemSetText; set { if (value != _itemSetText) { _itemSetText = value; OnPropertyChangedWithValue(value, "ItemSetText"); } } }
         [DataSourceProperty] public SelectorVM<EncyclopediaUnitEquipmentSetSelectorItemVM> ItemSetSelector { get => _itemSetSelector; set { if (value != _itemSetSelector) { _itemSetSelector = value; OnPropertyChangedWithValue(value, "ItemSetSelector"); } } }
@@ -63,6 +65,7 @@ namespace LanceSystem.DynamicTroops.UI
             TotalSkillSum = BuildTotalSkillSumText();
             LanceNames = new MBBindingList<BindingListStringItem> { new("Swadian Knights Lance - 12 men"), new("Vanguard Lance - 8 men"), new("Reserve Lance - 4 men") };
             FaceString = "Face : Default";
+            FormationType = _manager.FillFormationString();
         }
         public void BuildItemSetSelector()
         {
@@ -74,10 +77,6 @@ namespace LanceSystem.DynamicTroops.UI
             _itemSetTextObj.SetTextVariable("CURINDEX", ItemSetSelector.SelectedIndex + 1);
             _itemSetTextObj.SetTextVariable("COUNT", ItemSetSelector.ItemList.Count);
             ItemSetText = _itemSetTextObj.ToString();
-        }
-        int CalculateNameWidth(string name)
-        {
-            return name.Count() * 15 + 100;
         }
         void BuildItemBindings()
         {
@@ -157,16 +156,17 @@ namespace LanceSystem.DynamicTroops.UI
             UnitCharacter.RefreshValues();
             TierText = "Tier " + _manager.GetTier();
             TotalSkillSum = BuildTotalSkillSumText();
+            FormationType = _manager.FillFormationString();
         }
-        public void UpdateSkill(SkillObject skill, int amount) => _manager.UpdateSkill(skill, amount);
+        public void MarkDirty() => _isDirty = true;
+        public bool HasUnsavedChanges => _isDirty;
+        public void UpdateSkill(SkillObject skill, int amount) { _manager.UpdateSkill(skill, amount); MarkDirty(); }
         void SelectItem(string slotKey) => _manager.SelectItem(slotKey);
-        void OnUpgradeLink(CharacterObject upgrade) => _manager.SelectUpgradeCharacter(upgrade);
+        void OnUpgradeLink(CharacterObject upgrade) { _manager.SelectUpgradeCharacter(upgrade); MarkDirty(); }
         void RemoveUpgrade(CharacterObject upgrade)
         {
             _manager.RemoveUpgrade(upgrade);
-            TroopEditorViewService.Delete();
-            TroopEditorController next = new TroopEditorController(_character);
-            TroopEditorViewService.Create(next.Vm);
+            MarkDirty();
         }
         void OnItemSetChange(SelectorVM<EncyclopediaUnitEquipmentSetSelectorItemVM> selector)
         {
@@ -179,21 +179,46 @@ namespace LanceSystem.DynamicTroops.UI
             UnitCharacter.SetEquipment(CurrentSelectedItemSet.EquipmentSet);
             UnitCharacter.RefreshValues();
         }
-        public void Rename() => _manager.Rename();
-        public void ChangeCulture() => _manager.ChangeCulture();
-        public void ChangeGender() => _manager.ChangeGender();
-        public void ChangeTier() => _manager.OpenTierInquiry();
-        public void ChangeFace() => _manager.SelectAppearance();
-        public void AddUpgrade() => _manager.AddUpgrade();
-        public void CopyTemplate() => _manager.CopyTemplate();
-        public void PasteTemplate() => InformationManager.DisplayMessage(new InformationMessage("Paste template: placeholder - use Copy Template first"));
+        public void Rename() { _manager.Rename(); MarkDirty(); }
+        public void ChangeCulture() { _manager.ChangeCulture(); MarkDirty(); }
+        public void ChangeGender() { _manager.ChangeGender(); MarkDirty(); }
+        public void ChangeTier() { _manager.OpenTierInquiry(); MarkDirty(); }
+        public void ChangeFace() { _manager.SelectAppearance(); MarkDirty(); }
+        public void AddUpgrade() { _manager.AddUpgrade(); MarkDirty(); }
+        public void CopyTemplate()
+        {
+            _manager.CopyTemplate();
+        }
+        public void PasteTemplate()
+        {
+            var template = EditorTemplateHolder.Instance.TroopPreviewCharacter;
+            if (template == null)
+            {
+                InformationManager.DisplayMessage(new InformationMessage("No troop template in clipboard. Copy a template first."));
+                return;
+            }
+            if (HasUnsavedChanges)
+            {
+                InformationManager.ShowInquiry(new InquiryData("Unsaved Changes", "There are unsaved changes. Do you want to discard them and paste the template?", true, true, "Yes", "No", () => ApplyPaste(template), null, "", 0f, null, null, null), true, false);
+                return;
+            }
+            ApplyPaste(template);
+        }
+        void ApplyPaste(CharacterObject template)
+        {
+            TroopEditorViewService.Delete();
+            var controller = new TroopEditorController(template);
+            TroopEditorViewService.Create(controller.Vm);
+            InformationManager.DisplayMessage(new InformationMessage("Troop template pasted"));
+        }
         public void SaveTroop()
         {
             _manager.OnSave();
+            _isDirty = false;
         }
         public void SwitchTroop() => _manager.SwitchTroop();
         public void CreateNewTroop() => _manager.CreateNewTroop();
-        public void AddSet() => _manager.AddSet();
-        public void RemoveSet() => _manager.RemoveSet();
+        public void AddSet() { _manager.AddSet(); MarkDirty(); }
+        public void RemoveSet() { _manager.RemoveSet(); MarkDirty(); }
     }
 }

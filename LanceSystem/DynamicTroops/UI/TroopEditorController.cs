@@ -22,7 +22,7 @@ namespace LanceSystem.DynamicTroops.UI
         readonly SkillService _skillService;
         readonly AppearanceService _appearanceService;
         readonly EquipmentService _equipmentService;
-        readonly UpgradeService _upgradeService;
+        readonly TroopUpgradeService _upgradeService;
         int _level;
         public TroopEditorController(CharacterObject character)
         {
@@ -31,7 +31,7 @@ namespace LanceSystem.DynamicTroops.UI
             _skillService = new SkillService(character, () => GetTier(), Refresh);
             _appearanceService = new AppearanceService(character, Refresh);
             _equipmentService = new EquipmentService(character, Refresh);
-            _upgradeService = new UpgradeService(character, Refresh);
+            _upgradeService = new TroopUpgradeService(character, Refresh);
             Vm = new TroopEditorVM(PreviewCharacter, this);
         }
         public string GetName() => _appearanceService.GetName();
@@ -41,7 +41,7 @@ namespace LanceSystem.DynamicTroops.UI
         public List<Equipment> GetBattleEquipments() => _equipmentService.GetBattleEquipments();
         public FormationClass GetDefaultGroup() => _equipmentService.GetDefaultGroup();
         public MBEquipmentRoster GetRoster() => _equipmentService.BuildRoster();
-        public List<CharacterObject> GetUpgradeTargets() => _upgradeService.GetUpgradeTargets();
+        public List<CharacterObject> GetUpgradeTargets() => _upgradeService.GetTroopUpgradeTargets();
         public int GetLevel() => _level;
         public int GetTier()
         {
@@ -80,7 +80,7 @@ namespace LanceSystem.DynamicTroops.UI
                 if (slotWithNewCharacter.Count() != 0) return;
                 slotToUpdate.ChangeCharacter(newCharacter);
             });
-            var controller = new ObjectSelectorController<CharacterObject>(allCharacters, onSelect, (character, close) => new CharacterCardVM(character, onSelect, close), FilterFactory.CreateCharacterFilters());
+            var controller = new ObjectSelectorController<CharacterObject>("Select Troop", allCharacters, onSelect, (character, close) => new CharacterCardVM(character, onSelect, close), FilterFactory.CreateCharacterFilters());
             controller.Open();
         }
         public void SelectItem(string slotKey) => _equipmentService.SelectItem(slotKey);
@@ -88,18 +88,37 @@ namespace LanceSystem.DynamicTroops.UI
         public void SetDefaultGroup() => _equipmentService.RecalculateDefaultGroup();
         public void AddUpgrade()
         {
-            var currentUpgrades = _upgradeService.GetUpgradeTargets();
+            var currentUpgrades = _upgradeService.GetTroopUpgradeTargets();
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier)
                 .Where(c => !currentUpgrades.Contains(c))
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>(allCharacters, _upgradeService.AddUpgradeTarget, (character, close) => new CharacterCardVM(character, _upgradeService.AddUpgradeTarget, close), FilterFactory.CreateCharacterFilters());
+            var controller = new ObjectSelectorController<CharacterObject>("Select Troop", allCharacters, _upgradeService.AddTroopUpgradeTarget, (character, close) => new CharacterCardVM(character, _upgradeService.AddTroopUpgradeTarget, close), FilterFactory.CreateCharacterFilters());
             controller.Open();
         }
-        public void RemoveUpgrade(CharacterObject upgrade) => _upgradeService.RemoveUpgradeTarget(upgrade);
+        public void RemoveUpgrade(CharacterObject upgrade) => _upgradeService.RemoveTroopUpgradeTarget(upgrade);
         public void CopyTemplate()
         {
-            InformationManager.DisplayMessage(new InformationMessage("copy template pressed"));
+            var data = BuildTroopEditorData();
+            var preview = CreatePreviewCharacter();
+            EditorTemplateHolder.Instance.TroopTemplate = data;
+            EditorTemplateHolder.Instance.TroopPreviewCharacter = preview;
+            InformationManager.DisplayMessage(new InformationMessage("Troop template copied to clipboard"));
+        }
+        public TroopEditorData BuildTroopEditorData()
+        {
+            return new TroopEditorData
+            {
+                Name = GetName(),
+                IsFemale = GetIsFemale(),
+                DefaultGroup = GetDefaultGroup(),
+                Tier = GetTier(),
+                Culture = GetCulture(),
+                UpgradesTo = GetUpgradeTargets(),
+                Roster = GetRoster(),
+                FaceKeyTemplate = GetBodyProperty(),
+                SkillValues = BuildSkillValues()
+            };
         }
         public void OpenTierInquiry()
         {
@@ -138,12 +157,27 @@ namespace LanceSystem.DynamicTroops.UI
             _equipmentService.RemoveSets(indicesToRemove);
             Refresh();
         }
+        public string FillFormationString()
+        {
+            var text = "Formation: ";
+            var formationEnum = _equipmentService.GetDefaultGroup();
+            var formationType = formationEnum switch
+            {
+                FormationClass.Infantry => "Infantry",
+                FormationClass.Ranged => "Ranged",
+                FormationClass.Cavalry => "Cavalry",
+                FormationClass.HorseArcher => "Horse Archer",
+                _ => "Infantry",
+            };
+            return text + formationType;
+        }
+
         public void SwitchTroop()
         {
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier)
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>(allCharacters, OnSwitchTroop, (character, close) => new CharacterCardVM(character, OnSwitchTroop, close), FilterFactory.CreateCharacterFilters());
+            var controller = new ObjectSelectorController<CharacterObject>("Switch Troop", allCharacters, OnSwitchTroop, (character, close) => new CharacterCardVM(character, OnSwitchTroop, close), FilterFactory.CreateCharacterFilters());
             controller.Open();
         }
         void OnSwitchTroop(CharacterObject selectedCharacter)
@@ -178,18 +212,24 @@ namespace LanceSystem.DynamicTroops.UI
         }
         public void OnSave()
         {
-            TroopEditorData data = new()
+            DynamicTroopsService.Instance.SaveCharacterFromData(
+                GetName(), GetIsFemale(), GetDefaultGroup(), GetTier(), GetCulture(),
+                GetUpgradeTargets(), GetRoster(), GetBodyProperty(), BuildSkillValues());
+            InformationManager.DisplayMessage(new InformationMessage("Saved: " + GetName()));
+        }
+        Dictionary<SkillObject, int> BuildSkillValues()
+        {
+            return new Dictionary<SkillObject, int>
             {
-                Name = GetName(),
-                IsFemale = GetIsFemale(),
-                DefaultGroup = GetDefaultGroup(),
-                Tier = GetTier(),
-                Culture = GetCulture(),
-                UpgradesTo = GetUpgradeTargets(),
-                Roster = GetRoster(),
-                FaceKeyTemplate = GetBodyProperty()
+                { DefaultSkills.OneHanded, GetSkillValue(DefaultSkills.OneHanded) },
+                { DefaultSkills.TwoHanded, GetSkillValue(DefaultSkills.TwoHanded) },
+                { DefaultSkills.Polearm, GetSkillValue(DefaultSkills.Polearm) },
+                { DefaultSkills.Bow, GetSkillValue(DefaultSkills.Bow) },
+                { DefaultSkills.Crossbow, GetSkillValue(DefaultSkills.Crossbow) },
+                { DefaultSkills.Throwing, GetSkillValue(DefaultSkills.Throwing) },
+                { DefaultSkills.Riding, GetSkillValue(DefaultSkills.Riding) },
+                { DefaultSkills.Athletics, GetSkillValue(DefaultSkills.Athletics) }
             };
-            InformationManager.DisplayMessage(new InformationMessage("Data ready: " + data.Name));
         }
         public CharacterObject CreatePreviewCharacter()
         {

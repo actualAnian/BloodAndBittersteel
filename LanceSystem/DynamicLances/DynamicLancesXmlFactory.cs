@@ -13,22 +13,13 @@ namespace LanceSystem.DynamicLances
             _persistence = new DynamicLancesXmlSaver(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_lances.xml"));
         }
 
-        public Lance CreateLanceFromData(string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
+        public Lance SaveLance(string stringId, string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
         {
-            string stringId = name.ToLower().Replace(" ", "_");
             Lance lance = new(stringId, name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
             string xml = BuildLanceXml(lance);
             DynamicLancesService.Instance.AddLance(lance);
             _persistence.SaveToXml(stringId, xml);
             return lance;
-        }
-
-        public void UpdateLanceFromData(string stringId, string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
-        {
-            Lance lance = new(stringId, name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
-            string xml = BuildLanceXml(lance);
-            DynamicLancesService.Instance.AddLance(lance);
-            _persistence.SaveToXml(stringId, xml);
         }
 
         internal static string BuildLanceXml(Lance lance) =>

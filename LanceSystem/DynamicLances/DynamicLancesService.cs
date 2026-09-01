@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using LanceSystem.Deserialization;
 
 namespace LanceSystem.DynamicLances
@@ -46,22 +45,12 @@ namespace LanceSystem.DynamicLances
 
         public void Reset() => _lances.Clear();
 
-        public Lance? CreateLanceFromData(string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
+        public Lance? SaveLance(string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return null;
             string stringId = name.ToLower().Replace(" ", "_");
-            if (_lances.ContainsKey(stringId))
-                return null;
-            return _factory.CreateLanceFromData(name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
-        }
-
-        public bool UpdateLanceFromData(string stringId, string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
-        {
-            if (!_lances.ContainsKey(stringId))
-                return false;
-            _factory.UpdateLanceFromData(stringId, name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
-            return true;
+            return _factory.SaveLance(stringId, name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
         }
     }
 }

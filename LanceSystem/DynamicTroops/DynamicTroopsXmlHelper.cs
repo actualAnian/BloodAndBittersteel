@@ -12,7 +12,7 @@ namespace LanceSystem.DynamicTroops
     {
         public const string DefaultFaceKeyTemplateId = "looter";
 
-        public static string BuildNpcCharacterXml(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+        public static string BuildNpcCharacterXml(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int>? skillValues = null)
         {
             int level = TierToLevelMapper.GetLevelForTier(tier);
             string cultureAttr = culture != null ? $" culture=\"Culture.{SecurityElement.Escape(culture.StringId)}\"" : "";
@@ -22,9 +22,10 @@ namespace LanceSystem.DynamicTroops
             string faceId = faceKeyTemplate != null ? faceKeyTemplate.StringId : DefaultFaceKeyTemplateId;
             StringBuilder sb = new();
             sb.Append($"<NPCCharacter id=\"{escapedName}\" name=\"{{=!}}{escapedName}\"{cultureAttr} occupation=\"Soldier\" level=\"{level}\" default_group=\"{groupAttr}\" is_basic_troop=\"true\" is_female=\"{isFemaleAttr}\">");
+            sb.Append(BuildFaceXml(faceId));
+            sb.Append(BuildSkillsXml(skillValues));
             sb.Append(BuildUpgradeTargetsXml(upgradesTo));
             sb.Append(BuildEquipmentsXml(roster));
-            sb.Append(BuildFaceXml(faceId));
             sb.Append("</NPCCharacter>");
             return sb.ToString();
         }
@@ -68,6 +69,18 @@ namespace LanceSystem.DynamicTroops
                 sb.Append("</EquipmentRoster>");
             }
             sb.Append("</Equipments>");
+            return sb.ToString();
+        }
+
+        public static string BuildSkillsXml(Dictionary<SkillObject, int>? skillValues)
+        {
+            if (skillValues == null || skillValues.Count == 0)
+                return "";
+            StringBuilder sb = new();
+            sb.Append("<skills>");
+            foreach (var kvp in skillValues)
+                sb.Append($"<skill id=\"{SecurityElement.Escape(kvp.Key.StringId)}\" value=\"{kvp.Value}\" />");
+            sb.Append("</skills>");
             return sb.ToString();
         }
 

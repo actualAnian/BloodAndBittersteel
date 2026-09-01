@@ -2,12 +2,10 @@ using System.Linq;
 using LanceSystem.Deserialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using TaleWorlds.ObjectSystem;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
 using TaleWorlds.TwoDimension;
-using LanceSystem.DynamicTroops.UI.Services;
-using LanceSystem.DynamicTroops.UI;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicLances.UI
 {
@@ -19,35 +17,24 @@ namespace LanceSystem.DynamicLances.UI
         string _infoText = "Likelihood has to sum to 1. Values are normalized automatically.";
         MBBindingList<TroopDataRowVM> _troopRows = new();
         ImageIdentifierVM _templateBannerVisual;
-        Lance _originalSnapshot;
         bool _isDirty;
-        string _longestTroopName = "Basic Troop";
+        string _troopName;
         int _templateNameFontSize = 42;
-
-        public LanceTemplateEditorVM()
+        readonly LanceTemplateEditorController _controller;
+        public LanceTemplateEditorVM(LanceTemplateEditorController controller, Lance lance)
         {
-            _templateBannerVisual = new BannerImageIdentifierVM(null);
-            _troopRows.Add(new TroopDataRowVM(this, new TroopData(LanceTroopCategory.Infantry, 0.5, "looter")));
-            _troopRows.Add(new TroopDataRowVM(this, new TroopData(LanceTroopCategory.Ranged, 0.5, "looter")));
-            UpdateBannerVisual();
-            UpdateTemplateNameFontSize();
-            UpdateLongestTroopName();
-            CaptureSnapshot();
-            RefreshLikelihoodSum();
-        }
-
-        public LanceTemplateEditorVM(Lance lance) : this()
-        {
+            _controller = controller;
             _templateName = lance.Name;
             _bannerCode = lance.bannerKey ?? "";
             _troopRows.Clear();
-            foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, t));
+            foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, _controller, t));
+            var banner = new Banner(_bannerCode);
+            _templateBannerVisual = new BannerImageIdentifierVM(banner);
             UpdateBannerVisual();
             UpdateTemplateNameFontSize();
-            UpdateLongestTroopName();
-            CaptureSnapshot();
             _isDirty = false;
             RefreshLikelihoodSum();
+            _troopName = new TextObject("Troop Name").ToString();
         }
 
         [DataSourceProperty]
@@ -58,12 +45,11 @@ namespace LanceSystem.DynamicLances.UI
         }
 
         [DataSourceProperty]
-        public string LongestTroopName
+        public string TroopName
         {
-            get => _longestTroopName;
-            set { if (value != _longestTroopName) { _longestTroopName = value; OnPropertyChangedWithValue(value, nameof(LongestTroopName)); } }
+            get => _troopName;
+            set { if (value != _troopName) { _troopName = value; OnPropertyChangedWithValue(value, nameof(_troopName)); } }
         }
-
         [DataSourceProperty]
         public int TemplateNameFontSize
         {
@@ -116,21 +102,15 @@ namespace LanceSystem.DynamicLances.UI
         {
             _troopRows.Remove(row);
             MarkDirty();
-            UpdateLongestTroopName();
             RefreshLikelihoodSum();
         }
 
-        void AddRow(TroopData data) { _troopRows.Add(new TroopDataRowVM(this, data)); MarkDirty(); UpdateLongestTroopName(); RefreshLikelihoodSum(); }
-
-        public void UpdateLongestTroopName()
+        public void AddTroopRow(TroopData data)
         {
-            var longest = _troopRows.OrderByDescending(r => r.BasicTroopId?.Length ?? 0).FirstOrDefault()?.BasicTroopId;
-            if (string.IsNullOrWhiteSpace(longest)) longest = "Basic Troop";
-            if (longest.Length < "Basic Troop".Length) longest = "Basic Troop";
-            LongestTroopName = longest;
-            foreach (var r in _troopRows) r.RefreshLongestName();
+            _troopRows.Add(new TroopDataRowVM(this, _controller, data));
+            MarkDirty();
+            RefreshLikelihoodSum();
         }
-
         void UpdateTemplateNameFontSize()
         {
             var len = _templateName?.Length ?? 0;
@@ -138,161 +118,63 @@ namespace LanceSystem.DynamicLances.UI
             TemplateNameFontSize = size;
         }
 
-        void CaptureSnapshot()
-        {
-            try { _originalSnapshot = BuildLanceInternal(); _isDirty = false; } catch { _isDirty = false; }
-        }
-
-        Lance BuildLanceInternal()
-        {
-            var troops = _troopRows.Select(r => r.ToTroopData()).ToList();
-            var normalized = LanceDataDeserializer.NormalizeTroopLikelihoods(troops);
-            return new Lance(_templateName.ToLower().Replace(" ", "_"), _templateName, null, null, LanceTemplateOriginType.All, new LanceTroopsTemplate(normalized), 1, string.IsNullOrWhiteSpace(_bannerCode) ? null : _bannerCode);
-        }
-
         void UpdateBannerVisual()
         {
-            try
+            if (!string.IsNullOrWhiteSpace(_bannerCode))
             {
-                if (!string.IsNullOrWhiteSpace(_bannerCode))
-                {
-                    var banner = new Banner(_bannerCode);
-                    TemplateBannerVisual = new BannerImageIdentifierVM(banner);
-                    return;
-                }
+                var banner = new Banner(_bannerCode);
+                TemplateBannerVisual = new BannerImageIdentifierVM(banner);
+                return;
             }
-            catch { }
-            try
-            {
-                var clan = TaleWorlds.CampaignSystem.Campaign.Current != null ? TaleWorlds.CampaignSystem.Clan.PlayerClan?.Banner : null;
-                if (clan != null) { TemplateBannerVisual = new BannerImageIdentifierVM(clan); return; }
-            }
-            catch { }
+            var clan = Campaign.Current != null ? Clan.PlayerClan?.Banner : null;
+            if (clan != null) { TemplateBannerVisual = new BannerImageIdentifierVM(clan); return; }
             TemplateBannerVisual = new BannerImageIdentifierVM(null);
         }
-
         public void MarkDirty() => _isDirty = true;
-
+        public void ClearDirty() => _isDirty = false;
         public bool HasUnsavedChanges => _isDirty;
-
-        public void TryOpenTroopEditor(string troopId)
+        public void LoadFromLance(Lance lance)
         {
-            if (string.IsNullOrWhiteSpace(troopId)) { InformationManager.DisplayMessage(new InformationMessage("TroopId empty")); return; }
-            void DoOpen()
-            {
-                LanceTemplateEditorController.DeleteLayer();
-                CharacterObject character = MBObjectManager.Instance.GetObject<CharacterObject>(troopId) ?? Game.Current.ObjectManager.GetObject<CharacterObject>(troopId);
-                if (character == null) return;
-                TroopEditorController manager = new TroopEditorController(character);
-                TroopEditorViewService.Create(manager.Vm);
-            }
-            if (HasUnsavedChanges)
-            {
-                InformationManager.ShowInquiry(new InquiryData("Unsaved Changes", "There are unsaved changes, do you want to discard them and continue?", true, true, "Yes", "No", () => DoOpen(), null, "", 0f, null, null, null), true, false);
-            }
-            else DoOpen();
-        }
-
-        public Lance BuildLance()
-        {
-            var troops = _troopRows.Select(r => r.ToTroopData()).ToList();
-            var normalized = LanceDataDeserializer.NormalizeTroopLikelihoods(troops);
-            return new Lance(_templateName.ToLower().Replace(" ", "_"), _templateName, null, null, LanceTemplateOriginType.All, new LanceTroopsTemplate(normalized), 1, string.IsNullOrWhiteSpace(_bannerCode) ? null : _bannerCode);
+            TemplateName = lance.Name;
+            BannerCode = lance.bannerKey ?? "";
+            _troopRows.Clear();
+            foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, _controller, t));
+            UpdateBannerVisual();
+            UpdateTemplateNameFontSize();
+            RefreshLikelihoodSum();
         }
 
         public void ExecuteEditBanner()
         {
-            InformationManager.DisplayMessage(new InformationMessage("EditBanner clicked"));
+            _controller.EditBanner(_bannerCode, OnBannerEdited);
         }
 
-        public void ExecuteSwitchTemplate()
+        void OnBannerEdited(string? newBannerCode)
         {
-            InformationManager.DisplayMessage(new InformationMessage("SwitchTemplate clicked"));
-            //var lances = LanceTemplateManager.Instance.Lances.Values.ToList();
-            //if (lances.Count == 0) return;
-            //var elements = lances.Select(l => new InquiryElement(l.StringId, l.Name, null)).ToList();
-            //InformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Switch Template", "Select template to load", elements, true, 1, 1, "Load", null, args =>
-            //{
-            //    if (args == null || !args.Any()) return;
-            //    InformationManager.HideInquiry();
-            //    var id = args.First().Identifier as string;
-            //    var lance = LanceTemplateManager.Instance.GetLanceFromId(id);
-            //    TemplateName = lance.Name;
-            //    BannerCode = lance.bannerKey ?? "";
-            //    _troopRows.Clear();
-            //    foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, t));
-            //    RefreshLikelihoodSum();
-            //}, null, "", false), false, false);
+            if (newBannerCode != null)
+                BannerCode = newBannerCode;
+            _controller.ReactivateLayer();
         }
 
-        public void ExecuteCreateNewTemplate()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("CreateNewTemplate clicked"));
-            TemplateName = "New Lance";
-            BannerCode = "";
-            _troopRows.Clear();
-            AddRow(new TroopData(LanceTroopCategory.Infantry, 0.5, "looter"));
-            AddRow(new TroopData(LanceTroopCategory.Ranged, 0.5, "looter"));
-        }
+        public void ExecuteSwitchTemplate() => _controller.SwitchTemplate();
+        public void ExecuteSaveTemplate() => _controller.Save();
+        public void ExecuteCopyTemplate() => _controller.CopyTemplate();
+        public void ExecutePasteTemplate() => _controller.PasteTemplate();
+        public void ExecuteCreateNewTemplate() => _controller.CreateNewTemplate();
+        public void ExecuteAddTroop() => _controller.AddTroop();
+        public void ExecuteClose() => _controller.DeleteLayer();
+        public void ExecuteSaveAndClose() => _controller.SaveAndClose();
+
+        public void TryOpenTroopEditor(string troopId) => _controller.OpenTroopEditor(troopId);
 
         public void ExecuteRenameTemplate()
         {
-            InformationManager.DisplayMessage(new InformationMessage("RenameTemplate clicked"));
             InformationManager.ShowTextInquiry(new TextInquiryData("Rename Template", "Enter new name", true, true, "Confirm", "Cancel", s => { TemplateName = s; }, null, false, null, TemplateName, ""), false, false);
         }
 
         public void ExecuteBannerClicked()
         {
             InformationManager.DisplayMessage(new InformationMessage("BannerClicked pressed"));
-        }
-
-        public void ExecuteAddTroop()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("AddNew clicked"));
-            //var categories = new List<InquiryElement>
-            //{
-            //    new InquiryElement(LanceTroopCategory.Infantry, "Infantry", null),
-            //    new InquiryElement(LanceTroopCategory.Ranged, "Ranged", null),
-            //    new InquiryElement(LanceTroopCategory.Cavalry, "Cavalry", null),
-            //    new InquiryElement(LanceTroopCategory.HorseArcher, "HorseArcher", null)
-            //};
-            //InformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Add Troop", "Select category", categories, true, 1, 1, "Next", null, catArgs =>
-            //{
-            //    if (catArgs == null || !catArgs.Any()) return;
-            //    InformationManager.HideInquiry();
-            //    var cat = (LanceTroopCategory)catArgs.First().Identifier;
-            //    InformationManager.ShowTextInquiry(new TextInquiryData("Basic Troop Id", "Enter CharacterObject StringId", true, true, "Add", "Cancel", troopId =>
-            //    {
-            //        if (string.IsNullOrWhiteSpace(troopId)) return;
-            //        AddRow(new TroopData(cat, 0.1, troopId.Trim().Trim('"')));
-            //    }, null, false, null, "looter", ""), false, false);
-            //}, null, "", false), false, false);
-        }
-
-        public void ExecuteSaveTemplate()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("SaveTemplate clicked"));
-            var lance = BuildLance();
-            if (DynamicLancesService.Instance.IsDynamic(lance.StringId))
-                DynamicLancesService.Instance.UpdateLanceFromData(lance.StringId, lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
-            else
-                DynamicLancesService.Instance.CreateLanceFromData(lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
-            _isDirty = false;
-            _originalSnapshot = lance;
-            RefreshLikelihoodSum();
-        }
-
-        public void ExecuteClose()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("Close clicked"));
-            LanceTemplateEditorController.DeleteLayer();
-        }
-
-        public void ExecuteSaveAndClose()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("SaveAndClose clicked"));
-            ExecuteSaveTemplate();
-            ExecuteClose();
         }
     }
 }

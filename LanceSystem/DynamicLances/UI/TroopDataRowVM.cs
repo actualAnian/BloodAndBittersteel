@@ -10,36 +10,39 @@ namespace LanceSystem.DynamicLances.UI
     public class TroopDataRowVM : ViewModel
     {
         readonly LanceTemplateEditorVM _parent;
+        readonly LanceTemplateEditorController _controller;
         int _formationClassValue;
         string _basicTroopId;
         double _likelihood;
+        string _troopName;
         ImageIdentifierVM _troopVisual;
         string _likelihoodText = "";
 
-        public TroopDataRowVM(LanceTemplateEditorVM parent, TroopData data)
+        public TroopDataRowVM(LanceTemplateEditorVM parent, LanceTemplateEditorController controller, TroopData data)
         {
             _parent = parent;
+            _controller = controller;
             _formationClassValue = GetFormationClassValueFromCategory(data.Category);
             _basicTroopId = data.BasicTroopId;
             _likelihood = data.Likelihood;
-            _troopVisual = CreateVisual(_basicTroopId);
+            var character = TaleWorlds.ObjectSystem.MBObjectManager.Instance.GetObject<CharacterObject>(_basicTroopId);
+            _troopName = character.Name.ToString();
+            _troopVisual = CreateVisual(character);
             RefreshValues();
         }
 
-        ImageIdentifierVM CreateVisual(string troopId)
+        ImageIdentifierVM CreateVisual(CharacterObject character)
         {
-            try
-            {
-                var character = TaleWorlds.ObjectSystem.MBObjectManager.Instance.GetObject<CharacterObject>(troopId);
-                if (character != null) return new CharacterImageIdentifierVM(CharacterCode.CreateFrom(character));
-            }
-            catch { }
+            if (character != null)
+                return new CharacterImageIdentifierVM(CharacterCode.CreateFrom(character));
             return new ItemImageIdentifierVM(null);
         }
 
-        void UpdateVisual()
+        void UpdateCharacter()
         {
-            TroopVisual = CreateVisual(_basicTroopId);
+            var character = TaleWorlds.ObjectSystem.MBObjectManager.Instance.GetObject<CharacterObject>(_basicTroopId);
+            TroopName = character.Name.ToString();
+            TroopVisual = CreateVisual(character);
         }
 
 
@@ -71,14 +74,14 @@ namespace LanceSystem.DynamicLances.UI
         {
             get
             {
-                return this._formationClassValue;
+                return _formationClassValue;
             }
             set
             {
-                if (value != this._formationClassValue)
+                if (value != _formationClassValue)
                 {
-                    this._formationClassValue = value;
-                    base.OnPropertyChangedWithValue(value, "FormationClassValue");
+                    _formationClassValue = value;
+                    OnPropertyChangedWithValue(value, "FormationClassValue");
                     _parent.MarkDirty();
                 }
             }
@@ -88,13 +91,15 @@ namespace LanceSystem.DynamicLances.UI
         public string BasicTroopId
         {
             get => _basicTroopId;
-            set { if (value != _basicTroopId) { _basicTroopId = value; OnPropertyChangedWithValue(value, nameof(BasicTroopId)); UpdateVisual(); _parent.MarkDirty(); _parent.UpdateLongestTroopName(); } }
+            set { if (value != _basicTroopId) { _basicTroopId = value; OnPropertyChangedWithValue(value, nameof(BasicTroopId)); UpdateCharacter(); _parent.MarkDirty(); } }
         }
 
         [DataSourceProperty]
-        public string LongestTroopName => _parent.LongestTroopName;
-
-        public void RefreshLongestName() => OnPropertyChangedWithValue(LongestTroopName, nameof(LongestTroopName));
+        public string TroopName
+        {
+            get => _troopName;
+            set { if (value != _troopName) { _troopName = value; OnPropertyChangedWithValue(value, nameof(TroopName)); } }
+        }
 
         [DataSourceProperty]
         public string LikelihoodText
@@ -161,21 +166,11 @@ namespace LanceSystem.DynamicLances.UI
 
         public void ExecuteChangeCategory()
         {
-            InformationManager.DisplayMessage(new InformationMessage("ChangeCategory clicked"));
+            _controller.ChangeCategoryForRow(this);
         }
-        public void ExecuteCategoryClicked()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("ExecuteCategoryClicked pressed"));
-        }
-
-        public void ExecuteChangeTroop()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("ChangeTroop clicked"));
-        }
-
         public void ExecuteTroopClicked()
         {
-            InformationManager.DisplayMessage(new InformationMessage("TroopClicked pressed"));
+            _controller.SelectTroopForRow(this, _formationClassValue);
         }
 
         public void ExecuteLink()
@@ -183,17 +178,6 @@ namespace LanceSystem.DynamicLances.UI
             InformationManager.DisplayMessage(new InformationMessage("ExecuteLink pressed"));
             ExecuteTroopClicked();
         }
-
-        public void ExecuteBeginHint()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("ExecuteBeginHint pressed"));
-        }
-
-        public void ExecuteEndHint()
-        {
-            InformationManager.DisplayMessage(new InformationMessage("ExecuteEndHint pressed"));
-        }
-
         public void ExecuteOpenTroopEditor()
         {
             InformationManager.DisplayMessage(new InformationMessage("OpenTroopEditor pressed"));

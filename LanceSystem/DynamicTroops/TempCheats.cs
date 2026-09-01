@@ -14,7 +14,7 @@ namespace LanceSystem.DynamicTroops
             string characterName = "Test Character";
             var culture = MBObjectManager.Instance.GetObject<CultureObject>("empire");
             var upgradeTarget = MBObjectManager.Instance.GetObject<CharacterObject>("imperial_equite");
-            DynamicTroopsService.Instance.CreateCharacterFromData(characterName, false, FormationClass.Infantry, 1, culture, new List<CharacterObject>() { upgradeTarget }, new MBEquipmentRoster(), null);
+            DynamicTroopsService.Instance.SaveCharacterFromData(characterName, false, FormationClass.Infantry, 1, culture, new List<CharacterObject>() { upgradeTarget }, new MBEquipmentRoster(), null, new Dictionary<SkillObject, int>());
             //TaleWorlds.CampaignSystem.Party.MobileParty.MainParty.AddElementToMemberRoster(test, 1);
             return $"Character created: {characterName}";
         }

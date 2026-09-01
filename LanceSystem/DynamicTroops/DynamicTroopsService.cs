@@ -33,22 +33,17 @@ namespace LanceSystem.DynamicTroops
             _dynamicIds.Clear();
         }
 
-        public CharacterObject? CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
+        public CharacterObject? SaveCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return null;
-            if (MBObjectManager.Instance.GetObject<CharacterObject>(name) != null)
-                return null;
-            return _factory.CreateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate);
-        }
-
-        public bool UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate)
-        {
-            CharacterObject existing = MBObjectManager.Instance.GetObject<CharacterObject>(name);
-            if (existing == null)
-                return false;
-            _factory.UpdateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate);
-            return true;
+            bool exists = MBObjectManager.Instance.GetObject<CharacterObject>(name) != null;
+            if (exists)
+            {
+                _factory.UpdateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
+                return MBObjectManager.Instance.GetObject<CharacterObject>(name);
+            }
+            return _factory.CreateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
         }
     }
 }

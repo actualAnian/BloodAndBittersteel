@@ -89,13 +89,17 @@
 														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Header.Size" Text="@Name" />
 													</Children>
 												</ButtonWidget>
-
-												<!-- Tier selector -->
-												<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="45" SuggestedHeight="16" Brush="ButtonBrush1" Command.Click="ChangeTier">
+												<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="HorizontalLeftToRight">
 													<Children>
-														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@TierText" />
+														<!-- Tier selector -->
+														<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="70" SuggestedHeight="16" Brush="ButtonBrush1" Command.Click="ChangeTier">
+															<Children>
+																<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@TierText" />
+															</Children>
+														</ButtonWidget>
+														<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="200" SuggestedHeight="16" VerticalAlignment="Top" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@FormationType" MarginLeft="50"/>
 													</Children>
-												</ButtonWidget>
+												</ListPanel>
 
 												<!-- Character viewmodel -->
 												<CharacterTableauWidget DataSource="{UnitCharacter}" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="300" SuggestedHeight="500" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="-100" BodyProperties="@BodyProperties" IsFemale="@IsFemale" EquipmentCode="@EquipmentCode" CharStringId="@CharStringId" StanceIndex="@StanceIndex" BannerCodeText="@BannerCodeText" MountCreationKey="@MountCreationKey" IsEnabled="false" ArmorColor1="@ArmorColor1" ArmorColor2="@ArmorColor2" />

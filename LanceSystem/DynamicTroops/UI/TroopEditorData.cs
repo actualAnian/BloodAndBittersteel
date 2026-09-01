@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops.UI
 {
@@ -15,5 +14,6 @@ namespace LanceSystem.DynamicTroops.UI
         public List<CharacterObject> UpgradesTo { get; init; } = new();
         public MBEquipmentRoster Roster { get; init; } = default!;
         public MBBodyProperty? FaceKeyTemplate { get; init; }
+        public Dictionary<SkillObject, int> SkillValues { get; init; } = new();
     }
 }

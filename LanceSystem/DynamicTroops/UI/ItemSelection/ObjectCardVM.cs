@@ -90,7 +90,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         {
             if (_item?.WeaponComponent == null) return;
             var weapon = _item.WeaponComponent.Item.GetWeaponWithUsageIndex(0);
-            AddTextProperty(GameTexts.FindText("str_inventory_weapon", ((int)weapon.WeaponClass).ToString()), new TextObject("{=8cad4a279770f269c4bb0dc7a357ee1e}Class: "));
+            AddTextProperty(((int)weapon.WeaponClass).ToString(), new TextObject("{=8cad4a279770f269c4bb0dc7a357ee1e}Class: "));
             if (_item.BannerComponent == null)
                 AddIntProperty(new TextObject("{=weaponTier}Weapon Tier: "), (int)_item.Tier + 1);
             var type = WeaponComponentData.GetItemTypeFromWeaponClass(weapon.WeaponClass);

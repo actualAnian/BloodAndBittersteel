@@ -1,10 +1,8 @@
 using System;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
-using TaleWorlds.Library;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {

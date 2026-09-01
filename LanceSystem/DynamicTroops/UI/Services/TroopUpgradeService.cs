@@ -1,32 +1,32 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops.UI.Services
 {
-    public class UpgradeService
+    public class TroopUpgradeService
     {
-        readonly System.Action _refresh;
+        readonly Action _refresh;
         List<CharacterObject> _upgradeTargets;
-        public UpgradeService(CharacterObject character, System.Action refresh)
+        public TroopUpgradeService(CharacterObject character, Action refresh)
         {
             _refresh = refresh;
             _upgradeTargets = character.UpgradeTargets?.ToList() ?? new();
         }
-        public List<CharacterObject> GetUpgradeTargets() => _upgradeTargets;
-        public void AddUpgradeTarget(CharacterObject target)
+        public List<CharacterObject> GetTroopUpgradeTargets() => _upgradeTargets;
+        public void AddTroopUpgradeTarget(CharacterObject target)
         {
             if (_upgradeTargets.Contains(target)) return;
             _upgradeTargets.Add(target);
             _refresh();
         }
-        public void RemoveUpgradeTarget(CharacterObject target)
+        public void RemoveTroopUpgradeTarget(CharacterObject target)
         {
             _upgradeTargets.Remove(target);
             _refresh();
         }
-        public void SetUpgradeTargets(List<CharacterObject> targets)
+        public void SetTroopUpgradeTargets(List<CharacterObject> targets)
         {
             _upgradeTargets = targets;
             _refresh();
