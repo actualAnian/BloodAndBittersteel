@@ -267,30 +267,43 @@
 														<!-- UpgradesTo header -->
 														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="22" Text="Upgrades To" />
 														<!-- Upgrade slots + Add button -->
-														<ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="HorizontalLeftToRight">
+														<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="500" SuggestedHeight="180" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="HorizontalLeftToRight">
 															<Children>
-																<!-- Upgrade slots -->
-																<ListPanel DataSource="{UpgradeSlots}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Center" StackLayout.LayoutMethod="HorizontalLeftToRight">
-																	<ItemTemplate>
-																		<!-- UpgradeSlot: portrait + remove button -->
-																		<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="123" HorizontalAlignment="Left" MarginRight="15" StackLayout.LayoutMethod="VerticalTopToBottom">
+																<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" VerticalAlignment="Top" ClipRect="UpgradeClipRect" InnerPanel="UpgradeClipRect\UpgradeList" HorizontalScrollbar="UpgradeHorizontalScrollbar" AutoHideScrollBars="true">
+																	<Children>
+																		<Widget Id="UpgradeClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" ClipContents="true">
 																			<Children>
-																				<!-- Portrait -->
-																				<ButtonWidget Command.Click="ExecuteLink" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="123" SuggestedHeight="89" HorizontalAlignment="Center" Brush="Encyclopedia.SubPage.Element" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint">
-																					<Children>
-																						<ImageIdentifierWidget DataSource="{ImageIdentifier}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" HorizontalAlignment="Center" MarginRight="3" MarginLeft="3" MarginBottom="3" MarginTop="3" />
-																					</Children>
-																				</ButtonWidget>
-																				<!-- Remove button -->
-																				<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="ButtonBrush2" Command.Click="ExecuteRemove" MarginTop="30">
-																					<Children>
-																						<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="@ButtonText" />
-																					</Children>
-																				</ButtonWidget>
+																				<ListPanel Id="UpgradeList" DataSource="{UpgradeSlots}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" StackLayout.LayoutMethod="HorizontalLeftToRight">
+																					<ItemTemplate>
+																						<!-- UpgradeSlot: portrait + remove button -->
+																						<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="123" HorizontalAlignment="Left" MarginRight="15" StackLayout.LayoutMethod="VerticalTopToBottom">
+																							<Children>
+																								<!-- Portrait -->
+																								<ButtonWidget Command.Click="ExecuteLink" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="123" SuggestedHeight="89" HorizontalAlignment="Center" Brush="Encyclopedia.SubPage.Element" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint">
+																									<Children>
+																										<ImageIdentifierWidget DataSource="{ImageIdentifier}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" HorizontalAlignment="Center" MarginRight="3" MarginLeft="3" MarginBottom="3" MarginTop="3" />
+																									</Children>
+																								</ButtonWidget>
+																								<!-- Remove button -->
+																								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" HorizontalAlignment="Center" VerticalAlignment="Top" Brush="ButtonBrush2" Command.Click="ExecuteRemove" MarginTop="30">
+																									<Children>
+																										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="@ButtonText" />
+																									</Children>
+																								</ButtonWidget>
+																							</Children>
+																						</ListPanel>
+																					</ItemTemplate>
+																				</ListPanel>
 																			</Children>
-																		</ListPanel>
-																	</ItemTemplate>
-																</ListPanel>
+																		</Widget>
+																		<ScrollbarWidget Id="UpgradeHorizontalScrollbar" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="6" HorizontalAlignment="Center" VerticalAlignment="Bottom" MarginLeft="15" MarginRight="15" MarginBottom="5" AlignmentAxis="Horizontal" Handle="UpgradeHorizontalScrollbarHandle" MaxValue="100" MinValue="0">
+																			<Children>
+																				<Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="6" HorizontalAlignment="Center" Sprite="BlankWhiteSquare_9" AlphaFactor="0.2" Color="#5a4033FF" />
+																				<ImageWidget Id="UpgradeHorizontalScrollbarHandle" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="10" MarginTop="1" MarginBottom="1" HorizontalAlignment="Center" Brush="FaceGen.Scrollbar.Handle" />
+																			</Children>
+																		</ScrollbarWidget>
+																	</Children>
+																</ScrollablePanel>
 																<!-- Add new upgrade button -->
 																<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush1" Command.Click="AddUpgrade" MarginLeft="5" VerticalAlignment="Center" HorizontalAlignment="Left">
 																	<Children>
@@ -322,12 +335,43 @@
 												<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="300" HorizontalAlignment="Center" VerticalAlignment="Top" MarginLeft="15" StackLayout.LayoutMethod="VerticalTopToBottom">
 													<Children>
 														<!-- Lances header -->
-														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Lance templates present in" />
-														<!-- Lances list -->
-														<ListPanel DataSource="{LanceNames}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="280" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="10" StackLayout.LayoutMethod="VerticalTopToBottom">
-															<ItemTemplate>
-																<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@Item" MarginBottom="4" />
-															</ItemTemplate>
+														<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Lance Templates" />
+														<!-- Lances scrollable banner list -->
+														<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="300" SuggestedHeight="200" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="HorizontalLeftToRight">
+															<Children>
+																<ScrollablePanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" VerticalAlignment="Top" ClipRect="LanceClipRect" InnerPanel="LanceClipRect\LanceList" VerticalScrollbar="..\LanceScrollbar" AutoHideScrollBars="true">
+																	<Children>
+																		<Widget Id="LanceClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Left" ClipContents="true">
+																			<Children>
+																				<ListPanel Id="LanceList" DataSource="{LanceBanners}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom">
+																					<ItemTemplate>
+																						<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="270" SuggestedHeight="80" HorizontalAlignment="Left" MarginBottom="4" Brush="Encyclopedia.SubPage.Element" Command.Click="ExecuteClick">
+																							<Children>
+																								<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" StackLayout.LayoutMethod="HorizontalLeftToRight">
+																									<Children>
+																										<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="64" SuggestedHeight="64" HorizontalAlignment="Center" VerticalAlignment="Center" MarginLeft="4">
+																											<Children>
+																												<ImageIdentifierWidget DataSource="{BannerVisual}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" ImageId="@Id" AdditionalArgs="@AdditionalArgs" TextureProviderName="@TextureProviderName" HorizontalAlignment="Center" />
+																											</Children>
+																										</Widget>
+																										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" VerticalAlignment="Center" MarginLeft="8" Brush="OverlayPopup.ButtonText" Brush.FontSize="18" Text="@LanceName" />
+																									</Children>
+																								</ListPanel>
+																							</Children>
+																						</ButtonWidget>
+																					</ItemTemplate>
+																				</ListPanel>
+																			</Children>
+																		</Widget>
+																	</Children>
+																</ScrollablePanel>
+																<ScrollbarWidget Id="LanceScrollbar" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="12" SuggestedHeight="180" VerticalAlignment="Top" MarginLeft="4" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" Handle="LanceScrollbarHandle">
+																	<Children>
+																		<ImageWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" VerticalAlignment="Top" Brush="Encyclopedia.Scrollbar.Flat.Bed" />
+																		<ImageWidget Id="LanceScrollbarHandle" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="8" SuggestedHeight="50" VerticalAlignment="Top" Brush="Encyclopedia.Scrollbar.Flat.Handle" />
+																	</Children>
+																</ScrollbarWidget>
+															</Children>
 														</ListPanel>
 													</Children>
 												</ListPanel>

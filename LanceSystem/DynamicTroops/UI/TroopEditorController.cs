@@ -1,6 +1,7 @@
 using HarmonyLib;
 using LanceSystem.DynamicTroops.UI.ItemSelection;
 using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
+using LanceSystem.Deserialization;
 using LanceSystem.DynamicTroops.UI.Services;
 using System;
 using System.Collections.Generic;
@@ -170,6 +171,15 @@ namespace LanceSystem.DynamicTroops.UI
                 _ => "Infantry",
             };
             return text + formationType;
+        }
+
+        public MBBindingList<LanceBannerItemVM> GetLanceBannersForTroop(Action<string> onLanceClicked)
+        {
+            var banners = new MBBindingList<LanceBannerItemVM>();
+            var lances = LanceTemplateManager.Instance.GetLancesForTroop(PreviewCharacter.StringId);
+            foreach (var lance in lances)
+                banners.Add(new LanceBannerItemVM(lance, onLanceClicked));
+            return banners;
         }
 
         public void SwitchTroop()

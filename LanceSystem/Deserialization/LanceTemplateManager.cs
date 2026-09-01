@@ -45,6 +45,12 @@ namespace LanceSystem.Deserialization
             else type = LanceTemplateOriginType.Castle;
             return GetLances(cultureId, settlement.Owner.Clan.StringId, type);
         }
+        public IEnumerable<Lance> GetLancesForTroop(string troopStringId)
+        {
+            return Lances.Values.Where(l =>
+                l.TroopsTemplate.TroopTypes.Any(t =>
+                    string.Equals(t.BasicTroopId, troopStringId, StringComparison.Ordinal)));
+        }
         public Lance GetLanceFromId(string lanceId)
         {
             Lances.TryGetValue(lanceId, out var lance);

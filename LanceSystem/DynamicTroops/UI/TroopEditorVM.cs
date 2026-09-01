@@ -6,6 +6,7 @@ using TaleWorlds.Core.ViewModelCollection.Generic;
 using TaleWorlds.Core.ViewModelCollection.Selector;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using LanceSystem.DynamicLances.UI;
 using LanceSystem.DynamicTroops.UI.Services;
 namespace LanceSystem.DynamicTroops.UI
 {
@@ -27,7 +28,7 @@ namespace LanceSystem.DynamicTroops.UI
         MBBindingList<ItemSlotVM> _armorSlots = new();
         MBBindingList<ItemSlotVM> _mountSlots = new();
         MBBindingList<UpgradeSlotVM> _upgradeSlots = new();
-        MBBindingList<BindingListStringItem> _lanceNames = new();
+        MBBindingList<LanceBannerItemVM> _lanceBanners = new();
         SelectorVM<EncyclopediaUnitEquipmentSetSelectorItemVM> _itemSetSelector;
         EncyclopediaUnitEquipmentSetSelectorItemVM _currentSelectedItemSet;
         readonly TextObject _itemSetTextObj = new("{=vggt7exj}Set {CURINDEX}/{COUNT}");
@@ -48,7 +49,7 @@ namespace LanceSystem.DynamicTroops.UI
         [DataSourceProperty] public string GenderString { get => _genderString; set { if (value != _genderString) { _genderString = value; OnPropertyChanged("GenderString"); } } }
         [DataSourceProperty] public string CultureString { get => _cultureString; set { if (value != _cultureString) { _cultureString = value; OnPropertyChanged("CultureString"); } } }
         [DataSourceProperty] public string FaceString { get => _faceString; set { if (value != _faceString) { _faceString = value; OnPropertyChanged("FaceString"); } } }
-        [DataSourceProperty] public MBBindingList<BindingListStringItem> LanceNames { get => _lanceNames; set { if (value != _lanceNames) { _lanceNames = value; OnPropertyChangedWithValue(value, "LanceNames"); } } }
+        [DataSourceProperty] public MBBindingList<LanceBannerItemVM> LanceBanners { get => _lanceBanners; set { if (value != _lanceBanners) { _lanceBanners = value; OnPropertyChangedWithValue(value, "LanceBanners"); } } }
         public TroopEditorVM(CharacterObject character, TroopEditorController manager)
         {
             _character = character;
@@ -63,7 +64,7 @@ namespace LanceSystem.DynamicTroops.UI
             BuildAppearance();
             TierText = "Tier " + _manager.GetTier();
             TotalSkillSum = BuildTotalSkillSumText();
-            LanceNames = new MBBindingList<BindingListStringItem> { new("Swadian Knights Lance - 12 men"), new("Vanguard Lance - 8 men"), new("Reserve Lance - 4 men") };
+            LanceBanners = _manager.GetLanceBannersForTroop(OpenLanceTemplate);
             FaceString = "Face : Default";
             FormationType = _manager.FillFormationString();
         }
@@ -138,6 +139,17 @@ namespace LanceSystem.DynamicTroops.UI
         {
             TroopEditorViewService.Delete();
         }
+        public void OpenLanceTemplate(string lanceId)
+        {
+            void DoOpen()
+            {
+                TroopEditorViewService.Delete();
+                LanceTemplateEditorController.CreateLayer(lanceId);
+            }
+            if (HasUnsavedChanges)
+                InformationManager.ShowInquiry(new InquiryData("Unsaved Changes", "There are unsaved changes, do you want to discard them and continue?", true, true, "Yes", "No", () => DoOpen(), null, "", 0f, null, null, null), true, false);
+            else DoOpen();
+        }
         public override void RefreshValues()
         {
             base.RefreshValues();
@@ -157,6 +169,7 @@ namespace LanceSystem.DynamicTroops.UI
             TierText = "Tier " + _manager.GetTier();
             TotalSkillSum = BuildTotalSkillSumText();
             FormationType = _manager.FillFormationString();
+            LanceBanners = _manager.GetLanceBannersForTroop(OpenLanceTemplate);
         }
         public void MarkDirty() => _isDirty = true;
         public bool HasUnsavedChanges => _isDirty;
