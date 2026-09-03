@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanceSystem.UI;
 using TaleWorlds.Core;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
 {
@@ -18,13 +20,18 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
         {
             List<InquiryElement> elements = BuildElements();
             if (elements.Count == 0) return;
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select " + Title, "", elements, true, 1, elements.Count, "Continue", null, args =>
+            MBTextManager.SetTextVariable("FILTER_TITLE", Title);
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData(new TextObject("{=lance_select_filter_full}{FILTER_TITLE}").ToString(), "", elements, true, 1, elements.Count, new TextObject("{=WVkc4UgX}Continue.", null).ToString(), null, args =>
             {
                 ApplySelection(args.ToList());
                 OnChanged?.Invoke();
             }, null, "", false), false, false);
         }
         protected abstract void OnResetInternal();
-        public void Reset() => OnReset?.Invoke();
+        public void Reset()
+        {
+            OnReset?.Invoke();
+            OnResetInternal();
+        }
     }
 }

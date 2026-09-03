@@ -3,6 +3,6 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
 {
     public interface IDataFilter<T>
     {
-        IList<T> GetFilteredItems(IList<T> data);
+        IEnumerable<T> GetFilteredItems(IEnumerable<T> data);
     }
 }

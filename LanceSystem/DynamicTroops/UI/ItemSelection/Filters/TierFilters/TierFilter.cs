@@ -1,19 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaleWorlds.Core;
+
 namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.TierFilters
 {
-    public class TierFilter : IDataFilter<ItemObject>
+    public class TierFilter<T> : IDataFilter<T>
     {
         readonly TierContext _context;
-        public TierFilter(TierContext context) 
+        readonly Func<T, int> _tierSelector;
+        public TierFilter(TierContext context, Func<T, int> tierSelector)
         {
             _context = context;
+            _tierSelector = tierSelector;
         }
-        public IList<ItemObject> GetFilteredItems(IList<ItemObject> data)
+        public IEnumerable<T> GetFilteredItems(IEnumerable<T> data)
         {
             if (_context.Selected.Count == 7) return data;
-            return data.Where(item => item == null || _context.Selected.Contains((int)item.Tier) || _context.Selected.Contains((int)item.Tier + 1)).ToList();
+            return data.Where(item => _context.Selected.Contains(_tierSelector(item)));
         }
     }
 }

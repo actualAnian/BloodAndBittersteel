@@ -8,7 +8,6 @@ namespace LanceSystem.DynamicTroops.UI
         static EditorTemplateHolder? _instance;
         public static EditorTemplateHolder Instance => _instance ??= new EditorTemplateHolder();
         public Lance? LanceTemplate { get; set; }
-        public TroopEditorData? TroopTemplate { get; set; }
         public CharacterObject? TroopPreviewCharacter { get; set; }
     }
 }

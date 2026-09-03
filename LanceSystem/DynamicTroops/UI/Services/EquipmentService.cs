@@ -2,40 +2,47 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LanceSystem.UI;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 using LanceSystem.DynamicTroops.UI.ItemSelection;
-using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
+using static LanceSystem.DynamicTroops.UI.ItemSelection.Filters.FilterFactory;
 
 namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class EquipmentService
     {
+        static readonly TextObject _selectVariationsTitle = new("{=lance_select_variations}Select variations sets to change");
+        static readonly TextObject _selectWeaponText = new("{=lance_select_weapon}Select Weapon");
+        static readonly TextObject _selectHelmetText = new("{=lance_select_helmet}Select Helmet");
+        static readonly TextObject _selectBodyArmorText = new("{=lance_select_body_armor}Select Body Armor");
+        static readonly TextObject _selectGlovesText = new("{=lance_select_gloves}Select Gloves");
+        static readonly TextObject _selectLegArmorText = new("{=lance_select_leg_armor}Select Leg Armor");
+        static readonly TextObject _selectCapeText = new("{=lance_select_cape}Select Cape");
+        static readonly TextObject _selectHorseText = new("{=lance_select_horse}Select Horse");
+        static readonly TextObject _selectHorseHarnessText = new("{=lance_select_horse_harness}Select Horse Harness");
+        static readonly TextObject _selectItemText = new("{=lance_select_item}Select Item");
         readonly Action _refresh;
         List<Equipment> _battleEquipments;
-        List<Equipment> _civilianEquipments;
         FormationClass _defaultGroup;
         public List<int> UpdateSlots { get; private set; } = new();
         public EquipmentService(CharacterObject character, Action refresh)
         {
             _refresh = refresh;
             _battleEquipments = character.BattleEquipments.Select(original => new Equipment(original)).ToList();
-            _civilianEquipments = character.CivilianEquipments.Select(original => new Equipment(original)).ToList();
-            //_battleEquipments.ForEach(e => e.IsBattle = true);
             _defaultGroup = ComputeDefaultGroup();
         }
         public List<Equipment> GetBattleEquipments() => _battleEquipments;
-        public List<Equipment> GetCivilianEquipments() => _civilianEquipments;
         public FormationClass GetDefaultGroup() => _defaultGroup;
         public MBEquipmentRoster BuildRoster()
         {
             List<Equipment> combined = new();
             combined.AddRange(_battleEquipments);
-            combined.AddRange(_civilianEquipments);
-            MBEquipmentRoster roster = new();
+                MBEquipmentRoster roster = new();
             typeof(MBEquipmentRoster).GetField("_equipments", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                 ?.SetValue(roster, new MBList<Equipment>(combined));
             return roster;
@@ -43,7 +50,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
         public void SelectItem(string slotKey)
         {
             List<InquiryElement> elements = BuildItemSetElements(_battleEquipments, slotKey);
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select variations sets to change", "", elements, true, 1, _battleEquipments.Count, "Continue", null, args =>
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData(_selectVariationsTitle.ToString(), "", elements, true, 1, _battleEquipments.Count, GameTexts.FindText("str_continue", null).ToString(), null, args =>
             {
                 if (args == null || !args.Any()) return;
                 InformationManager.HideInquiry();
@@ -58,9 +65,11 @@ namespace LanceSystem.DynamicTroops.UI.Services
             for (int i = 0; i < equipments.Count; i++)
             {
                 EquipmentElement element = equipments[i][index];
-                string name = element.Item != null ? element.Item.Name.ToString() : "Empty";
-                ImageIdentifier identifier = element.Item != null ? new ItemImageIdentifier(element.Item) : null;
-                list.Add(new InquiryElement(i, (i + 1) + " : " + name, identifier));
+                string name = element.Item != null ? element.Item.Name.ToString() : UITexts.Empty.ToString();
+                var identifier = new ItemImageIdentifier(element.Item);
+                MBTextManager.SetTextVariable("SET_NUM", i + 1);
+                MBTextManager.SetTextVariable("ITEM_NAME", name);
+                list.Add(new InquiryElement(i, new TextObject("{=lance_set_entry}{SET_NUM} : {ITEM_NAME}").ToString(), identifier));
             }
             return list;
         }
@@ -75,22 +84,24 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 items.Add(item);
             }
             string title = GetSlotTitle(slot);
-            var controller = new ObjectSelectorController<ItemObject>(title, items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, null, i => FinalizeItem(slot, i), close), FilterFactory.CreateEquipmentFilters());
+            List<FilterDefinition<ItemObject>> filters = IsWeaponSlot(slot) ? CreateWeaponFilters() : CreateArmorFilters();
+            var controller = new ObjectSelectorController<ItemObject>(title, items, item => FinalizeItem(slot, item), (item, close) => new ItemCardVM(item, null, i => FinalizeItem(slot, i), close), filters, emptyCardFactory: (close) => new ItemCardVM(null, null, i => FinalizeItem(slot, i), close));
             controller.Open();
         }
+        static bool IsWeaponSlot(EquipmentIndex slot) => slot == EquipmentIndex.Weapon0 || slot == EquipmentIndex.Weapon1 || slot == EquipmentIndex.Weapon2 || slot == EquipmentIndex.Weapon3;
         static string GetSlotTitle(EquipmentIndex slot)
         {
             return slot switch
             {
-                EquipmentIndex.Weapon0 or EquipmentIndex.Weapon1 or EquipmentIndex.Weapon2 or EquipmentIndex.Weapon3 => "Select Weapon",
-                EquipmentIndex.Head => "Select Helmet",
-                EquipmentIndex.Body => "Select Body Armor",
-                EquipmentIndex.Gloves => "Select Gloves",
-                EquipmentIndex.Leg => "Select Leg Armor",
-                EquipmentIndex.Cape => "Select Cape",
-                EquipmentIndex.Horse => "Select Horse",
-                EquipmentIndex.HorseHarness => "Select Horse Harness",
-                _ => "Select Item",
+                EquipmentIndex.Weapon0 or EquipmentIndex.Weapon1 or EquipmentIndex.Weapon2 or EquipmentIndex.Weapon3 => _selectWeaponText.ToString(),
+                EquipmentIndex.Head => _selectHelmetText.ToString(),
+                EquipmentIndex.Body => _selectBodyArmorText.ToString(),
+                EquipmentIndex.Gloves => _selectGlovesText.ToString(),
+                EquipmentIndex.Leg => _selectLegArmorText.ToString(),
+                EquipmentIndex.Cape => _selectCapeText.ToString(),
+                EquipmentIndex.Horse => _selectHorseText.ToString(),
+                EquipmentIndex.HorseHarness => _selectHorseHarnessText.ToString(),
+                _ => _selectItemText.ToString(),
             };
         }
         public void FinalizeItem(EquipmentIndex equipmentIndex, ItemObject item)
@@ -125,7 +136,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
             Equipment first = _battleEquipments[0];
             bool hasMount = first[EquipmentIndex.Horse].Item != null;
             bool isRanged = HasRanged(first);
-            if (isRanged && hasMount) return FormationClass.Cavalry;
+            if (isRanged && hasMount) return FormationClass.HorseArcher;
             if (hasMount) return FormationClass.Cavalry;
             if (isRanged) return FormationClass.Ranged;
             return FormationClass.Infantry;

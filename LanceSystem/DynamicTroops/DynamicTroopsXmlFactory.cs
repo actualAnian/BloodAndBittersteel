@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops
@@ -17,27 +14,27 @@ namespace LanceSystem.DynamicTroops
             _persistence = new DynamicTroopsXmlSaver(_xmlPath);
         }
 
-        public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
+        public CharacterObject CreateCharacterFromData(TroopEditorData data)
         {
-            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
+            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(data);
             XmlDocument doc = new();
             doc.LoadXml(xml);
             CharacterObject character = (CharacterObject)MBObjectManager.Instance.CreateObjectFromXmlNode(doc.DocumentElement, "NPCCharacter");
-            DynamicTroopsService.Instance.MarkDynamic(name);
-            _persistence.SaveToXml(name, xml);
+            DynamicTroopsService.Instance.MarkDynamic(data.Name);
+            _persistence.SaveToXml(data.Name, xml);
             return character;
         }
 
-        public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
+        public void UpdateCharacterFromData(TroopEditorData data)
         {
-            CharacterObject existing = MBObjectManager.Instance.GetObject<CharacterObject>(name);
-            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
+            CharacterObject existing = MBObjectManager.Instance.GetObject<CharacterObject>(data.Name);
+            string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(data);
             XmlDocument doc = new();
             doc.LoadXml(xml);
             existing.Deserialize(MBObjectManager.Instance, doc.DocumentElement);
             existing.AfterInitialized();
-            DynamicTroopsService.Instance.MarkDynamic(name);
-            _persistence.SaveToXml(name, xml);
+            DynamicTroopsService.Instance.MarkDynamic(data.Name);
+            _persistence.SaveToXml(data.Name, xml);
         }
     }
 }

@@ -1,12 +1,15 @@
 using System.Collections.Generic;
+using LanceSystem.UI;
 using TaleWorlds.Core;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.TierFilters
 {
     public class TierContext : MultiSelectionContext
     {
-        public override string Title => "Tier";
-        public override string DisplayText => _selected.Count == 7 ? "All" : string.Join(", ", _selected);
+        static readonly TextObject _tierPrefix = new("{=lance_tier_filter}Tier ");
+        public override string Title => UITexts.Tier.ToString();
+        public override string DisplayText => _selected.Count == 7 ? UITexts.All.ToString() : string.Join(", ", _selected);
         HashSet<int> _selected = new() { 0, 1, 2, 3, 4, 5, 6 };
         public HashSet<int> Selected => _selected;
 
@@ -14,7 +17,10 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.TierFilters
         {
             List<InquiryElement> elements = new();
             for (int i = 0; i <= 6; i++)
-                elements.Add(new InquiryElement(i.ToString(), "Tier " + i, null, true, ""));
+            {
+                MBTextManager.SetTextVariable("TIER", i);
+                elements.Add(new InquiryElement(i.ToString(), new TextObject("{=lance_tier_entry}{TIER_PREFIX}{TIER}").SetTextVariable("TIER_PREFIX", _tierPrefix).ToString(), null, true, ""));
+            }
             return elements;
         }
 

@@ -1,4 +1,5 @@
 using System;
+using LanceSystem.UI;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
@@ -13,7 +14,7 @@ namespace LanceSystem.DynamicTroops.UI
         readonly Action _onAdd;
         readonly Action<CharacterObject> _onRemove;
         ImageIdentifierVM _imageIdentifier;
-        string _buttonText = "Add";
+        string _buttonText = "";
         public UpgradeSlotVM(CharacterObject upgrade, Action<CharacterObject> onLink, Action onAdd, Action<CharacterObject> onRemove)
         {
             _upgrade = upgrade;
@@ -21,12 +22,13 @@ namespace LanceSystem.DynamicTroops.UI
             _onAdd = onAdd;
             _onRemove = onRemove;
             _imageIdentifier = upgrade != null ? new CharacterImageIdentifierVM(CharacterCode.CreateFrom(upgrade)) : new ItemImageIdentifierVM(null);
-            _buttonText = upgrade != null ? "Remove" : "Add";
+            _buttonText = upgrade != null ? UITexts.Remove.ToString() : UITexts.Add.ToString();
         }
         public void ChangeCharacter(CharacterObject newCharacter)
         {
             _upgrade = newCharacter;
             ImageIdentifier = new CharacterImageIdentifierVM(CharacterCode.CreateFrom(newCharacter));
+            ButtonText = UITexts.Remove.ToString();
         }
         [DataSourceProperty] public ImageIdentifierVM ImageIdentifier { get => _imageIdentifier; set { if (value != _imageIdentifier) { _imageIdentifier = value; OnPropertyChangedWithValue(value, "ImageIdentifier"); } } }
         [DataSourceProperty] public string ButtonText { get => _buttonText; set { if (value != _buttonText) { _buttonText = value; OnPropertyChangedWithValue(value, "ButtonText"); } } }

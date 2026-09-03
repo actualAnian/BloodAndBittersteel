@@ -10,7 +10,9 @@ namespace LanceSystem.DynamicTroops
 {
     public static class DynamicTroopsXmlHelper
     {
-        public const string DefaultFaceKeyTemplateId = "looter";
+        public const string DefaultFaceKeyTemplateId = "imperial_recruit";
+
+        public static string BuildNpcCharacterXml(TroopEditorData data) => BuildNpcCharacterXml(data.Name, data.IsFemale, data.DefaultGroup, data.Tier, data.Culture, data.UpgradesTo, data.Roster, data.FaceKeyTemplate, data.SkillValues);
 
         public static string BuildNpcCharacterXml(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int>? skillValues = null)
         {

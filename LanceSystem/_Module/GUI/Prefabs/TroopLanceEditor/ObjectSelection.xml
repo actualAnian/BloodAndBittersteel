@@ -17,7 +17,7 @@
 		<!-- Root overlay: semi-transparent fullscreen background -->
 		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000CC">
 			<!-- Leave button: bottom-center -->
-			<Standard.PopupCloseButton HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="940" Command.Click="Close" Parameter.ButtonText="Leave" />
+			<Standard.PopupCloseButton HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="940" Command.Click="Close" Text="@LeaveButtonText" />
 			<Children>
 				<!-- Main popup frame: Encyclopedia styled window -->
 				<BrushWidget Id="TownManagementPopup" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Encyclopedia.Frame.Width" SuggestedHeight="!Encyclopedia.Frame.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginBottom="35" Brush="Encyclopedia.Frame" ReserveManagementPopup="ReservePopup">
@@ -62,7 +62,7 @@
 								<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="320" HorizontalAlignment="Right" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
 									<Children>
 										<!-- Filter list -->
-										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="Filters" MarginBottom="14" />
+										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="@FiltersHeaderText" MarginBottom="14" />
 										<ListPanel DataSource="{Filters}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalTopToBottom">
 											<ItemTemplate>
 												<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="20">
@@ -75,7 +75,7 @@
 										<!-- Clear all filters -->
 										<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="140" SuggestedHeight="36" HorizontalAlignment="Center" Brush="ButtonBrush2" Command.Click="ExecuteClearFilters" MarginTop="80">
 											<Children>
-												<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="Clear Filters" />
+												<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="@ClearFiltersButtonText" />
 											</Children>
 										</ButtonWidget>
 									</Children>

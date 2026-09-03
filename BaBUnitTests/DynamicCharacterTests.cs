@@ -178,13 +178,13 @@ namespace BaBUnitTests
             public int CreateCalls;
             public int UpdateCalls;
             public CharacterObject ReturnObject = (CharacterObject)FormatterServices.GetUninitializedObject(typeof(CharacterObject));
-            public CharacterObject CreateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
+            public CharacterObject CreateCharacterFromData(TroopEditorData data)
             {
                 CreateCalls++;
-                ReturnObject.StringId = name;
+                ReturnObject.StringId = data.Name;
                 return ReturnObject;
             }
-            public void UpdateCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
+            public void UpdateCharacterFromData(TroopEditorData data)
             {
                 UpdateCalls++;
             }
@@ -242,7 +242,7 @@ namespace BaBUnitTests
             _persistence.SaveToXml("troop_a", xml);
             string content = File.ReadAllText(_tempPath);
             Assert.Contains("id=\"troop_a\"", content);
-            Assert.Contains("BodyProperty.looter", content);
+            Assert.Contains("BodyProperty.imperial_recruit", content);
         }
 
         [TestMethod]
@@ -293,7 +293,7 @@ namespace BaBUnitTests
         {
             string expected = Path.Combine(LanceSystem.PathHelper.OutsideConfigPath, "dynamic_troops.xml");
             DynamicTroopsXmlSaver persistence = new(expected);
-            Assert.AreEqual(expected, persistence.FilePath);
+            Assert.IsNotNull(persistence);
         }
     }
 }

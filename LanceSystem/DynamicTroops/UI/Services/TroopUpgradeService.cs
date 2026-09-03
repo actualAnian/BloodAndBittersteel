@@ -8,7 +8,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
     public class TroopUpgradeService
     {
         readonly Action _refresh;
-        List<CharacterObject> _upgradeTargets;
+        readonly List<CharacterObject> _upgradeTargets;
         public TroopUpgradeService(CharacterObject character, Action refresh)
         {
             _refresh = refresh;
@@ -24,11 +24,6 @@ namespace LanceSystem.DynamicTroops.UI.Services
         public void RemoveTroopUpgradeTarget(CharacterObject target)
         {
             _upgradeTargets.Remove(target);
-            _refresh();
-        }
-        public void SetTroopUpgradeTargets(List<CharacterObject> targets)
-        {
-            _upgradeTargets = targets;
             _refresh();
         }
     }

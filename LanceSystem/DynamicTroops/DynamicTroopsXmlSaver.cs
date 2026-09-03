@@ -6,13 +6,11 @@ namespace LanceSystem.DynamicTroops
     public class DynamicTroopsXmlSaver
     {
         private readonly string _path;
-        public string FilePath => _path;
 
         public DynamicTroopsXmlSaver(string path)
         {
             _path = path;
         }
-
         public void CreateCharacterXmlIfNeeded()
         {
             string dir = Path.GetDirectoryName(_path);

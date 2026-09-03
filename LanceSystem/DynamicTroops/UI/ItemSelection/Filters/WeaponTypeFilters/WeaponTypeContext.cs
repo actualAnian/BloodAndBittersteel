@@ -1,11 +1,28 @@
 using System.Collections.Generic;
 using System.Linq;
+using LanceSystem.UI;
 using TaleWorlds.Core;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.WeaponTypeFilters
 {
     public class WeaponTypeContext : MultiSelectionContext
     {
+        static readonly Dictionary<ItemObject.ItemTypeEnum, TextObject> DisplayNames = new()
+        {
+            { ItemObject.ItemTypeEnum.Arrows, new("{=lance_weapon_arrows}Arrows") },
+            { ItemObject.ItemTypeEnum.Bolts, new("{=lance_weapon_bolts}Bolts") },
+            { ItemObject.ItemTypeEnum.Bow, new("{=lance_weapon_bow}Bow") },
+            { ItemObject.ItemTypeEnum.Bullets, new("{=lance_weapon_bullets}Bullets") },
+            { ItemObject.ItemTypeEnum.Crossbow, new("{=lance_weapon_crossbow}Crossbow") },
+            { ItemObject.ItemTypeEnum.Musket, new("{=lance_weapon_musket}Musket") },
+            { ItemObject.ItemTypeEnum.OneHandedWeapon, new("{=lance_weapon_one_handed}One Handed Weapon") },
+            { ItemObject.ItemTypeEnum.Pistol, new("{=lance_weapon_pistol}Pistol") },
+            { ItemObject.ItemTypeEnum.Polearm, new("{=lance_weapon_polearm}Polearm") },
+            { ItemObject.ItemTypeEnum.Shield, new("{=lance_weapon_shield}Shield") },
+            { ItemObject.ItemTypeEnum.Thrown, new("{=lance_weapon_thrown}Thrown") },
+            { ItemObject.ItemTypeEnum.TwoHandedWeapon, new("{=lance_weapon_two_handed}Two Handed Weapon") }
+        };
         static readonly Dictionary<string, ItemObject.ItemTypeEnum> Map = new()
         {
             { "Arrows", ItemObject.ItemTypeEnum.Arrows },
@@ -22,14 +39,14 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.WeaponTypeFilters
             { "Two Handed Weapon", ItemObject.ItemTypeEnum.TwoHandedWeapon }
         };
 
-        public override string Title => "Weapon";
-        public override string DisplayText => _selected.Count == 0 ? "All" : string.Join(", ", _selected);
+        public override string Title => new TextObject("{=lance_weapon_type}Weapon").ToString();
+        public override string DisplayText => _selected.Count == 0 ? UITexts.All.ToString() : string.Join(", ", _selected.Select(s => DisplayNames[s].ToString()));
         HashSet<ItemObject.ItemTypeEnum> _selected = new();
         public IReadOnlyCollection<ItemObject.ItemTypeEnum> Selected => _selected;
 
         protected override List<InquiryElement> BuildElements()
         {
-            return Map.Keys.Select(k => new InquiryElement(k, k, null, true, "")).ToList();
+            return Map.Select(kv => new InquiryElement(kv.Key, DisplayNames[kv.Value].ToString(), null, true, "")).ToList();
         }
 
         protected override void ApplySelection(List<InquiryElement> selected)

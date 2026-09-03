@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using LanceSystem.Common;
 using TaleWorlds.CampaignSystem;
-using TaleWorlds.Core;
 using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops
@@ -9,9 +9,8 @@ namespace LanceSystem.DynamicTroops
     {
         static DynamicTroopsService? _instance;
         public static DynamicTroopsService Instance => _instance ??= new DynamicTroopsService(new DynamicTroopsXmlFactory());
-
         readonly HashSet<string> _dynamicIds = new();
-        IDynamicTroopsFactory _factory;
+        readonly IDynamicTroopsFactory _factory;
         public DynamicTroopsService(IDynamicTroopsFactory factory)
         {
             _factory = factory;
@@ -33,17 +32,17 @@ namespace LanceSystem.DynamicTroops
             _dynamicIds.Clear();
         }
 
-        public CharacterObject? SaveCharacterFromData(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int> skillValues)
+        public Result<CharacterObject> SaveCharacterFromData(TroopEditorData data)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                return null;
-            bool exists = MBObjectManager.Instance.GetObject<CharacterObject>(name) != null;
+            bool exists = MBObjectManager.Instance.GetObject<CharacterObject>(data.Name) != null;
+            if (exists && !IsDynamic(data.Name))
+                return Result<CharacterObject>.Fail("non dynamic troop with the same id already exists.");
             if (exists)
             {
-                _factory.UpdateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
-                return MBObjectManager.Instance.GetObject<CharacterObject>(name);
+                _factory.UpdateCharacterFromData(data);
+                return Result<CharacterObject>.Ok(MBObjectManager.Instance.GetObject<CharacterObject>(data.Name));
             }
-            return _factory.CreateCharacterFromData(name, isFemale, defaultGroup, tier, culture, upgradesTo, roster, faceKeyTemplate, skillValues);
+            return Result<CharacterObject>.Ok(_factory.CreateCharacterFromData(data));
         }
     }
 }

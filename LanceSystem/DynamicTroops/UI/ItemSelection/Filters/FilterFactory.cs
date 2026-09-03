@@ -27,7 +27,17 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
         }
         // filters are reversed when run, see ObjectSelectorController.GetFilteredItems
 
-        public static List<FilterDefinition<ItemObject>> CreateEquipmentFilters()
+        public static List<FilterDefinition<ItemObject>> CreateArmorFilters()
+        {
+            return new()
+            {
+                CreateItemNameFilter(),
+                CreateItemTierFilter(),
+                CreateItemCultureFilter(),
+                CreateArmourMaterialFilter(),
+            };
+        }
+        public static List<FilterDefinition<ItemObject>> CreateWeaponFilters()
         {
             return new()
             {
@@ -35,7 +45,6 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
                 CreateItemTierFilter(),
                 CreateWeaponTypeFilter(),
                 CreateItemCultureFilter(),
-                CreateArmourMaterialFilter(),
             };
         }
 
@@ -48,6 +57,12 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
                 CreateCharacterCultureFilter(),
             };
         }
+        public static List<FilterDefinition<CharacterObject>> CreateCharacterFiltersWithOccupation()
+        {
+            var filters = CreateCharacterFilters();
+            filters.Add(CreateCharacterTypeFilter());
+            return filters;
+        }
 
         static FilterDefinition<T> CreateFilter<TContext, T>(TContext context, IDataFilter<T> filter) where TContext : IFilterContext
         {
@@ -56,11 +71,15 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
             context.OnReset += vm.Refresh;
             return new FilterDefinition<T>(filter, vm, context);
         }
-
+        static FilterDefinition<CharacterObject> CreateCharacterTypeFilter()
+        {
+            var context = new CharacterTypeContext();
+            return CreateFilter(context, new CharacterTypeFilter(context));
+        }
         static FilterDefinition<ItemObject> CreateItemTierFilter()
         {
             var context = new TierContext();
-            return CreateFilter(context, new TierFilter(context));
+            return CreateFilter(context, new TierFilter<ItemObject>(context, item => (int)item.Tier));
         }
 
         static FilterDefinition<ItemObject> CreateWeaponTypeFilter()
@@ -72,7 +91,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
         static FilterDefinition<ItemObject> CreateItemCultureFilter()
         {
             var context = new CultureContext();
-            return CreateFilter(context, new ItemCultureFilter(context));
+            return CreateFilter(context, new CultureFilter<ItemObject>(context, item => item.Culture as CultureObject));
         }
 
         static FilterDefinition<ItemObject> CreateItemNameFilter()
@@ -89,20 +108,20 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters
 
         static FilterDefinition<CharacterObject> CreateCharacterTierFilter()
         {
-            var context = new CharacterTierContext();
-            return CreateFilter(context, new CharacterTierFilter(context));
+            var context = new TierContext();
+            return CreateFilter(context, new TierFilter<CharacterObject>(context, c => c.Tier));
         }
 
         static FilterDefinition<CharacterObject> CreateCharacterCultureFilter()
         {
-            var context = new CharacterCultureContext();
-            return CreateFilter(context, new CharacterCultureFilter(context));
+            var context = new CultureContext();
+            return CreateFilter(context, new CultureFilter<CharacterObject>(context, c => c.Culture as CultureObject));
         }
 
         static FilterDefinition<CharacterObject> CreateCharacterNameFilter()
         {
-            var context = new CharacterNameContext();
-            return CreateFilter(context, new CharacterNameFilter(context, c => c.Name.ToString() ?? ""));
+            var context = new NameContext();
+            return CreateFilter(context, new NameFilter<CharacterObject>(context, c => c.Name.ToString() ?? ""));
         }
     }
 }

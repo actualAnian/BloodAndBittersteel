@@ -16,18 +16,17 @@ public static class FuzzySearchManager
 {
     private static readonly SearchScorer Scorer = new(new TextNormalizer(), new LevenshteinMatcher());
 
-    public static IList<SearchResult<T>> TrySearch<T>(IEnumerable<T> items, string query, Func<T, string> selector)
+    public static IEnumerable<SearchResult<T>> TrySearch<T>(IEnumerable<T> items, string query, Func<T, string> selector)
     {
         var engine = new FuzzySearch<T>(Scorer);
 
         return engine.Search(items, query, selector);
     }
-    public static IList<T> TrySearchOrdered<T>(IEnumerable<T> items, string query, Func<T, string> selector)
+    public static IEnumerable<T> TrySearchOrdered<T>(IEnumerable<T> items, string query, Func<T, string> selector)
     {
         return TrySearch(items, query, selector)
         .OrderByDescending(x => x.Score)
-        .Select(x => x.Item)
-        .ToList();
+        .Select(x => x.Item);
     }
 }
 public sealed class FuzzySearch<T>
@@ -38,7 +37,7 @@ public sealed class FuzzySearch<T>
         _scorer = scorer;
     }
 
-    public IList<SearchResult<T>> Search(
+    public IEnumerable<SearchResult<T>> Search(
         IEnumerable<T> items,
         string query,
         Func<T, string> selector,

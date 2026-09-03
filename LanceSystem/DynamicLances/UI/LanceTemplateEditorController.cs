@@ -1,7 +1,9 @@
+using LanceSystem.Common;
 using LanceSystem.Deserialization;
 using LanceSystem.DynamicTroops.UI;
 using LanceSystem.DynamicTroops.UI.ItemSelection;
 using LanceSystem.DynamicTroops.UI.Services;
+using LanceSystem.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Core;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 using TaleWorlds.ScreenSystem;
 using TaleWorlds.TwoDimension;
@@ -19,19 +22,31 @@ namespace LanceSystem.DynamicLances.UI
 {
     public class LanceTemplateEditorController
     {
+        static readonly TextObject _changeCategoryTitle = new("{=lance_change_category_title}Change Category");
+        static readonly TextObject _changeCategoryHint = new("{=lance_change_category_hint}Select category");
+        static readonly TextObject _switchTemplateTitle = new("{=lance_switch_template_title}Switch Template");
+        static readonly TextObject _switchTemplateHint = new("{=lance_switch_template_hint}Select template to load");
+        static readonly TextObject _loadText = new("{=lance_load}Load");
+        static readonly TextObject _noTemplatesText = new("{=lance_no_templates}No lance templates available");
+        static readonly TextObject _savedPrefix = new("{=lance_saved_prefix}Saved: ");
+        static readonly TextObject _copiedText = new("{=lance_copied}Lance template copied to clipboard");
+        static readonly TextObject _noTemplateClipboardText = new("{=lance_no_template_clipboard}No lance template in clipboard. Copy a template first.");
+        static readonly TextObject _pasteSuccessText = new("{=lance_paste_success}Lance template pasted");
+        static readonly TextObject _troopIdEmptyText = new("{=lance_troop_id_empty}TroopId empty");
+        static readonly TextObject _infantryText = new("{=lance_infantry}Infantry");
+        static readonly TextObject _rangedText = new("{=lance_ranged}Ranged");
+        static readonly TextObject _cavalryText = new("{=lance_cavalry}Cavalry");
+        static readonly TextObject _horseArcherText = new("{=lance_horse_archer}HorseArcher");
+        static readonly TextObject _newLanceText = new("{=lance_new_template_name}New Lance");
 
         GauntletLayer? _layer;
         GauntletMovieIdentifier? _movie;
         SpriteCategory? _orderCategory;
-        Lance _currentLance;
-        Lance? _originalSnapshot;
         public LanceTemplateEditorVM Vm { get; internal set; }
 
         LanceTemplateEditorController(Lance lance)
         {
-            _currentLance = lance;
             Vm = new LanceTemplateEditorVM(this, lance);
-            CaptureSnapshot();
         }
         public static void CreateLayer(string lanceId)
         {
@@ -41,8 +56,8 @@ namespace LanceSystem.DynamicLances.UI
         }
         public static void CreateLayer()
         {
-            var troopTemplates = new LanceTroopsTemplate(new() { new(LanceTroopCategory.Infantry, 0.5, "looter") });
-            var lance = new Lance("temp", "Temp", null, null, LanceTemplateOriginType.All, troopTemplates);
+            var troopTemplates = new LanceTroopsTemplate(new() { new(LanceTroopCategory.Infantry, 0.5, "imperial_recruit") });
+            var lance = new Lance("temp", _newLanceText.ToString(), null, null, LanceTemplateOriginType.All, troopTemplates);
             var controller = new LanceTemplateEditorController(lance);
             controller.OpenLayer();
         }
@@ -109,7 +124,7 @@ namespace LanceSystem.DynamicLances.UI
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier)
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>("Select Troop", allCharacters, OnAddTroopSelected, (character, close) => new CharacterCardVM(character, OnAddTroopSelected, close), CreateCharacterFilters());
+            var controller = new ObjectSelectorController<CharacterObject>(UITexts.SelectTroop.ToString(), allCharacters, OnAddTroopSelected, (character, close) => new CharacterCardVM(character, OnAddTroopSelected, close), CreateCharacterFilters());
             controller.Open();
         }
 
@@ -121,12 +136,12 @@ namespace LanceSystem.DynamicLances.UI
 
         public void SelectTroopForRow(TroopDataRowVM row, int formationClassValue)
         {
-            var category = IntToLanceTroopCategory(formationClassValue);
+            var category = formationClassValue.ToCategory();
             var matchingFormationClasses = GetFormationClassesForCategory(category);
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier && matchingFormationClasses.Contains(c.DefaultFormationClass))
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>("Select Troop", allCharacters, c => OnTroopSelectedForRow(row, c), (character, close) => new CharacterCardVM(character, c => OnTroopSelectedForRow(row, c), close), CreateCharacterFilters());
+            var controller = new ObjectSelectorController<CharacterObject>(UITexts.SelectTroop.ToString(), allCharacters, c => OnTroopSelectedForRow(row, c), (character, close) => new CharacterCardVM(character, c => OnTroopSelectedForRow(row, c), close), CreateCharacterFilters());
             controller.Open();
         }
 
@@ -141,19 +156,25 @@ namespace LanceSystem.DynamicLances.UI
         {
             var elements = new List<InquiryElement>
             {
-                new((int)LanceTroopCategory.Infantry, "Infantry", null),
-                new((int)LanceTroopCategory.Ranged, "Ranged", null),
-                new((int)LanceTroopCategory.Cavalry, "Cavalry", null),
-                new((int)LanceTroopCategory.HorseArcher, "HorseArcher", null)
+                new((int)LanceTroopCategory.Infantry, _infantryText.ToString(), null),
+                new((int)LanceTroopCategory.Ranged, _rangedText.ToString(), null),
+                new((int)LanceTroopCategory.Cavalry, _cavalryText.ToString(), null),
+                new((int)LanceTroopCategory.HorseArcher, _horseArcherText.ToString(), null)
             };
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Change Category", "Select category", elements, true, 1, 1, "Confirm", null, args =>
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData(_changeCategoryTitle.ToString(), _changeCategoryHint.ToString(), elements, true, 1, 1, UITexts.Confirm.ToString(), null, args =>
             {
                 if (args == null || !args.Any()) return;
                 var selected = (LanceTroopCategory)(int)args.First().Identifier;
-                row.FormationClassValue = row.GetFormationClassValueFromCategory(selected);
+                var formationValue = row.GetFormationClassValueFromCategory(selected);
+                row.FormationClassValue = formationValue;
+                row.BasicTroopId = SetCharacterToFirstFromCategory(formationValue);
             }, null, "", false), false, false);
         }
-
+        private string SetCharacterToFirstFromCategory(int formationValue)
+        {
+            var character = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>().FirstOrDefault(t => t.Occupation == Occupation.Soldier && (int)t.DefaultFormationClass == formationValue);
+            return character?.StringId ?? "";
+        }
         static LanceTroopCategory FormationClassToLanceTroopCategory(FormationClass formationClass)
         {
             return formationClass switch
@@ -161,17 +182,6 @@ namespace LanceSystem.DynamicLances.UI
                 FormationClass.Ranged or FormationClass.Skirmisher => LanceTroopCategory.Ranged,
                 FormationClass.Cavalry or FormationClass.HeavyCavalry or FormationClass.LightCavalry => LanceTroopCategory.Cavalry,
                 FormationClass.HorseArcher => LanceTroopCategory.HorseArcher,
-                _ => LanceTroopCategory.Infantry,
-            };
-        }
-
-        static LanceTroopCategory IntToLanceTroopCategory(int value)
-        {
-            return value switch
-            {
-                1 => LanceTroopCategory.Ranged,
-                2 => LanceTroopCategory.Cavalry,
-                3 => LanceTroopCategory.HorseArcher,
                 _ => LanceTroopCategory.Infantry,
             };
         }
@@ -192,19 +202,17 @@ namespace LanceSystem.DynamicLances.UI
             var lances = DynamicLancesService.Instance.GetAllLances().ToList();
             if (lances.Count == 0)
             {
-                InformationManager.DisplayMessage(new InformationMessage("No lance templates available"));
+                InformationManager.DisplayMessage(new InformationMessage(_noTemplatesText.ToString()));
                 return;
             }
             var elements = lances.Select(l => new InquiryElement(l.StringId, l.Name, null)).ToList();
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Switch Template", "Select template to load", elements, true, 1, 1, "Load", null, args =>
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData(_switchTemplateTitle.ToString(), _switchTemplateHint.ToString(), elements, true, 1, 1, _loadText.ToString(), null, args =>
             {
                 if (args == null || !args.Any()) return;
                 var id = (string)args.First().Identifier;
                 var lance = DynamicLancesService.Instance.GetLance(id);
                 if (lance == null) return;
                 Vm.LoadFromLance(lance);
-                _currentLance = lance;
-                CaptureSnapshot();
             }, null, "", false), false, false);
         }
 
@@ -215,28 +223,27 @@ namespace LanceSystem.DynamicLances.UI
             string stringId = Vm.TemplateName.ToLower().Replace(" ", "_");
             return new Lance(stringId, Vm.TemplateName, null, null, LanceTemplateOriginType.All, new LanceTroopsTemplate(normalized), 1, string.IsNullOrWhiteSpace(Vm.BannerCode) ? null : Vm.BannerCode);
         }
-
-        void CaptureSnapshot()
-        {
-            try { _originalSnapshot = BuildLance(); } catch { }
-        }
-
         public void Save()
         {
             var lance = BuildLance();
-            DynamicLancesService.Instance.SaveLance(lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
-            _currentLance = lance;
-            CaptureSnapshot();
+            var result = DynamicLancesService.Instance.SaveLance(lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
+            if (!result.IsSuccess)
+            {
+                InformationManager.DisplayMessage(new InformationMessage(result.ErrorMessage!, new Color(1, 0, 0)));
+                return;
+            }
             Vm.ClearDirty();
             Vm.RefreshLikelihoodSum();
-            InformationManager.DisplayMessage(new InformationMessage("Saved: " + lance.Name));
+            MBTextManager.SetTextVariable("NAME", lance.Name);
+            InformationManager.DisplayMessage(new InformationMessage(new TextObject("{=lance_saved_full}{SAVED_PREFIX}{NAME}")
+                .SetTextVariable("SAVED_PREFIX", _savedPrefix).ToString()));
         }
 
         public void CopyTemplate()
         {
             var lance = BuildLance();
             EditorTemplateHolder.Instance.LanceTemplate = lance;
-            InformationManager.DisplayMessage(new InformationMessage("Lance template copied to clipboard"));
+            InformationManager.DisplayMessage(new InformationMessage(_copiedText.ToString()));
         }
 
         public void PasteTemplate()
@@ -244,12 +251,12 @@ namespace LanceSystem.DynamicLances.UI
             var template = EditorTemplateHolder.Instance.LanceTemplate;
             if (template == null)
             {
-                InformationManager.DisplayMessage(new InformationMessage("No lance template in clipboard. Copy a template first."));
+                InformationManager.DisplayMessage(new InformationMessage(_noTemplateClipboardText.ToString()));
                 return;
             }
             if (Vm.HasUnsavedChanges)
             {
-                InformationManager.ShowInquiry(new InquiryData("Unsaved Changes", "There are unsaved changes. Do you want to discard them and paste the template?", true, true, "Yes", "No", () => ApplyPaste(template), null, "", 0f, null, null, null), true, false);
+                InformationManager.ShowInquiry(new InquiryData(UITexts.UnsavedTitle.ToString(), UITexts.UnsavedMessage.ToString(), true, true, GameTexts.FindText("str_yes", null).ToString(), GameTexts.FindText("str_no", null).ToString(), () => ApplyPaste(template), null, "", 0f, null, null, null), true, false);
                 return;
             }
             ApplyPaste(template);
@@ -258,23 +265,19 @@ namespace LanceSystem.DynamicLances.UI
         void ApplyPaste(Lance template)
         {
             Vm.LoadFromLance(template);
-            _currentLance = template;
-            CaptureSnapshot();
-            InformationManager.DisplayMessage(new InformationMessage("Lance template pasted"));
+            InformationManager.DisplayMessage(new InformationMessage(_pasteSuccessText.ToString()));
         }
 
         public void CreateNewTemplate()
         {
-            var troopTemplates = new LanceTroopsTemplate(new() { new(LanceTroopCategory.Infantry, 0.5, "looter"), new(LanceTroopCategory.Ranged, 0.5, "looter") });
-            var lance = new Lance("temp", "New Lance", null, null, LanceTemplateOriginType.All, troopTemplates);
+            var troopTemplates = new LanceTroopsTemplate(new() { new(LanceTroopCategory.Infantry, 0.5, "imperial_recruit"), new(LanceTroopCategory.Ranged, 0.5, "imperial_recruit") });
+            var lance = new Lance("temp", _newLanceText.ToString(), null, null, LanceTemplateOriginType.All, troopTemplates);
             Vm.LoadFromLance(lance);
-            _currentLance = lance;
-            CaptureSnapshot();
         }
 
         public void OpenTroopEditor(string troopId)
         {
-            if (string.IsNullOrWhiteSpace(troopId)) { InformationManager.DisplayMessage(new InformationMessage("TroopId empty")); return; }
+            if (string.IsNullOrWhiteSpace(troopId)) { InformationManager.DisplayMessage(new InformationMessage(_troopIdEmptyText.ToString())); return; }
             void DoOpen()
             {
                 DeleteLayer();
@@ -284,7 +287,7 @@ namespace LanceSystem.DynamicLances.UI
                 TroopEditorViewService.Create(controller.Vm);
             }
             if (Vm.HasUnsavedChanges)
-                InformationManager.ShowInquiry(new InquiryData("Unsaved Changes", "There are unsaved changes, do you want to discard them and continue?", true, true, "Yes", "No", () => DoOpen(), null, "", 0f, null, null, null), true, false);
+                InformationManager.ShowInquiry(new InquiryData(UITexts.UnsavedTitle.ToString(), UITexts.UnsavedMessage.ToString(), true, true, GameTexts.FindText("str_yes", null).ToString(), GameTexts.FindText("str_no", null).ToString(), () => DoOpen(), null, "", 0f, null, null, null), true, false);
             else DoOpen();
         }
 

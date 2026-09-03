@@ -1,5 +1,6 @@
 using LanceSystem.DynamicTroops.UI.ItemSelection;
 using LanceSystem.DynamicTroops.UI.ItemSelection.Filters;
+using LanceSystem.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,17 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ImageIdentifiers;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.DynamicTroops.UI.Services
 {
     public class AppearanceService
     {
+        static readonly TextObject _renameTitle = new("{=lance_rename_title}Rename");
+        static readonly TextObject _proceedText = new("{=lance_proceed}Proceed");
+        static readonly TextObject _selectCultureTitle = new("{=lance_select_culture}Select Culture");
+        static readonly TextObject _selectFaceTitle = new("{=lance_select_face}Select Face");
         readonly Action _refresh;
         string _name;
         bool _isFemale;
@@ -32,7 +38,7 @@ namespace LanceSystem.DynamicTroops.UI.Services
         public MBBodyProperty? GetBodyProperty() => _bodyProperty;
         public void Rename()
         {
-            InformationManager.ShowTextInquiry(new TextInquiryData("Rename", "Enter new name", true, true, "Proceed", "Cancel", text => SetName(text), null, false, null, "", ""), false, false);
+            InformationManager.ShowTextInquiry(new TextInquiryData(_renameTitle.ToString(), UITexts.RenameHint.ToString(), true, true, _proceedText.ToString(), GameTexts.FindText("str_cancel").ToString(), text => SetName(text), null, false, null, "", ""), false, false);
         }
         void SetName(string text)
         {
@@ -49,12 +55,12 @@ namespace LanceSystem.DynamicTroops.UI.Services
                 cultures.Add(kingdom.Culture);
                 elements.Add(new InquiryElement(kingdom.Culture, kingdom.Culture.Name.ToString(), new BannerImageIdentifier(kingdom.Banner)));
             }
-            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData("Select Culture", "", elements, true, 1, 1, "Continue", null, args =>
+            MBInformationManager.ShowMultiSelectionInquiry(new MultiSelectionInquiryData(_selectCultureTitle.ToString(), "", elements, true, 1, 1, GameTexts.FindText("str_continue", null).ToString(), null, args =>
             {
                 if (args == null || !args.Any()) return;
                 InformationManager.HideInquiry();
-                CultureObject culture = args.Select(e => e.Identifier as CultureObject).First();
-                _culture = culture;
+                var culture = args.Select(e => e.Identifier as CultureObject).First();
+                if (culture != null) _culture = culture;
                 _refresh();
             }, null, "", false), false, false);
         }
@@ -63,10 +69,10 @@ namespace LanceSystem.DynamicTroops.UI.Services
             var allCharacters = MBObjectManager.Instance.GetObjectTypeList<CharacterObject>()
                 .Where(c => c.Occupation == Occupation.Soldier || c.Occupation == Occupation.Lord)
                 .ToList();
-            var controller = new ObjectSelectorController<CharacterObject>("Select Face", allCharacters,
+            var controller = new ObjectSelectorController<CharacterObject>(_selectFaceTitle.ToString(), allCharacters,
                 (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
                 (character, close) => new CharacterCardVM(character, (selectedCharacter) => { _bodyProperty = selectedCharacter.BodyPropertyRange; _refresh(); },
-                close), FilterFactory.CreateCharacterFilters());
+                close), FilterFactory.CreateCharacterFiltersWithOccupation());
             controller.Open();
         }
         public void ToggleGender()

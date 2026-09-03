@@ -6,8 +6,6 @@ namespace LanceSystem.DynamicTroops
     {
         public static bool IsDynamicCharacter(this BasicCharacterObject character)
         {
-            if (character == null)
-                return false;
             return DynamicTroopsService.Instance.IsDynamic(character.StringId);
         }
     }

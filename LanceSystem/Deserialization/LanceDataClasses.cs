@@ -23,5 +23,31 @@ namespace LanceSystem.Deserialization
         Cavalry,
         HorseArcher
     }
+
+    public static class LanceTroopCategoryExtensions
+    {
+        public static LanceTroopCategory ToCategory(this int value)
+        {
+            return value switch
+            {
+                1 => LanceTroopCategory.Ranged,
+                2 => LanceTroopCategory.Cavalry,
+                3 => LanceTroopCategory.HorseArcher,
+                _ => LanceTroopCategory.Infantry
+            };
+        }
+
+        public static int ToInt(this LanceTroopCategory category)
+        {
+            return category switch
+            {
+                LanceTroopCategory.Infantry => 0,
+                LanceTroopCategory.Ranged => 1,
+                LanceTroopCategory.Cavalry => 2,
+                LanceTroopCategory.HorseArcher => 3,
+                _ => 0
+            };
+        }
+    }
     public record TroopData(LanceTroopCategory Category, double Likelihood, string BasicTroopId);
 }

@@ -14,14 +14,8 @@ namespace LanceSystem.DynamicTroops.UI.Services
         {
             _getTier = getTier;
             _refresh = refresh;
-            _skills[DefaultSkills.OneHanded] = character.GetSkillValue(DefaultSkills.OneHanded);
-            _skills[DefaultSkills.TwoHanded] = character.GetSkillValue(DefaultSkills.TwoHanded);
-            _skills[DefaultSkills.Polearm] = character.GetSkillValue(DefaultSkills.Polearm);
-            _skills[DefaultSkills.Bow] = character.GetSkillValue(DefaultSkills.Bow);
-            _skills[DefaultSkills.Crossbow] = character.GetSkillValue(DefaultSkills.Crossbow);
-            _skills[DefaultSkills.Throwing] = character.GetSkillValue(DefaultSkills.Throwing);
-            _skills[DefaultSkills.Riding] = character.GetSkillValue(DefaultSkills.Riding);
-            _skills[DefaultSkills.Athletics] = character.GetSkillValue(DefaultSkills.Athletics);
+            foreach (var skill in TroopSkills.All)
+                _skills[skill] = character.GetSkillValue(skill);
         }
         public int GetSkillValue(SkillObject skill) => _skills.TryGetValue(skill, out int value) ? value : 0;
         public int GetCurrentSkillSum()
@@ -32,12 +26,11 @@ namespace LanceSystem.DynamicTroops.UI.Services
         }
         public int GetSuggestedMaxSkillSum()
         {
-            if (TroopEditorController.DisableSkillTotalRestriction) return 10000;
             return _getTier() switch
             { 
-                1 => 80, 
+                1 => 90, 
                 2 => 200,
-                3 => 350,
+                3 => 400,
                 4 => 500,
                 5 => 700,
                 6 => 900,

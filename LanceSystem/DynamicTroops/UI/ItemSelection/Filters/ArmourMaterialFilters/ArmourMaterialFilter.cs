@@ -11,10 +11,10 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.ArmourMaterialFilte
         {
             _context = context;
         }
-        public IList<ItemObject> GetFilteredItems(IList<ItemObject> data)
+        public IEnumerable<ItemObject> GetFilteredItems(IEnumerable<ItemObject> data)
         {
             if (_context.Selected.Count == 0) return data;
-            return data.Where(item => item.ArmorComponent != null && _context.Selected.Contains(item.ArmorComponent.MaterialType)).ToList();
+            return data.Where(item => item.ArmorComponent != null && _context.Selected.Contains(item.ArmorComponent.MaterialType));
         }
     }
 }

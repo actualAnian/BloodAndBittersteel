@@ -1,5 +1,6 @@
 using System;
 using Helpers;
+using LanceSystem.UI;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ViewModelCollection;
 using TaleWorlds.CampaignSystem.ViewModelCollection.Inventory;
@@ -13,23 +14,24 @@ using static TaleWorlds.Core.ViewModelCollection.Information.TooltipProperty;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection
 {
+
+    // localization strings present in TaleWorlds.CampaignSystem.ViewModelCollection.Inventory.ItemMenuVM
     public class ItemCardVM : CardVM
     {
-        readonly ItemObject _item;
+        static readonly TextObject _noCultureText = new("{=lance_no_culture}No Culture");
+        readonly ItemObject? _item;
         readonly CharacterObject _troop;
 
-        public ItemCardVM(ItemObject item, CharacterObject troop, Action<ItemObject> apply, Action? close = null)
-            : base(() => apply(item), close)
+        public ItemCardVM(ItemObject? item, CharacterObject troop, Action<ItemObject?> apply, Action? close = null) : base(() => apply(item), close, new ItemImageIdentifierVM(item, ""))
         {
             _item = item;
             _troop = troop;
             if (_item == null)
             {
-                CardName = "Empty";
+                CardName = UITexts.Empty.ToString();
                 return;
             }
             CardName = _item.Name.ToString();
-            Image = new ItemImageIdentifierVM(_item, "");
             InitializeFlags();
             InitializeProperties();
         }
@@ -66,10 +68,10 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         {
             if (_item?.Culture?.Name != null)
             {
-                CreateColoredProperty(ObjectProperties, "Culture: ", _item.Culture.Name.ToString(), Color.FromUint(_item.Culture.Color));
+                CreateColoredProperty(ObjectProperties, UITexts.CultureLabel.ToString(), _item.Culture.Name.ToString(), Color.FromUint(_item.Culture.Color));
                 return;
             }
-            CreateColoredProperty(ObjectProperties, "Culture: ", "No Culture", UIColors.Gold);
+            CreateColoredProperty(ObjectProperties, UITexts.CultureLabel.ToString(), _noCultureText.ToString(), UIColors.Gold);
         }
 
         void BuildHorseProperties()
@@ -77,7 +79,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             if (_item?.HorseComponent == null) return;
             var element = new EquipmentElement(_item);
             AddTextProperty(GameTexts.FindText("str_inventory_type_" + (int)_item.Type), new TextObject("{=08abd5af7774d311cadc3ed900b47754}Type: "));
-            AddIntProperty(new TextObject("{=mountTier}Mount Tier: "), (int)_item.Tier + 1);
+            AddIntProperty(new TextObject("{=mountTier}Mount Tier: "), (int)_item.Tier);
             AddIntProperty(new TextObject("{=c7638a0869219ae845de0f660fd57a9d}Charge Damage: "), element.GetModifiedMountCharge(in EquipmentElement.Invalid));
             AddIntProperty(GameTexts.FindText("str_mount_speed"), element.GetModifiedMountSpeed(in EquipmentElement.Invalid));
             AddIntProperty(new TextObject("{=3025020b83b218707499f0de3135ed0a}Maneuver: "), element.GetModifiedMountManeuver(in EquipmentElement.Invalid));
@@ -92,7 +94,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             var weapon = _item.WeaponComponent.Item.GetWeaponWithUsageIndex(0);
             AddTextProperty(((int)weapon.WeaponClass).ToString(), new TextObject("{=8cad4a279770f269c4bb0dc7a357ee1e}Class: "));
             if (_item.BannerComponent == null)
-                AddIntProperty(new TextObject("{=weaponTier}Weapon Tier: "), (int)_item.Tier + 1);
+                AddIntProperty(new TextObject("{=weaponTier}Weapon Tier: "), (int)_item.Tier);
             var type = WeaponComponentData.GetItemTypeFromWeaponClass(weapon.WeaponClass);
             BuildWeaponTypeProperties(weapon, type);
         }
@@ -136,7 +138,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
                 AddIntProperty(GameTexts.FindText("str_thrust_speed"), element.GetModifiedThrustSpeedForUsage(0));
                 AddTextProperty(ItemHelper.GetThrustDamageText(weapon, element.ItemModifier), GameTexts.FindText("str_thrust_damage"));
             }
-            AddIntProperty(new TextObject("{=c6e4c8588ca9e42f6e1b47b11f0f367b}Length: "), weapon.WeaponLength);
+            AddIntProperty(new TextObject("{=5fa36d2798479803b4518a64beb4d732}Weapon Length: "), weapon.WeaponLength);
             AddIntProperty(new TextObject("{=ca8b1e8956057b831dfc665f54bae4b0}Handling: "), element.GetModifiedHandlingForUsage(0));
         }
 
@@ -181,7 +183,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
         {
             if (_item?.ArmorComponent == null) return;
             var element = new EquipmentElement(_item);
-            AddIntProperty(new TextObject("{=armorTier}Armor Tier: "), (int)_item.Tier + 1);
+            AddIntProperty(new TextObject("{=armorTier}Armor Tier: "), (int)_item.Tier);
             AddTextProperty(GameTexts.FindText("str_inventory_type_" + (int)_item.Type), new TextObject("{=08abd5af7774d311cadc3ed900b47754}Type: "));
             if (element.GetModifiedHeadArmor() != 0)
                 AddTextProperty(element.GetModifiedHeadArmor().ToString(), GameTexts.FindText("str_head_armor"));
@@ -203,14 +205,14 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
 
         void AddSkillRequirement()
         {
-            string skillName = _item.RelevantSkill.Name.ToString();
-            string value = skillName + " " + _item.Difficulty;
-            bool meetsRequirement = _troop != null && _troop.GetSkillValue(_item.RelevantSkill) >= _item.Difficulty;
+            string skillName = _item?.RelevantSkill.Name.ToString() ?? "";
+            string value = skillName + " " + _item?.Difficulty;
+            bool meetsRequirement = _troop != null && _troop.GetSkillValue(_item?.RelevantSkill) >= _item?.Difficulty;
             var color = meetsRequirement ? UIColors.PositiveIndicator : UIColors.NegativeIndicator;
             CreateColoredProperty(ObjectProperties, new TextObject("{=154a34f8caccfc833238cc89d38861e8}Requires: ").ToString(), value, color);
         }
 
-        EquipmentIndex GetItemTypeWithItemObject(ItemObject item)
+        EquipmentIndex GetItemTypeWithItemObject(ItemObject? item)
         {
             if (item == null) return (EquipmentIndex)(-1);
             switch (item.Type)

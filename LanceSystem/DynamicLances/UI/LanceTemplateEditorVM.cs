@@ -1,62 +1,60 @@
 using System.Linq;
 using LanceSystem.Deserialization;
+using LanceSystem.UI;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
-using TaleWorlds.TwoDimension;
 using TaleWorlds.Localization;
+using TaleWorlds.TwoDimension;
 
 namespace LanceSystem.DynamicLances.UI
 {
     public class LanceTemplateEditorVM : ViewModel
     {
-        string _templateName = "New Lance";
+        static readonly TextObject _infoTextObj = new("{=lance_info_text}Likelihood has to sum to 1. Values are normalized automatically when saved. Each value must be between 0 and 1.");
+        static readonly TextObject _troopNameText = new("{=lance_troop_name}Troop Name");
+        static readonly TextObject _sumPrefix = new("{=lance_sum_prefix}Sum");
+        static readonly TextObject _mustSumText = new("{=lance_must_sum}(must sum to 1)");
+        static readonly TextObject _renameTitle = new("{=lance_rename_title}Rename Template");
+
+        static readonly TextObject _bannerClickedText = new("{=lance_banner_clicked}BannerClicked pressed");
+        static readonly TextObject _templateBannerHeaderText = new("{=lance_template_banner_header}Template Banner");
+        static readonly TextObject _editBannerText = new("{=lance_edit_banner}Edit Banner");
+        static readonly TextObject _troopEditorHeaderText = new("{=lance_troop_editor_header}Troop Editor");
+        static readonly TextObject _categoryHeaderText = new("{=lance_category_header}Category");
+        static readonly TextObject _troopHeaderText = new("{=lance_troop_header}Troop");
+        static readonly TextObject _likelihoodHeaderText = new("{=lance_likelihood_header}Likelihood");
+        static readonly TextObject _addNewText = new("{=lance_add_new}Add New");
+        static readonly TextObject _switchTemplateText = new("{=lance_switch_template}Switch Template");
+        static readonly TextObject _newTemplateText = new("{=lance_new_template}New Template");
+        static readonly TextObject _saveTemplateText = new("{=lance_save_template}Save Template");
+        static readonly TextObject _infoHeaderText = new("{=lance_info_header}Info");
+        string _templateName = "";
         string _bannerCode = "";
         string _likelihoodSumText = "";
-        string _infoText = "Likelihood has to sum to 1. Values are normalized automatically.";
         MBBindingList<TroopDataRowVM> _troopRows = new();
         ImageIdentifierVM _templateBannerVisual;
         bool _isDirty;
-        string _troopName;
-        int _templateNameFontSize = 42;
         readonly LanceTemplateEditorController _controller;
         public LanceTemplateEditorVM(LanceTemplateEditorController controller, Lance lance)
         {
             _controller = controller;
-            _templateName = lance.Name;
-            _bannerCode = lance.bannerKey ?? "";
-            _troopRows.Clear();
-            foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, _controller, t));
-            var banner = new Banner(_bannerCode);
-            _templateBannerVisual = new BannerImageIdentifierVM(banner);
-            UpdateBannerVisual();
-            UpdateTemplateNameFontSize();
-            _isDirty = false;
-            RefreshLikelihoodSum();
-            _troopName = new TextObject("Troop Name").ToString();
+            LoadFromLance(lance);
         }
 
         [DataSourceProperty]
         public string TemplateName
         {
             get => _templateName;
-            set { if (value != _templateName) { _templateName = value; OnPropertyChangedWithValue(value, nameof(TemplateName)); UpdateTemplateNameFontSize(); MarkDirty(); } }
+            set { if (value != _templateName) { _templateName = value; OnPropertyChangedWithValue(value, nameof(TemplateName)); MarkDirty(); } }
         }
 
         [DataSourceProperty]
         public string TroopName
         {
-            get => _troopName;
-            set { if (value != _troopName) { _troopName = value; OnPropertyChangedWithValue(value, nameof(_troopName)); } }
+            get => _troopNameText.ToString();
         }
-        [DataSourceProperty]
-        public int TemplateNameFontSize
-        {
-            get => _templateNameFontSize;
-            set { if (value != _templateNameFontSize) { _templateNameFontSize = value; OnPropertyChangedWithValue(value, nameof(TemplateNameFontSize)); } }
-        }
-
         [DataSourceProperty]
         public string BannerCode
         {
@@ -85,17 +83,34 @@ namespace LanceSystem.DynamicLances.UI
             set { if (value != _likelihoodSumText) { _likelihoodSumText = value; OnPropertyChangedWithValue(value, nameof(LikelihoodSumText)); } }
         }
 
-        [DataSourceProperty]
-        public string InfoText
-        {
-            get => _infoText;
-            set { if (value != _infoText) { _infoText = value; OnPropertyChangedWithValue(value, nameof(InfoText)); } }
-        }
+        [DataSourceProperty] public string InfoText => _infoTextObj.ToString();
+        [DataSourceProperty] public string TemplateBannerHeaderText => _templateBannerHeaderText.ToString();
+        [DataSourceProperty] public string EditBannerButtonText => _editBannerText.ToString();
+        [DataSourceProperty] public string TroopEditorHeaderText => _troopEditorHeaderText.ToString();
+        [DataSourceProperty] public string CategoryHeaderText => _categoryHeaderText.ToString();
+        [DataSourceProperty] public string TroopHeaderText => _troopHeaderText.ToString();
+        [DataSourceProperty] public string LikelihoodHeaderText => _likelihoodHeaderText.ToString();
+        [DataSourceProperty] public string AddNewButtonText => _addNewText.ToString();
+        [DataSourceProperty] public string SwitchTemplateButtonText => _switchTemplateText.ToString();
+        [DataSourceProperty] public string NewTemplateButtonText => _newTemplateText.ToString();
+        [DataSourceProperty] public string CopyTemplateButtonText => UITexts.CopyTemplate.ToString();
+        [DataSourceProperty] public string PasteTemplateButtonText => UITexts.PasteTemplate.ToString();
+        [DataSourceProperty] public string SaveTemplateButtonText => _saveTemplateText.ToString();
+        [DataSourceProperty] public string InfoHeaderText => _infoHeaderText.ToString();
+        [DataSourceProperty] public string RenameTitleText => _renameTitle.ToString();
+        [DataSourceProperty] public string RenameHintText => UITexts.RenameHint.ToString();
+        [DataSourceProperty] public string ConfirmButtonText => UITexts.Confirm.ToString();
+        [DataSourceProperty] public string CancelButtonText => GameTexts.FindText("str_cancel").ToString();
+        [DataSourceProperty] public string BannerClickedMessageText => _bannerClickedText.ToString();
 
         public void RefreshLikelihoodSum()
         {
             var sum = _troopRows.Sum(r => r.Likelihood);
-            LikelihoodSumText = $"Sum: {sum:0.##} / 1.0 {(Mathf.Abs((float)sum - 1f) < 0.001f ? "(OK)" : "(must sum to 1)")}";
+            bool isOk = Mathf.Abs((float)sum - 1f) < 0.001f;
+            MBTextManager.SetTextVariable("SUM", sum.ToString("0.##"));
+            MBTextManager.SetTextVariable("STATUS", isOk ? GameTexts.FindText("str_yes", null).ToString() : _mustSumText);
+            LikelihoodSumText = new TextObject("{=lance_likelihood_sum_full}{SUM_PREFIX}: {SUM} / 1.0 {STATUS}")
+                .SetTextVariable("SUM_PREFIX", _sumPrefix).ToString();
         }
 
         public void RemoveRow(TroopDataRowVM row)
@@ -111,13 +126,6 @@ namespace LanceSystem.DynamicLances.UI
             MarkDirty();
             RefreshLikelihoodSum();
         }
-        void UpdateTemplateNameFontSize()
-        {
-            var len = _templateName?.Length ?? 0;
-            int size = len <= 15 ? 42 : len <= 22 ? 36 : len <= 30 ? 28 : len <= 40 ? 22 : 18;
-            TemplateNameFontSize = size;
-        }
-
         void UpdateBannerVisual()
         {
             if (!string.IsNullOrWhiteSpace(_bannerCode))
@@ -140,7 +148,6 @@ namespace LanceSystem.DynamicLances.UI
             _troopRows.Clear();
             foreach (var t in lance.TroopsTemplate.TroopTypes) _troopRows.Add(new TroopDataRowVM(this, _controller, t));
             UpdateBannerVisual();
-            UpdateTemplateNameFontSize();
             RefreshLikelihoodSum();
         }
 
@@ -169,12 +176,12 @@ namespace LanceSystem.DynamicLances.UI
 
         public void ExecuteRenameTemplate()
         {
-            InformationManager.ShowTextInquiry(new TextInquiryData("Rename Template", "Enter new name", true, true, "Confirm", "Cancel", s => { TemplateName = s; }, null, false, null, TemplateName, ""), false, false);
+            InformationManager.ShowTextInquiry(new TextInquiryData(RenameTitleText, RenameHintText, true, true, ConfirmButtonText, CancelButtonText, s => { TemplateName = s; }, null, false, null, TemplateName, ""), false, false);
         }
 
         public void ExecuteBannerClicked()
         {
-            InformationManager.DisplayMessage(new InformationMessage("BannerClicked pressed"));
+            InformationManager.DisplayMessage(new InformationMessage(BannerClickedMessageText));
         }
     }
 }

@@ -1,18 +1,26 @@
 using LanceSystem.Deserialization;
+using LanceSystem.UI;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.ImageIdentifiers;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicLances.UI
 {
     public class TroopDataRowVM : ViewModel
     {
+        static readonly TextObject _removeClickedText = new("{=lance_remove_clicked}Remove clicked");
+        static readonly TextObject _editLikelihoodTitle = new("{=lance_edit_likelihood_title}Edit Likelihood");
+        static readonly TextObject _editLikelihoodHint = new("{=lance_edit_likelihood_hint}Enter value between 0-1");
+        static readonly TextObject _likelihoodRangeError = new("{=lance_likelihood_range_error}Likelihood must be between 0 and 1");
+        static readonly TextObject _invalidNumberText = new("{=lance_invalid_number}Invalid number");
         readonly LanceTemplateEditorVM _parent;
         readonly LanceTemplateEditorController _controller;
         int _formationClassValue;
         string _basicTroopId;
+        string _removeButtonText;
         double _likelihood;
         string _troopName;
         ImageIdentifierVM _troopVisual;
@@ -28,6 +36,7 @@ namespace LanceSystem.DynamicLances.UI
             var character = TaleWorlds.ObjectSystem.MBObjectManager.Instance.GetObject<CharacterObject>(_basicTroopId);
             _troopName = character.Name.ToString();
             _troopVisual = CreateVisual(character);
+            RemoveButtonText = UITexts.Remove.ToString();
             RefreshValues();
         }
 
@@ -37,37 +46,13 @@ namespace LanceSystem.DynamicLances.UI
                 return new CharacterImageIdentifierVM(CharacterCode.CreateFrom(character));
             return new ItemImageIdentifierVM(null);
         }
-
         void UpdateCharacter()
         {
             var character = TaleWorlds.ObjectSystem.MBObjectManager.Instance.GetObject<CharacterObject>(_basicTroopId);
             TroopName = character.Name.ToString();
             TroopVisual = CreateVisual(character);
         }
-
-
-        public int GetFormationClassValueFromCategory(LanceTroopCategory category)
-        {
-            return category switch
-            {
-                LanceTroopCategory.Infantry => 0,
-                LanceTroopCategory.Ranged => 1,
-                LanceTroopCategory.Cavalry => 2,
-                LanceTroopCategory.HorseArcher => 3,
-                _ => 0
-            };
-        }
-        public LanceTroopCategory IntToLanceTroopCategory(int value)
-        {
-            return value switch
-            {
-                0 => LanceTroopCategory.Infantry,
-                1 => LanceTroopCategory.Ranged,
-                2 => LanceTroopCategory.Cavalry,
-                3 => LanceTroopCategory.HorseArcher,
-                _ => LanceTroopCategory.Infantry
-            };
-        }
+        public int GetFormationClassValueFromCategory(LanceTroopCategory category) => category.ToInt();
 
         [DataSourceProperty]
         public int FormationClassValue
@@ -85,6 +70,11 @@ namespace LanceSystem.DynamicLances.UI
                     _parent.MarkDirty();
                 }
             }
+        }
+        [DataSourceProperty]
+        public string OpenButtonText
+        {
+            get => UITexts.Open.ToString();
         }
 
         [DataSourceProperty]
@@ -114,6 +104,8 @@ namespace LanceSystem.DynamicLances.UI
             get => _troopVisual;
             set { if (value != _troopVisual) { _troopVisual = value; OnPropertyChangedWithValue(value, nameof(TroopVisual)); } }
         }
+        [DataSourceProperty]
+        public string RemoveButtonText { get => _removeButtonText; set { if (value != _removeButtonText) { _removeButtonText = value; OnPropertyChangedWithValue(value, nameof(RemoveButtonText)); } } }
 
         public double Likelihood
         {
@@ -130,7 +122,7 @@ namespace LanceSystem.DynamicLances.UI
                 }
             }
         }
-        public TroopData ToTroopData() => new TroopData(IntToLanceTroopCategory(_formationClassValue), _likelihood, _basicTroopId);
+        public TroopData ToTroopData() => new TroopData(_formationClassValue.ToCategory(), _likelihood, _basicTroopId);
 
         public override void RefreshValues()
         {
@@ -140,30 +132,27 @@ namespace LanceSystem.DynamicLances.UI
 
         public void ExecuteRemove()
         {
-            InformationManager.DisplayMessage(new InformationMessage("Remove clicked"));
+            InformationManager.DisplayMessage(new InformationMessage(_removeClickedText.ToString()));
             _parent.RemoveRow(this);
         }
 
         public void ExecuteEditLikelihood()
         {
-            InformationManager.DisplayMessage(new InformationMessage("EditLikelihood clicked"));
-            InformationManager.ShowTextInquiry(new TextInquiryData("Edit Likelihood", "Enter value 0-1", true, true, "Confirm", "Cancel", OnLikelihoodEntered, null, false, null, _likelihood.ToString("0.##"), ""));
+            InformationManager.ShowTextInquiry(new TextInquiryData(_editLikelihoodTitle.ToString(), _editLikelihoodHint.ToString(), true, true, UITexts.Confirm.ToString(), GameTexts.FindText("str_cancel").ToString(), OnLikelihoodEntered, null, false, null, _likelihood.ToString("0.##"), ""));
         }
-
         void OnLikelihoodEntered(string input)
         {
             if (double.TryParse(input, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var val) || double.TryParse(input, out val))
             {
                 if (val < 0 || val > 1)
                 {
-                    InformationManager.DisplayMessage(new InformationMessage("Likelihood must be between 0 and 1"));
+                    InformationManager.DisplayMessage(new InformationMessage(_likelihoodRangeError.ToString()));
                     return;
                 }
                 Likelihood = val;
             }
-            else InformationManager.DisplayMessage(new InformationMessage("Invalid number"));
+            else InformationManager.DisplayMessage(new InformationMessage(_invalidNumberText.ToString()));
         }
-
         public void ExecuteChangeCategory()
         {
             _controller.ChangeCategoryForRow(this);
@@ -172,15 +161,12 @@ namespace LanceSystem.DynamicLances.UI
         {
             _controller.SelectTroopForRow(this, _formationClassValue);
         }
-
         public void ExecuteLink()
         {
-            InformationManager.DisplayMessage(new InformationMessage("ExecuteLink pressed"));
             ExecuteTroopClicked();
         }
         public void ExecuteOpenTroopEditor()
         {
-            InformationManager.DisplayMessage(new InformationMessage("OpenTroopEditor pressed"));
             _parent.TryOpenTroopEditor(_basicTroopId);
         }
     }

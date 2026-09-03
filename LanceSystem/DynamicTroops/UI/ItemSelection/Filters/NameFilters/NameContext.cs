@@ -1,5 +1,7 @@
-﻿using System;
+﻿using LanceSystem.UI;
+using System;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 
 namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.NameFilters
 {
@@ -15,7 +17,7 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection.Filters.NameFilters
 
         public void OnEventClicked()
         {
-            InformationManager.ShowTextInquiry(new TextInquiryData("Filter by name", "Type name substring", true, true, "Apply", "Cancel", OnTextEntered, null, false, null, ""), false, false);
+            InformationManager.ShowTextInquiry(new TextInquiryData(UITexts.FilterByName.ToString(), UITexts.TypeNameSubstring.ToString(), true, true, UITexts.Apply.ToString(), new TextObject("{=3CpNUnVl}Cancel", null).ToString(), OnTextEntered, null, false, null, ""), false, false);
         }
 
         void OnTextEntered(string text)

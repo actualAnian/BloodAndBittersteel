@@ -13,21 +13,23 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
     {
         const int ItemsPerRow = 3;
         readonly string _title;
-        readonly List<T> _allItems;
+        readonly IEnumerable<T> _allItems;
         readonly Action<T> _apply;
         readonly Func<T, CardVM> _cardFactory;
         readonly List<FilterDefinition<T>> _filters;
+        readonly Func<Action?, CardVM>? _emptyCardFactory;
         GauntletLayer? _layer;
         GauntletMovieIdentifier? _movie;
         public ObjectSelectorVM? Vm { get; private set; }
 
-        public ObjectSelectorController(string title, List<T> items, Action<T> apply, Func<T, Action?, CardVM> cardFactory, List<FilterDefinition<T>> filters)
+        public ObjectSelectorController(string title, List<T> items, Action<T> apply, Func<T, Action?, CardVM> cardFactory, List<FilterDefinition<T>> filters, Func<Action?, CardVM>? emptyCardFactory = null)
         {
             _title = title;
             _allItems = new List<T>(items);
             _apply = apply;
             _cardFactory = (item) => cardFactory(item, Close);
             _filters = filters;
+            _emptyCardFactory = emptyCardFactory;
             foreach (var filter in _filters)
                 filter.Context.OnChanged += ApplyFilters;
         }
@@ -57,18 +59,21 @@ namespace LanceSystem.DynamicTroops.UI.ItemSelection
             Vm = null;
         }
 
-        public IList<T> GetFilteredItems()
+        public IEnumerable<T> GetFilteredItems()
         {
-            IList<T> result = _allItems;
+            var result = _allItems;
             for (int i = _filters.Count - 1; i >= 0; i--)
                 result = _filters[i].Filter.GetFilteredItems(result);
             return result;
         }
 
-        MBBindingList<ObjectRowVM> BuildRows(IList<T> items)
+        MBBindingList<ObjectRowVM> BuildRows(IEnumerable<T> items)
         {
             MBBindingList<ObjectRowVM> rows = new();
             MBBindingList<CardVM> current = new();
+            if (_emptyCardFactory != null)
+                current.Add(_emptyCardFactory(Close));
+
             foreach (T item in items)
             {
                 current.Add(_cardFactory(item));

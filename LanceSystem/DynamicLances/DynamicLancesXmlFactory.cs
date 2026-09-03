@@ -10,9 +10,8 @@ namespace LanceSystem.DynamicLances
         private readonly DynamicLancesXmlSaver _persistence;
         public DynamicLancesXmlFactory()
         {
-            _persistence = new DynamicLancesXmlSaver(Path.Combine(PathHelper.OutsideConfigPath, "dynamic_lances.xml"));
+            _persistence = new DynamicLancesXmlSaver(DynamicLancesService.XmlPath);
         }
-
         public Lance SaveLance(string stringId, string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
         {
             Lance lance = new(stringId, name, cultureId, clanId, originType, troopsTemplate, weight, bannerKey);
@@ -21,10 +20,8 @@ namespace LanceSystem.DynamicLances
             _persistence.SaveToXml(stringId, xml);
             return lance;
         }
-
         internal static string BuildLanceXml(Lance lance) =>
             BuildLanceXml(lance.StringId, lance.Name, lance.CultureId, lance.ClanId, lance.LanceOriginType, lance.TroopsTemplate, lance.weight, lance.bannerKey);
-
         internal static string BuildLanceXml(string stringId, string name, string? cultureId, string? clanId, LanceTemplateOriginType originType, LanceTroopsTemplate troopsTemplate, int weight, string? bannerKey)
         {
             StringBuilder sb = new();
@@ -43,7 +40,6 @@ namespace LanceSystem.DynamicLances
             sb.Append("</Lance>");
             return sb.ToString();
         }
-
         static string BuildTroopsXml(LanceTroopsTemplate troopsTemplate)
         {
             StringBuilder sb = new();
@@ -59,7 +55,6 @@ namespace LanceSystem.DynamicLances
             sb.Append("</Troops>");
             return sb.ToString();
         }
-
         static string TroopCategoryToElementName(LanceTroopCategory category)
         {
             return category switch
@@ -71,7 +66,6 @@ namespace LanceSystem.DynamicLances
                 _ => "MeleeTroop"
             };
         }
-
         static string XmlEscape(string value)
         {
             return SecurityElement.Escape(value);

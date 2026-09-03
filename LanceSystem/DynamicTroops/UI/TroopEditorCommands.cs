@@ -12,7 +12,7 @@ namespace LanceSystem.DynamicTroops.UI
         [CommandLineFunctionality.CommandLineArgumentFunction("open_troop_editor", "bab")]
         public static string OpenTroopEditor(List<string> args)
         {
-            string troopId = args != null && args.Count > 0 ? args[0] : "looter";
+            string troopId = args != null && args.Count > 0 ? args[0] : "imperial_recruit";
             CharacterObject troop = MBObjectManager.Instance.GetObject<CharacterObject>(troopId);
             if (troop == null && Game.Current != null) troop = Game.Current.ObjectManager.GetObject<CharacterObject>(troopId);
             if (troop == null) return "Troop not found: " + troopId;
