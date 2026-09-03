@@ -178,13 +178,13 @@ namespace BaBUnitTests
             public int CreateCalls;
             public int UpdateCalls;
             public CharacterObject ReturnObject = (CharacterObject)FormatterServices.GetUninitializedObject(typeof(CharacterObject));
-            public CharacterObject CreateCharacterFromData(TroopEditorData data)
+            public CharacterObject CreateCharacterFromData(TroopCreationDTO data)
             {
                 CreateCalls++;
                 ReturnObject.StringId = data.Name;
                 return ReturnObject;
             }
-            public void UpdateCharacterFromData(TroopEditorData data)
+            public void UpdateCharacterFromData(TroopCreationDTO data)
             {
                 UpdateCalls++;
             }

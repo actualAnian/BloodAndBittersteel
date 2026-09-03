@@ -32,7 +32,7 @@ namespace LanceSystem.DynamicTroops
             _dynamicIds.Clear();
         }
 
-        public Result<CharacterObject> SaveCharacterFromData(TroopEditorData data)
+        public Result<CharacterObject> SaveCharacterFromData(TroopCreationDTO data)
         {
             bool exists = MBObjectManager.Instance.GetObject<CharacterObject>(data.Name) != null;
             if (exists && !IsDynamic(data.Name))

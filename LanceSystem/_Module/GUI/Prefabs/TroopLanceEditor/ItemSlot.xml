@@ -1,0 +1,30 @@
+<Prefab>
+	<Constants>
+		<Constant Name="ItemRows.MarginTop" Value="20" />
+		<Constant Name="ItemRows.Button.Width" Value="60" />
+		<Constant Name="ItemRows.Button.Height" Value="16" />
+		<Constant Name="ItemRows.Button.MarginLeft" Value="10" />
+		<Constant Name="ItemRows.Icon.MarginRight" Value="20" />
+		<Constant Name="Text.Standard.Size" Value="25" />
+		<Constant Name="ItemRows.Text.MarginLeft" Value="30" />
+	</Constants>
+	<Window>
+		<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
+			<Children>
+				<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
+					<Children>
+						<EquipmentTypeVisualBrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="EquipmentType.Image" Type="@Type" IsVisible="@HasItem" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
+					</Children>
+				</Widget>
+				<!-- item name -->
+				<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ExecuteChange" MarginLeft="!ItemRows.Button.MarginLeft" VerticalAlignment="Center" HorizontalAlignment="Left">
+					<Children>
+						<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@EditButtonText" />
+					</Children>
+				</ButtonWidget>
+				<!-- item name -->
+				<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@DisplayName" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" HorizontalAlignment="Left" />
+			</Children>
+		</ListPanel>
+	</Window>
+</Prefab>

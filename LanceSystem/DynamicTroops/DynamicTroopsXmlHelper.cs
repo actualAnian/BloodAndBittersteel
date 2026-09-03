@@ -12,7 +12,7 @@ namespace LanceSystem.DynamicTroops
     {
         public const string DefaultFaceKeyTemplateId = "imperial_recruit";
 
-        public static string BuildNpcCharacterXml(TroopEditorData data) => BuildNpcCharacterXml(data.Name, data.IsFemale, data.DefaultGroup, data.Tier, data.Culture, data.UpgradesTo, data.Roster, data.FaceKeyTemplate, data.SkillValues);
+        public static string BuildNpcCharacterXml(TroopCreationDTO data) => BuildNpcCharacterXml(data.Name, data.IsFemale, data.DefaultGroup, data.Tier, data.Culture, data.UpgradesTo, data.Roster, data.FaceKeyTemplate, data.SkillValues);
 
         public static string BuildNpcCharacterXml(string name, bool isFemale, FormationClass defaultGroup, int tier, CultureObject culture, List<CharacterObject> upgradesTo, MBEquipmentRoster roster, MBBodyProperty? faceKeyTemplate, Dictionary<SkillObject, int>? skillValues = null)
         {
@@ -48,9 +48,7 @@ namespace LanceSystem.DynamicTroops
         {
             if (roster == null || roster.AllEquipments == null)
                 return "";
-            List<Equipment> equips = roster.AllEquipments.Where(e => e != null && !e.IsEmpty() && e.IsBattle).ToList();
-            if (equips.Count == 0)
-                equips = roster.AllEquipments.Where(e => e != null && !e.IsEmpty()).Take(1).ToList();
+            List<Equipment> equips = roster.AllEquipments.Where(e => !e.IsEmpty() && e.IsBattle).ToList();
             if (equips.Count == 0)
                 return "";
             StringBuilder sb = new();

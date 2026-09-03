@@ -1,3 +1,4 @@
+using HarmonyLib;
 using System.IO;
 using System.Xml;
 using TaleWorlds.CampaignSystem;
@@ -14,7 +15,7 @@ namespace LanceSystem.DynamicTroops
             _persistence = new DynamicTroopsXmlSaver(_xmlPath);
         }
 
-        public CharacterObject CreateCharacterFromData(TroopEditorData data)
+        public CharacterObject CreateCharacterFromData(TroopCreationDTO data)
         {
             string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(data);
             XmlDocument doc = new();
@@ -25,12 +26,14 @@ namespace LanceSystem.DynamicTroops
             return character;
         }
 
-        public void UpdateCharacterFromData(TroopEditorData data)
+        public void UpdateCharacterFromData(TroopCreationDTO data)
         {
             CharacterObject existing = MBObjectManager.Instance.GetObject<CharacterObject>(data.Name);
             string xml = DynamicTroopsXmlHelper.BuildNpcCharacterXml(data);
             XmlDocument doc = new();
             doc.LoadXml(xml);
+            var eqRoster = AccessTools.Field("TaleWorlds.Core.BasicCharacterObject:_equipmentRoster");
+            eqRoster.SetValue(existing, null);
             existing.Deserialize(MBObjectManager.Instance, doc.DocumentElement);
             existing.AfterInitialized();
             DynamicTroopsService.Instance.MarkDynamic(data.Name);

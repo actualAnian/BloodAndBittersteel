@@ -136,25 +136,7 @@
 														<!-- Armor slots -->
 														<ListPanel DataSource="{ArmorSlots}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- ArmorSlot: icon + Edit button + name -->
-																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
-																	<Children>
-																		<!-- Icon placeholder: always 36px so Edit button stays anchored -->
-																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
-																			<Children>
-																				<EquipmentTypeVisualBrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="EquipmentType.Image" Type="@Type" IsVisible="@HasItem" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
-																			</Children>
-																		</Widget>
-																		<!-- Edit button -->
-																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ExecuteChange" MarginLeft="!ItemRows.Button.MarginLeft" VerticalAlignment="Center" HorizontalAlignment="Left">
-																			<Children>
-																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@EditButtonText" />
-																			</Children>
-																		</ButtonWidget>
-																		<!-- Item name -->
-																		<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@DisplayName" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" HorizontalAlignment="Left" />
-																	</Children>
-																</ListPanel>
+																<ItemSlot />
 															</ItemTemplate>
 														</ListPanel>
 														<!-- Mount header -->
@@ -162,22 +144,7 @@
 														<!-- Mount slots: 2 slots (horse + harness) -->
 														<ListPanel DataSource="{MountSlots}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- MountSlot: icon + Edit button + name -->
-																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
-																	<Children>
-																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
-																			<Children>
-																				<EquipmentTypeVisualBrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="EquipmentType.Image" Type="@Type" IsVisible="@HasItem" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
-																			</Children>
-																		</Widget>
-																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ExecuteChange" MarginLeft="!ItemRows.Button.MarginLeft" VerticalAlignment="Center" HorizontalAlignment="Left">
-																			<Children>
-																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@EditButtonText" />
-																			</Children>
-																		</ButtonWidget>
-																		<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@DisplayName" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" HorizontalAlignment="Left" />
-																	</Children>
-																</ListPanel>
+																<ItemSlot />
 															</ItemTemplate>
 														</ListPanel>
 													</Children>
@@ -191,22 +158,7 @@
 														<!-- Weapon slots: 4 weapons -->
 														<ListPanel DataSource="{WeaponSlots}" WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" VerticalAlignment="Top" MarginTop="8" StackLayout.LayoutMethod="VerticalTopToBottom">
 															<ItemTemplate>
-																<!-- WeaponSlot: icon + Edit button + name -->
-																<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="340" HorizontalAlignment="Left" MarginTop="!ItemRows.MarginTop" StackLayout.LayoutMethod="HorizontalLeftToRight">
-																	<Children>
-																		<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="36" SuggestedHeight="36" VerticalAlignment="Center" HorizontalAlignment="Left" MarginRight="!ItemRows.Icon.MarginRight">
-																			<Children>
-																				<EquipmentTypeVisualBrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="EquipmentType.Image" Type="@Type" IsVisible="@HasItem" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" />
-																			</Children>
-																		</Widget>
-																		<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ItemRows.Button.Width" SuggestedHeight="!ItemRows.Button.Height" Brush="ButtonBrush2" Command.Click="ExecuteChange" MarginLeft="!ItemRows.Button.MarginLeft" VerticalAlignment="Center" HorizontalAlignment="Left">
-																			<Children>
-																				<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="!Text.Standard.Size" Text="@EditButtonText" />
-																			</Children>
-																		</ButtonWidget>
-																		<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" Brush.FontSize="!Text.Standard.Size" Text="@DisplayName" VerticalAlignment="Center" MarginLeft="!ItemRows.Text.MarginLeft" HorizontalAlignment="Left" />
-																	</Children>
-																</ListPanel>
+																<ItemSlot />
 															</ItemTemplate>
 														</ListPanel>
 														<!-- Appearance header -->

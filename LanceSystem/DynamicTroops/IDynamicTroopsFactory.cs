@@ -4,7 +4,7 @@ namespace LanceSystem.DynamicTroops
 {
     public interface IDynamicTroopsFactory
     {
-        CharacterObject CreateCharacterFromData(TroopEditorData data);
-        void UpdateCharacterFromData(TroopEditorData data);
+        CharacterObject CreateCharacterFromData(TroopCreationDTO data);
+        void UpdateCharacterFromData(TroopCreationDTO data);
     }    
 }

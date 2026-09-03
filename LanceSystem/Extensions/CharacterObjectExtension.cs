@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.Core;
-using TaleWorlds.ObjectSystem;
 
 namespace LanceSystem.Extensions
 {
