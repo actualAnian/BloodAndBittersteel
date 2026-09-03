@@ -25,7 +25,7 @@ namespace LanceSystem.UI
             _lanceTroops = mainPartyTroops;
             _disbandLanceHint = new BasicTooltipViewModel(delegate()
             {
-                GameTexts.SetVariable("TEXT", new TextObject("Disband Lance", null));
+                GameTexts.SetVariable("TEXT", UITexts.DisbandLance);
                 GameTexts.SetVariable("HOTKEY", "");
                 return GameTexts.FindText("str_hotkey_with_hint", null).ToString();
             });

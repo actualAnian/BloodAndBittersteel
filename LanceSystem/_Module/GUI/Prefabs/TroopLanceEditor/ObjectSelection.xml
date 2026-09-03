@@ -1,0 +1,92 @@
+<Prefab>
+	<!-- Constants: cached brush sizes for popup frame -->
+	<Constants>
+		<Constant Name="Encyclopedia.Frame.Width" BrushLayer="Default" BrushName="Encyclopedia.Frame" BrushValueType="Width" />
+		<Constant Name="Encyclopedia.Frame.Height" BrushLayer="Default" BrushName="Encyclopedia.Frame" BrushValueType="Height" />
+		<Constant Name="Top.Height" Value="240" />
+		<Constant Name="Top.VerticalDivider.Height" Value="!Top.Height" />
+		<Constant Name="Top.VerticalDivider.Width" Value="15" />
+		<Constant Name="Top.VerticalDivider.Thin.Width" Value="7" />
+		<Constant Name="Reference.AlphaFactor" Value="0" />
+
+		<Constant Name="Text.Header.Size" Value="50" />
+		<Constant Name="Text.Standard.Size" Value="25" />
+
+	</Constants>
+	<Window>
+		<!-- Root overlay: semi-transparent fullscreen background -->
+		<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Sprite="BlankWhiteSquare_9" Color="#000000CC">
+			<!-- Leave button: bottom-center -->
+			<Standard.PopupCloseButton HorizontalAlignment="Center" VerticalAlignment="Center" MarginTop="940" Command.Click="Close" Text="@LeaveButtonText" />
+			<Children>
+				<!-- Main popup frame: Encyclopedia styled window -->
+				<BrushWidget Id="TownManagementPopup" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Encyclopedia.Frame.Width" SuggestedHeight="!Encyclopedia.Frame.Height" HorizontalAlignment="Center" VerticalAlignment="Center" MarginBottom="35" Brush="Encyclopedia.Frame" ReserveManagementPopup="ReservePopup">
+					<Children>
+						<!-- Title bar -->
+						<Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="720" SuggestedHeight="155" HorizontalAlignment="Center" VerticalAlignment="Top" PositionXOffset="6" PositionYOffset="-18" Sprite="StdAssets\tabbar_popup" IsDisabled="true">
+							<Children>
+								<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" PositionYOffset="-25" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="46" IsDisabled="true" Text="@TitleText" />
+							</Children>
+						</Widget>
+						<!-- Main content: item grid (left) + filter sidebar (right) -->
+						<ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" MarginTop="130" MarginBottom="30" MarginLeft="20" MarginRight="20" StackLayout.LayoutMethod="HorizontalLeftToRight">
+							<Children>
+								<!-- Left: item grid with scrollbar -->
+								<Widget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="1020" HorizontalAlignment="Center" VerticalAlignment="Center">
+									<Children>
+										<!-- Scrollable item rows -->
+										<ScrollablePanel WidthSizePolicy="Fixed" SuggestedWidth="840" HeightSizePolicy="StretchToParent" MarginTop="0" MarginBottom="0" HorizontalAlignment="Center"  ClipRect="ListClipRect" InnerPanel="ListClipRect\List" VerticalScrollbar="..\RightSideScrollbar" AutoHideScrollBars="false" MouseScrollAxis="Vertical">
+											<Children>
+												<Widget Id="ListClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" ClipContents="true">
+													<Children>
+														<!-- Item rows: each row contains 3 ObjectCard items -->
+														<ListPanel Id="List" DataSource="{Rows}" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalTopToBottom">
+															<ItemTemplate>
+																<ObjectRow ButtonType="Radio" />
+															</ItemTemplate>
+														</ListPanel>
+													</Children>
+												</Widget>
+											</Children>
+										</ScrollablePanel>
+										<!-- Vertical scrollbar -->
+										<ScrollbarWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="CoverChildren" Id="RightSideScrollbar" MinValue="0" MaxValue="100" MarginRight="4" AlignmentAxis="Vertical" HorizontalAlignment="Right" Handle="RightSideScrollbarHandle" UpdateChildrenStates="true">
+											<Children>
+												<ImageWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="Fixed" SuggestedWidth="2" VerticalAlignment="Center" Brush="Encyclopedia.Scrollbar.Flat.Bed"/>
+												<ImageWidget Id="RightSideScrollbarHandle" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="8" SuggestedHeight="50" VerticalAlignment="Top" Brush="Encyclopedia.Scrollbar.Flat.Handle"/>
+											</Children>
+										</ScrollbarWidget>
+									</Children>
+								</Widget>
+								<!-- Right: filter sidebar -->
+								<ListPanel WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="320" HorizontalAlignment="Right" VerticalAlignment="Top" MarginLeft="20" StackLayout.LayoutMethod="VerticalTopToBottom">
+									<Children>
+										<!-- Filter list -->
+										<RichTextWidget WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="!Text.Header.Size" Text="@FiltersHeaderText" MarginBottom="14" />
+										<ListPanel DataSource="{Filters}" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalTopToBottom">
+											<ItemTemplate>
+												<Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginTop="20">
+													<Children>
+														<ObjectFilterEntry />
+													</Children>
+												</Widget>
+											</ItemTemplate>
+										</ListPanel>
+										<!-- Clear all filters -->
+										<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="140" SuggestedHeight="36" HorizontalAlignment="Center" Brush="ButtonBrush2" Command.Click="ExecuteClearFilters" MarginTop="80">
+											<Children>
+												<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="16" Text="@ClearFiltersButtonText" />
+											</Children>
+										</ButtonWidget>
+									</Children>
+								</ListPanel>
+							</Children>
+						</ListPanel>
+					</Children>
+				</BrushWidget>
+				<!-- Close button: top-right corner -->
+				<ButtonWidget Command.Click="Close" HeightSizePolicy ="Fixed" WidthSizePolicy="Fixed" SuggestedHeight="100" SuggestedWidth="100" VerticalAlignment="Center" HorizontalAlignment="Center" PositionYOffset="-465" MarginLeft="1440" Brush="Popup.CloseButton"/>
+			</Children>
+		</Widget>
+	</Window>
+</Prefab>

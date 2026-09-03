@@ -1,7 +1,6 @@
 ﻿using LanceSystem.CampaignBehaviors;
 using LanceSystem.LanceDataClasses;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
 
