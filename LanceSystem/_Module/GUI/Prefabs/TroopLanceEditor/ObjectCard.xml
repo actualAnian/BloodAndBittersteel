@@ -1,0 +1,39 @@
+<Prefab>
+	<!-- ObjectCard: item card in the selection grid - shows icon, name, stats, and select button -->
+	<Window>
+		<!-- Card container, gradient background -->
+		<ListPanel Sprite="StdAssets\Popup\order_popup_canvas" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="250" SuggestedHeight="425" MarginTop="20" MarginLeft="20">
+			<Children>
+				<ListPanel Sprite="StdAssets\Popup\canvas_gradient" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent">
+					<Children>
+						<Panel Sprite="frame_9" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="-20" MarginTop="-20" MarginRight="-20" MarginBottom="-20">
+							<Children>
+								<!-- Item icon -->
+								<ButtonWidget  WidthSizePolicy = "Fixed" HeightSizePolicy = "Fixed" SuggestedHeight="100" SuggestedWidth="100" MarginTop="35" MarginLeft="95" Brush="Encyclopedia.SubPage.Element" >
+									<Children>
+										<ImageIdentifierWidget DataSource="{Image}" DoNotAcceptEvents="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="96" SuggestedHeight="96" HorizontalAlignment="Center" VerticalAlignment="Top" MarginTop="2"  MarginLeft="2" AdditionalArgs="@AdditionalArgs" ImageId="@Id" TextureProviderName="@TextureProviderName" />
+									</Children>
+								</ButtonWidget>
+
+								<!-- Item name -->
+								<RichTextWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" MarginTop="140" MarginLeft="0" SuggestedWidth="250" HorizontalAlignment="Center" Brush="Recruitment.Popup.Title.Text" Brush.FontSize="16" Text="@CardName"/>
+
+								<!-- Item stats: flags + tooltip properties -->
+								<InventoryTooltipInnerContent Parameter.ItemFlagsDataSource="{ItemFlagList}" Parameter.PropertiesDataSource="{ObjectProperties}" HorizontalAlignment="Center" MarginTop="160" MarginLeft="0"/>
+
+								<!-- Select button: applies item and closes selector -->
+								<ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedHeight="40" SuggestedWidth="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Brush="ButtonBrush1" Command.Click="Apply"  MarginBottom="25" IsEnabled="true">
+									<Children>
+										<RichTextWidget DoNotAcceptEvents="true" WidthSizePolicy="CoverChildren" HeightSizePolicy="CoverChildren" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="OverlayPopup.ButtonText" Brush.FontSize="20" Text="@CardSelectText" />
+									</Children>
+								</ButtonWidget>
+
+							</Children>
+						</Panel>
+					</Children>
+				</ListPanel>
+			</Children>
+		</ListPanel>
+
+	</Window>
+</Prefab>

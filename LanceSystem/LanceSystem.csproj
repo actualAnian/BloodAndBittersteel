@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<Version>0.0.1</Version>
 		<TargetFramework>net472</TargetFramework>
@@ -57,15 +56,19 @@
 			<HintPath>%(Identity)</HintPath>
 			<Private>False</Private>
 		</Reference>
+
+		<Reference Include="$(GameFolder)\Modules\Bannerlord.UIExtenderEx\bin\Win64_Shipping_Client\*.dll">
+			<HintPath>%(Identity)</HintPath>
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="ClanScreenUI\" />
 	  <Folder Include="_Module\Languages\" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="echo ProjectDir=$(ProjectDir)&#xD;&#xA;xcopy /y /d &quot;$(ProjectDir)\bin\x64\aaa\net472\LanceSystem.*&quot; &quot;$(BANNERLORD_GAME_DIR)\Modules\BloodAndBittersteel\bin\Win64_Shipping_Client&quot;&#xD;&#xA;xcopy /y /d /s /e &quot;$(ProjectDir)\\_Module\*&quot; &quot;$(BANNERLORD_GAME_DIR)\Modules\BloodAndBittersteel&quot;&#xD;&#xA;" />
 	</Target>
-
-
 </Project>

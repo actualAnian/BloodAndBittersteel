@@ -9,10 +9,10 @@ namespace BloodAndBittersteel.Features.FemaleLords
             CampaignEvents.CanHeroLeadPartyEvent.AddNonSerializedListener(this, IsFemale);
         }
 
-        private void IsFemale(Hero t1, ref bool t2)
+        private void IsFemale(Hero hero, ref bool result)
         {
-            if (FemaleLordsConfig.CanLeadParties(t1.CharacterObject)) t2 = true;
-            t2 = false;
+            if (FemaleLordsConfig.CanLeadParties(hero.CharacterObject)) result = true;
+            else result = false;
         }
         public override void SyncData(IDataStore dataStore) { }
     }

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LanceSystem.SimpleFuzzySearch;
+
+public sealed record SearchResult<T>(T Item, SearchScore Score) : IComparable<SearchResult<T>>
+{
+    public int CompareTo(SearchResult<T>? other)
+    {
+        if (other is null) return 1;
+        return other.Score.Combined.CompareTo(Score.Combined);
+    }
+}
+public static class FuzzySearchManager
+{
+    private static readonly SearchScorer Scorer = new(new TextNormalizer(), new LevenshteinMatcher());
+
+    public static IEnumerable<SearchResult<T>> TrySearch<T>(IEnumerable<T> items, string query, Func<T, string> selector)
+    {
+        var engine = new FuzzySearch<T>(Scorer);
+
+        return engine.Search(items, query, selector);
+    }
+    public static IEnumerable<T> TrySearchOrdered<T>(IEnumerable<T> items, string query, Func<T, string> selector)
+    {
+        return TrySearch(items, query, selector)
+        .OrderByDescending(x => x.Score)
+        .Select(x => x.Item);
+    }
+}
+public sealed class FuzzySearch<T>
+{
+    private readonly SearchScorer _scorer;
+    public FuzzySearch(SearchScorer scorer)
+    {
+        _scorer = scorer;
+    }
+
+    public IEnumerable<SearchResult<T>> Search(
+        IEnumerable<T> items,
+        string query,
+        Func<T, string> selector,
+        double minimumScore = 0.3,
+        int maxResults = 20)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return new List<SearchResult<T>>();
+
+        return items
+            .Select(item =>
+            {
+                var value = selector(item);
+
+                var score = _scorer.Score(value, query);
+
+                return new SearchResult<T>(item, score);
+            })
+            .Where(result =>
+                result.Score.Combined >= minimumScore)
+            .OrderByDescending(result =>
+                result.Score.Combined)
+            .Take(maxResults)
+            .ToList();
+    }
+}

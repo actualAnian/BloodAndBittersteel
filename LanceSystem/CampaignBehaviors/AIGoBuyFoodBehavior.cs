@@ -14,7 +14,7 @@ namespace LanceSystem.CampaignBehaviors
         private void AiHourlyTick(MobileParty mobileParty, PartyThinkParams p)
         {
             if (!mobileParty.IsLordParty) return;
-            if (mobileParty.GetNumDaysForFoodToLast() > 6) return;
+            if (mobileParty.GetNumDaysForFoodToLast() > Campaign.Current.Models.ArmyManagementCalculationModel.MinimumNeededFoodInDaysToCallToArmy) return;
             var closestTown = SettlementHelper.FindNearestTownToMobileParty(mobileParty, MobileParty.NavigationType.All, s => { return !s.MapFaction.IsAtWarWith(mobileParty.MapFaction); });
             if (closestTown == null) return;
             var data = new AIBehaviorData(closestTown.Settlement, AiBehavior.GoToSettlement, MobileParty.NavigationType.All, false, false, false);

@@ -1,15 +1,17 @@
-﻿using BloodAndBittersteel;
+﻿using LanceSystem.DynamicLances;
 using LanceSystem.Logger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Settlements;
 
 namespace LanceSystem.Deserialization
 {
     public class LanceTemplateManager
     {
-        private static readonly Lazy<string> _path = new(() => PathHelper.BaBOutsideConfigPath + "lance_templates.xml");
+        private static readonly Lazy<string> _path = new(() => Path.Combine(PathHelper.OutsideConfigPath, "lance_templates.xml"));
         private static LanceTemplateManager? _instance;
         public static LanceTemplateManager Instance => _instance ??= new LanceTemplateManager();
         public Dictionary<string, Lance> Lances { get; private set; } = new();
@@ -31,6 +33,8 @@ namespace LanceSystem.Deserialization
                 (l.CultureId == null || l.CultureId == cultureId)
                 && (l.ClanId == null || l.ClanId == clanId)
                 && ((l.LanceOriginType == originType || l.LanceOriginType == LanceTemplateOriginType.All) || l.LanceOriginType == LanceTemplateOriginType.Settlement && (originType == LanceTemplateOriginType.Town || originType == LanceTemplateOriginType.Castle || originType == LanceTemplateOriginType.Village)));
+            if (clanId == Clan.PlayerClan?.StringId)
+                result = result.Concat(DynamicLancesService.Instance.GetAllLances());
             return result.Any() ? result : new List<Lance> { FallBackLance };
         }
         public IEnumerable<Lance> GetLances(string cultureId, Settlement settlement)
@@ -41,11 +45,21 @@ namespace LanceSystem.Deserialization
             else type = LanceTemplateOriginType.Castle;
             return GetLances(cultureId, settlement.Owner.Clan.StringId, type);
         }
+        public IEnumerable<Lance> GetLancesForTroop(string troopStringId)
+        {
+            return Lances.Values
+                .Concat(DynamicLancesService.Instance.Lances.Values)
+                .Where(l =>
+                    l.TroopsTemplate.TroopTypes.Any(t =>
+                        string.Equals(t.BasicTroopId, troopStringId, StringComparison.Ordinal)));
+        }
         public Lance GetLanceFromId(string lanceId)
         {
-            Lances.TryGetValue(lanceId, out var lance);
-            if (lance == null)
-                LanceLogger.Logger.Warning($"Warning, Lance with id {lanceId} does not exist!");
+            if (Lances.TryGetValue(lanceId, out var lance))
+                return lance;
+            if (DynamicLancesService.Instance.Lances.TryGetValue(lanceId, out var dynamicLance))
+                return dynamicLance;
+            LanceLogger.Logger.Warning($"Warning, Lance with id {lanceId} does not exist!");
             return lance ?? FallBackLance;
         }
     }
