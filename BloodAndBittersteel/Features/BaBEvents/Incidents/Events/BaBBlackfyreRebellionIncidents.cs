@@ -54,7 +54,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                 effect =>
                 {
                     TextObject textObject = new("The civil war engulfs the empire");
-                    return new List<TextObject> { textObject };
+                    return new IncidentHint(textObject); //new List<TextObject> { textObject };
                 });
         }
         public static IncidentEffect JoinTheRebellionEffect()
@@ -65,7 +65,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                 effect =>
                 {
                     TextObject textObject = new("{=bab_join_rebellion}You will join the rebels!");
-                    return new List<TextObject> { textObject };
+                    return new IncidentHint(textObject);
                 });
         }
         private static void JoinRebellion()
@@ -82,7 +82,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                 effect =>
                 {
                     TextObject textObject = new("{=bab_join_rebellion}You will join the loyalists!");
-                    return new List<TextObject> { textObject };
+                    return new IncidentHint(textObject);
                 });
         }
         private static void FightRebellion()

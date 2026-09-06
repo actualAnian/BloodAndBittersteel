@@ -10,7 +10,6 @@ using BloodAndBittersteel.Features.Tribute;
 using BloodAndBittersteel.MCM;
 using BloodAndBittersteel.Models;
 using HarmonyLib;
-using System;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.AdvancedStartOptions;
@@ -20,7 +19,6 @@ using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using static BloodAndBittersteel.MCM.BaBSettings;
 
 namespace BloodAndBittersteel
 {
@@ -97,6 +95,8 @@ namespace BloodAndBittersteel
         protected override void OnSubModuleLoad()
         {
             harmony.PatchAll();
+            //var og = AccessTools.Method("BackstoryCampaignBehavior:OnNewGameCreated");
+            //harmony.Patch(og, prefix: new HarmonyMethod(typeof(BackstoryOnNewGameCreatedPatch), nameof(BackstoryOnNewGameCreatedPatch.Prefix)));
             ItemSwapManager.Instance.LoadFromFile();
             RemoveSandboxAndStoryOptions();
             AddBaBStart();

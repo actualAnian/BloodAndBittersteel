@@ -16,9 +16,9 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents
             new Type[] {
                     typeof(Func<bool>),
                     typeof(Func<List<TextObject>>),
-                    typeof(Func<IncidentEffect, List<TextObject>>)
+                    typeof(Func<IncidentEffect, IncidentHint>)
         });
-        public static IncidentEffect CreateCustomIncidentEffect(Func<bool> condition, Func<List<TextObject>> consequence, Func<IncidentEffect, List<TextObject>> hint)
+        public static IncidentEffect CreateCustomIncidentEffect(Func<bool> condition, Func<List<TextObject>> consequence, Func<IncidentEffect, IncidentHint> hint)
         {
             return (IncidentEffect)_ctor.Invoke(new object[] { condition, consequence, hint });
         }

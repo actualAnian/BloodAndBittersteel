@@ -27,7 +27,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                     TextObject textObject = new("{=bab_dornish_loyalist}You will stand with {DORNE_KING}! The Vulture King must be stopped before his rebellion tears all of Dorne apart!");
                     var loyalKingdom = Kingdom.All.FirstOrDefault(k => k.StringId == Globals.DorneKingdomId);
                     GameTexts.SetVariable("DORNE_KING", loyalKingdom.Leader.Name);
-                    return new List<TextObject> { textObject };
+                    return new IncidentHint(textObject);
                 });
         }
 
@@ -54,7 +54,7 @@ namespace BloodAndBittersteel.Features.BaBEvents.Incidents.Events
                 effect =>
                 {
                     TextObject textObject = new("{=bab_dornish_rebels}You swear your sword and fealty to the Vulture King's cause, that Dorne shall be free of the Iron Throne's yoke!");
-                    return new List<TextObject> { textObject };
+                    return new IncidentHint(textObject);
                 });
         }
 
