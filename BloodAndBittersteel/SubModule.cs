@@ -1,6 +1,7 @@
 ﻿using BloodAndBittersteel.Features.BaBEvents;
 using BloodAndBittersteel.Features.BlackfyreRebellion;
 using BloodAndBittersteel.Features.CampaignStart;
+using BloodAndBittersteel.Features.CharacterCreation;
 using BloodAndBittersteel.Features.FemaleLords;
 using BloodAndBittersteel.Features.HelmetTilting;
 using BloodAndBittersteel.Features.IronbornWives;
@@ -38,6 +39,10 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new FemaleLordsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new JoustingCampaignBehavior());
                 campaignGameStarter.AddBehavior(new AiJoustingBehavior());
+                // character creation
+                var vanillaCharCreation = campaignGameStarter.CampaignBehaviors.First(b => b is CharacterCreationCampaignBehavior);
+                campaignGameStarter.RemoveBehavior(vanillaCharCreation);
+                campaignGameStarter.AddBehavior(new BaBCharacterCreationCampaignBehavior());
                 // models
                 campaignGameStarter.AddModel(new BaBCampaignTimeModel());
                 campaignGameStarter.AddModel(new BaBMapWeatherModel(gameStarterObject.GetExistingModel<MapWeatherModel>()));
@@ -51,8 +56,6 @@ namespace BloodAndBittersteel
 
                 RemoveChildGenerationAtGameStart(campaignGameStarter);
                 ToggleInformationRestrictionModel(campaignGameStarter);
-                // temporary, before it implements proper characterCreation interface
-                campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
             }
         }
         public override void OnMissionBehaviorInitialize(Mission mission)
