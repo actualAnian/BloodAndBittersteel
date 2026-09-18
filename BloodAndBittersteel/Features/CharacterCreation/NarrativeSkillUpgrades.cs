@@ -1,6 +1,4 @@
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
-using TaleWorlds.CampaignSystem.CharacterDevelopment;
-using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.Core;
 
 namespace BloodAndBittersteel.Features.CharacterCreation;

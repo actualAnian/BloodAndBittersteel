@@ -93,9 +93,7 @@ public static class NarrativeEquipmentHelper
         foreach (NarrativeMenuCharacter character in ccm.CurrentMenu.Characters)
         {
             if (character.StringId == characterStringId)
-            {
                 character.SetAnimationId(animation);
-            }
         }
     }
 }
