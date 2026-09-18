@@ -97,7 +97,7 @@ namespace BloodAndBittersteel
             harmony.PatchAll();
             //var og = AccessTools.Method("BackstoryCampaignBehavior:OnNewGameCreated");
             //harmony.Patch(og, prefix: new HarmonyMethod(typeof(BackstoryOnNewGameCreatedPatch), nameof(BackstoryOnNewGameCreatedPatch.Prefix)));
-            ItemSwapManager.Instance.LoadFromFile();
+            HelmetSwapManager.Instance.LoadFromFile();
             RemoveSandboxAndStoryOptions();
             AddBaBStart();
             CustomSettingsBootstrap.Initialize();
