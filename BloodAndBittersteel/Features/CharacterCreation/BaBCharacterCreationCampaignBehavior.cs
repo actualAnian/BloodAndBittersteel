@@ -87,8 +87,17 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     private void RegisterCultures()
     {
+        _cultures.Clear();
         _cultures.Add(new VlandianCulture());
         _cultures.Add(new CrownlanderCulture());
+        _cultures.Add(new ValemanCulture());
+        _cultures.Add(new StormlanderCulture());
+        _cultures.Add(new DornishCulture());
+        _cultures.Add(new ReachmanCulture());
+        _cultures.Add(new WesterlanderCulture());
+        _cultures.Add(new RiverlanderCulture());
+        _cultures.Add(new IronIslanderCulture());
+        _cultures.Add(new NorthmanCulture());
     }
 
     private void InitializeCharacterCreationStages(CharacterCreationManager characterCreationManager)
