@@ -6,19 +6,17 @@ namespace BloodAndBittersteel.Features.CharacterCreation;
 
 public static class NarrativeEquipmentHelper
 {
-    private const string FallbackEquipmentId = "player_char_creation_default";
+    private const string FallbackEquipmentId = "player_char_creation_empire_retainer_m";
 
     public static MBEquipmentRoster LoadWithFallback(string equipmentId)
     {
-        try
+        var roster = Game.Current.ObjectManager.GetObject<MBEquipmentRoster>(equipmentId);
+        if (roster == null)
         {
-            var roster = Game.Current.ObjectManager.GetObject<MBEquipmentRoster>(equipmentId);
-            return roster ?? LoadFallback();
-        }
-        catch
-        {
+            InformationManager.DisplayMessage(new($"ERROR, no equipment with id {equipmentId}", new Color(1, 0, 0)));
             return LoadFallback();
         }
+        return roster;
     }
 
     private static MBEquipmentRoster LoadFallback()

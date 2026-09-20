@@ -14,6 +14,7 @@ namespace BloodAndBittersteel.Features.CharacterCreation;
 public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, ICharacterCreationContentHandler
 {
     private readonly List<ICharacterCreationCulture> _cultures = new();
+    private readonly HashSet<string> _registeredOptionIds = new();
 
     private readonly IReadOnlyDictionary<string, string> _occupationToEquipmentMapping = new Dictionary<string, string>
     {
@@ -35,7 +36,10 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         { CharacterOccupations.ArtisanUrban, "artisan" },
         { CharacterOccupations.PhysicianUrban, "physician" },
         { CharacterOccupations.HealerUrban, "healer" },
-        { CharacterOccupations.BardUrban, "bard" }
+        { CharacterOccupations.BardUrban, "bard" },
+        { "noble", "noble" },
+        { "cavalry", "cavalry" },
+        { "bandit", "bandit" }
     };
 
     public override void RegisterEvents()
@@ -53,6 +57,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     void ICharacterCreationContentHandler.InitializeContent(CharacterCreationManager characterCreationManager)
     {
+        _registeredOptionIds.Clear();
         characterCreationManager.CharacterCreationContent.AddEquipmentToUseGetter(delegate(string occupationId, out string equipmentId)
         {
             return _occupationToEquipmentMapping.TryGetValue(occupationId, out equipmentId);
@@ -83,6 +88,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
     private void RegisterCultures()
     {
         _cultures.Add(new VlandianCulture());
+        _cultures.Add(new CrownlanderCulture());
     }
 
     private void InitializeCharacterCreationStages(CharacterCreationManager characterCreationManager)
@@ -148,7 +154,10 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         foreach (ICharacterCreationCulture culture in _cultures)
         {
             foreach (NarrativeOption option in culture.GetParentOptions())
-                narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+            {
+                if (_registeredOptionIds.Add(option.OptionId))
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+            }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
     }
@@ -173,7 +182,10 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         foreach (ICharacterCreationCulture culture in _cultures)
         {
             foreach (NarrativeOption option in culture.GetChildhoodOptions())
-                narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+            {
+                if (_registeredOptionIds.Add(option.OptionId))
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+            }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
     }
@@ -199,7 +211,8 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         {
             foreach (NarrativeOption option in culture.GetEducationOptions())
             {
-                narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                if (_registeredOptionIds.Add(option.OptionId))
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -229,7 +242,8 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         {
             foreach (NarrativeOption option in culture.GetYouthOptions())
             {
-                narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                if (_registeredOptionIds.Add(option.OptionId))
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -265,7 +279,8 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         {
             foreach (NarrativeOption option in culture.GetAdulthoodOptions())
             {
-                narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                if (_registeredOptionIds.Add(option.OptionId))
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -281,6 +296,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             new NarrativeMenuCharacterArgs(mountCreationKey: MountCreationKey.GetRandomMountKey(playerEquipment.DefaultEquipment[EquipmentIndex.ArmorItemEndSlot].Item, CharacterObject.PlayerCharacter.GetMountKeySeed()), characterId: "narrative_character_horse", age: -1, equipmentId: "", animationId: "act_horse_stand_1", spawnPointEntityId: "spawnpoint_mount_1", leftHandItemId: playerEquipment.DefaultEquipment[EquipmentIndex.ArmorItemEndSlot].Item.StringId, rightHandItemId: playerEquipment.DefaultEquipment[EquipmentIndex.HorseHarness].Item.StringId, isHuman: false)
         };
     }
+
 
     private void AddAgeSelectionMenu(CharacterCreationManager characterCreationManager, NarrativeSkillUpgrades upgrades)
     {
