@@ -7,6 +7,7 @@ using TaleWorlds.CampaignSystem.Extensions;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.ObjectSystem;
 
 namespace BloodAndBittersteel.Features.CharacterCreation;
 
@@ -97,12 +98,15 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     private void InitializeCharacterCreationCultures(CharacterCreationManager characterCreationManager)
     {
-        foreach (CultureObject objectType in Game.Current.ObjectManager.GetObjectTypeList<CultureObject>())
+        foreach (var objectType in _cultures)
         {
-            if ( objectType.StringId == "vlandia")
+            var culture = MBObjectManager.Instance.GetObject<CultureObject>(objectType.CultureId);
+            if (culture == null) 
             {
-                characterCreationManager.CharacterCreationContent.AddCharacterCreationCulture(objectType, 1, 10);
+                InformationManager.DisplayMessage(new($"ERROR, no culture with id {objectType.CultureId}", new Color(1, 0, 0)));
+                continue;
             }
+            characterCreationManager.CharacterCreationContent.AddCharacterCreationCulture(culture, 1, 10);
         }
     }
 
