@@ -99,7 +99,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
     {
         foreach (CultureObject objectType in Game.Current.ObjectManager.GetObjectTypeList<CultureObject>())
         {
-            if (objectType.StringId == "aserai" || objectType.StringId == "battania" || objectType.StringId == "empire" || objectType.StringId == "khuzait" || objectType.StringId == "sturgia" || objectType.StringId == "vlandia")
+            if ( objectType.StringId == "vlandia")
             {
                 characterCreationManager.CharacterCreationContent.AddCharacterCreationCulture(objectType, 1, 10);
             }
