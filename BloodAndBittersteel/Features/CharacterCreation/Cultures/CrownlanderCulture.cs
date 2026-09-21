@@ -22,7 +22,15 @@ public class CrownlanderCulture : ICharacterCreationCulture
 
     public IEnumerable<NarrativeOption> GetChildhoodOptions() => MainlandChildhoodOptions.Shared;
 
-    public IEnumerable<NarrativeOption> GetEducationOptions() => MainlandEducationOptions.Shared;
+    public IEnumerable<NarrativeOption> GetEducationOptions()
+    {
+        foreach (NarrativeOption option in MainlandEducationOptions.Shared)
+            yield return option;
+
+        yield return new NarrativeOption("crownlander_education_court_page_option", new TextObject("{=bab_crownlander_education_court_page_title}served as a page at the royal court."), new TextObject("{=bab_crownlander_education_court_page_desc}Your family secured you a place in a Crownlands lord's household near the royal court. You carried messages, attended ceremonies, and watched petitioners and councillors bargain for favour."), (args, u) => u.UpgradeLeadershipTacticsSkills(args, DefaultCharacterAttributes.Social), ccm => IsCrownlander(ccm) && ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Retainer && !CharacterObject.PlayerCharacter.IsFemale, ccm => MainlandEducationOptions.SetEducationAnim(ccm, "act_childhood_manners", "", ""));
+        yield return new NarrativeOption("crownlander_education_court_lady_option", new TextObject("{=bab_crownlander_education_court_lady_title}served as a lady-in-waiting at court."), new TextObject("{=bab_crownlander_education_court_lady_desc}You attended a noblewoman at court, learning proper conduct, household management, correspondence, and the quiet exchange of influence among the ladies of the realm."), (args, u) => u.UpgradeStewardCharmSkills(args, DefaultCharacterAttributes.Social), ccm => IsCrownlander(ccm) && ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Retainer && CharacterObject.PlayerCharacter.IsFemale, ccm => MainlandEducationOptions.SetEducationAnim(ccm, "act_childhood_manners", "", ""));
+        yield return new NarrativeOption("crownlander_education_city_guilds_option", new TextObject("{=bab_crownlander_education_city_guilds_title}learned among the city guilds."), new TextObject("{=bab_crownlander_education_city_guilds_desc}Your family sent you among guild masters, factors, and dockside agents, where you learned how royal taxes, foreign cargoes, and guild privileges shaped trade in the Crownlands."), (args, u) => u.UpgradeTradeCharmSkills(args, DefaultCharacterAttributes.Intelligence), ccm => IsCrownlander(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.MerchantUrban || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.ArtisanUrban), ccm => MainlandEducationOptions.SetEducationAnim(ccm, "act_childhood_book", "", ""));
+    }
 
     public IEnumerable<NarrativeOption> GetYouthOptions()
     {

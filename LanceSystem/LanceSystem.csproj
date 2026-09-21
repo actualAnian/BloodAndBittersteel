@@ -8,7 +8,7 @@
 		<ModuleId>$(MSBuildProjectName)</ModuleId>
 		<ModuleName>$(MSBuildProjectName)</ModuleName>
 		<GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
-		<Configurations>Debug;Release;aaa;ccc</Configurations>
+		<Configurations>Debug;Release;aaa;ccc;ddd</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

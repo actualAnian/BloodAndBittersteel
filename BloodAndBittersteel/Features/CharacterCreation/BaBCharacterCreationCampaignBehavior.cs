@@ -87,8 +87,17 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     private void RegisterCultures()
     {
+        _cultures.Clear();
         _cultures.Add(new VlandianCulture());
         _cultures.Add(new CrownlanderCulture());
+        _cultures.Add(new ValemanCulture());
+        _cultures.Add(new StormlanderCulture());
+        _cultures.Add(new DornishCulture());
+        _cultures.Add(new ReachmanCulture());
+        _cultures.Add(new WesterlanderCulture());
+        _cultures.Add(new RiverlanderCulture());
+        _cultures.Add(new IronIslanderCulture());
+        _cultures.Add(new NorthmanCulture());
     }
 
     private void InitializeCharacterCreationStages(CharacterCreationManager characterCreationManager)
@@ -206,7 +215,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         List<NarrativeMenuCharacter> list = new List<NarrativeMenuCharacter>();
         NarrativeMenuCharacter educationCharacter = new NarrativeMenuCharacter("player_education_character", originalBodyProperties, CharacterObject.PlayerCharacter.Race, CharacterObject.PlayerCharacter.IsFemale);
         list.Add(educationCharacter);
-        NarrativeMenu narrativeMenu = new NarrativeMenu("narrative_education_menu", "narrative_childhood_menu", "narrative_youth_menu", new TextObject("{=rcoueCmk}Adolescence"), new TextObject("{=WYvnWcXQ}Like all village children you helped out in the fields. You also..."), list, GetEducationMenuNarrativeMenuCharacterArgs);
+        NarrativeMenu narrativeMenu = new NarrativeMenu("narrative_education_menu", "narrative_childhood_menu", "narrative_youth_menu", new TextObject("{=rcoueCmk}Adolescence"), new TextObject("{=bab_education_menu_description}As you grew older, your family prepared you for your place in the world. You..."), list, GetEducationMenuNarrativeMenuCharacterArgs);
         foreach (ICharacterCreationCulture culture in _cultures)
         {
             foreach (NarrativeOption option in culture.GetEducationOptions())
