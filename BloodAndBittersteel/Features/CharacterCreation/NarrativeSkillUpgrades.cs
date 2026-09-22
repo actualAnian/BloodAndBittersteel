@@ -94,6 +94,12 @@ public class NarrativeSkillUpgrades
     public void UpgradeRogueryCharmSkills(NarrativeMenuOptionArgs args, CharacterAttribute attr)
         => Apply(args, new[] { DefaultSkills.Roguery, DefaultSkills.Charm }, attr);
 
+    public void UpgradeRogueryTacticsSkills(NarrativeMenuOptionArgs args, CharacterAttribute attr)
+        => Apply(args, new[] { DefaultSkills.Roguery, DefaultSkills.Tactics }, attr);
+
+    public void UpgradeAthleticsTradeSkills(NarrativeMenuOptionArgs args, CharacterAttribute attr)
+        => Apply(args, new[] { DefaultSkills.Athletics, DefaultSkills.Trade }, attr);
+
     public void UpgradeMedicineCharmSkills(NarrativeMenuOptionArgs args, CharacterAttribute attr)
         => Apply(args, new[] { DefaultSkills.Medicine, DefaultSkills.Charm }, attr);
 

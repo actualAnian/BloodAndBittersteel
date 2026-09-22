@@ -21,8 +21,13 @@ public static class CharacterOccupations
     public const string PhysicianUrban = "physician_urban";
     public const string HealerUrban = "healer_urban";
     public const string BardUrban = "bard_urban";
+    public const string Noble = "noble";
+    public const string Merchant = "merchant";
+    public const string Craftman = "craftman";
+    public const string Cavalry = "cavalry";
+    public const string Bandit = "bandit";
 
-    public static bool IsUrbanOccupation(string occupation)
+public static bool IsUrbanOccupation(string occupation)
     {
         return occupation switch
         {

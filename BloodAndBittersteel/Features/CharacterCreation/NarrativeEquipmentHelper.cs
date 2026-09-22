@@ -1,3 +1,4 @@
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
@@ -84,6 +85,13 @@ public static class NarrativeEquipmentHelper
                 character.SetEquipment(equipment);
             }
         }
+    }
+
+    public static void SelectYouthEquipment(CharacterCreationManager ccm, string cultureId, string titleType, string animation)
+    {
+        ccm.CharacterCreationContent.SelectedTitleType = titleType;
+        string equipmentId = GetPlayerEquipmentId(ccm, titleType, cultureId, CharacterObject.PlayerCharacter.IsFemale);
+        SetPlayerEquipment(ccm, equipmentId, animation);
     }
 
     public static void SetPlayerCharacterAnimation(CharacterCreationManager ccm, string characterStringId, string animation)

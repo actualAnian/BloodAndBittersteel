@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
-using TaleWorlds.CampaignSystem.CharacterDevelopment;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 
@@ -20,7 +19,15 @@ public class DornishCulture : ICharacterCreationCulture
         yield return CreateParentOption("dornish_hunter_option", "{=YcnK0Thk}Hunters", "{=bab_dornish_parent_hunter_desc}Your family hunted the stony hills and dry valleys, reading faint tracks and surviving far from any well.", (args, u) => u.UpgradeScoutingCrossbowSkills(args, DefaultCharacterAttributes.Control), CharacterOccupations.Hunter, "act_character_creation_female_default_side_to_side_3", "act_character_creation_male_default_side_to_side_3");
     }
 
-    public IEnumerable<NarrativeOption> GetChildhoodOptions() => MainlandChildhoodOptions.Shared;
+    public IEnumerable<NarrativeOption> GetChildhoodOptions()
+    {
+        foreach (NarrativeOption option in MainlandChildhoodOptions.Shared)
+            yield return option;
+
+        yield return new NarrativeOption("dornish_childhood_water_gardens_option", new TextObject("{=bab_dornish_childhood_water_gardens_title}played in the pools of the Water Gardens."), new TextObject("{=bab_dornish_childhood_water_gardens_desc}You were fostered among children of every station, swimming, racing, and playing shoulder-riding games beneath the fountains and orange trees."), (args, u) => u.UpgradeLeadershipCharmSkills(args, DefaultCharacterAttributes.Social), ccm => IsDornish(ccm), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_childhood_character", "act_childhood_athlete"));
+        yield return new NarrativeOption("dornish_childhood_sand_steeds_option", new TextObject("{=bab_dornish_childhood_sand_steeds_title}learned to ride the sand steeds."), new TextObject("{=bab_dornish_childhood_sand_steeds_desc}You were trusted with the swift, enduring horses of Dorne and learned to ride lightly over dust, stone, and broken ground."), (args, u) => u.UpgradeRidingPolearmSkills(args, DefaultCharacterAttributes.Endurance), ccm => IsDornish(ccm), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_childhood_character", "act_childhood_animals"));
+        yield return new NarrativeOption("dornish_childhood_water_lesson_option", new TextObject("{=bab_dornish_childhood_water_lesson_title}learned the worth of every drop of water."), new TextObject("{=bab_dornish_childhood_water_lesson_desc}You helped inspect wells, cisterns, and channels, learning that water wisely shared could bind a community together while water stolen could begin a feud."), (args, u) => u.UpgradeStewardTacticsSkills(args, DefaultCharacterAttributes.Intelligence), ccm => IsDornish(ccm), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_childhood_character", "act_childhood_memory"));
+    }
 
     public IEnumerable<NarrativeOption> GetEducationOptions()
     {
@@ -34,26 +41,29 @@ public class DornishCulture : ICharacterCreationCulture
 
     public IEnumerable<NarrativeOption> GetYouthOptions()
     {
-        yield return new NarrativeOption("dornish_youth_groom_option", new TextObject("{=bab_crownlander_youth_groom_title}served as a lord's groom."), new TextObject("{=bab_dornish_youth_groom_desc}You tended a Dornish knight's swift horse and carried messages along dusty roads beneath the hot sun."), (args, u) => u.UpgradeCharmTacticsSkills(args, DefaultCharacterAttributes.Social), IsDornish, ccm => SelectYouth(ccm, "noble", "act_childhood_sharp"));
-        yield return new NarrativeOption("dornish_youth_cavalry_option", new TextObject("{=h2KnarLL}trained with the cavalry."), new TextObject("{=bab_dornish_youth_cavalry_desc}You trained with light and heavy riders, learning to conserve your mount before closing suddenly with spear and sword."), (args, u) => u.UpgradeRidingPolearmSkills(args, DefaultCharacterAttributes.Endurance), IsDornish, ccm => SelectYouth(ccm, "cavalry", "act_childhood_apprentice"));
-        yield return new NarrativeOption("dornish_youth_guard_option", new TextObject("{=aTncHUfL}stood guard with the garrisons."), new TextObject("{=bab_dornish_youth_guard_desc}You guarded a desert holdfast, watching wells and gates and learning how stone walls could master heat and distance."), (args, u) => u.UpgradeCrossbowEngineeringSkills(args, DefaultCharacterAttributes.Intelligence), IsDornish, ccm => SelectYouth(ccm, "guard", "act_childhood_vibrant"));
-        yield return new NarrativeOption("dornish_youth_bandit_option", new TextObject("{=bab_dornish_youth_bandit_title}rode with an outlaw band."), new TextObject("{=bab_dornish_youth_bandit_desc}You rode with smugglers and outlaws who knew hidden springs, lonely tracks, and ways around a lord's patrols."), (args, u) => u.UpgradeRogueryThrowingSkills(args, DefaultCharacterAttributes.Cunning), IsDornish, ccm => SelectYouth(ccm, "bandit", "act_childhood_militia"));
-        yield return new NarrativeOption("dornish_youth_infantry_option", new TextObject("{=a8arFSra}trained with the infantry."), new TextObject("{=bab_dornish_youth_infantry_desc}You drilled with spear and shield to hold narrow passes and punish any foe exhausted by the Dornish heat."), (args, u) => u.UpgradePolearmOneHandedSkills(args, DefaultCharacterAttributes.Vigor), IsDornish, ccm => SelectYouth(ccm, "infantry", "act_childhood_fierce"));
-        yield return new NarrativeOption("dornish_youth_skirmisher_option", new TextObject("{=oMbOIPc9}joined the skirmishers."), new TextObject("{=bab_dornish_youth_skirmisher_desc}You learned to strike at range, withdraw across harsh ground, and draw heavier enemies into a fruitless pursuit."), (args, u) => u.UpgradeThrowingOneHandedSkills(args, DefaultCharacterAttributes.Control), IsDornish, ccm => SelectYouth(ccm, "skirmisher", "act_childhood_fox"));
+        foreach (NarrativeOption option in WesterosiSharedPathOptions.YouthOptions)
+            yield return option;
+
+        yield return new NarrativeOption("dornish_youth_heir_training_option", new TextObject("{=bab_dornish_youth_heir_training_title}trained beside the household's heirs."), new TextObject("{=bab_dornish_youth_heir_training_desc}Dornish custom did not bar you for being a daughter. You studied riding, arms, judgment, and command beside those expected to inherit land and duty."), (args, u) => u.UpgradeRidingPolearmSkills(args, DefaultCharacterAttributes.Endurance), ccm => IsDornish(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Retainer || NarrativeChoiceState.EducationWas("dornish_education_dornish_heir_option")), ccm => SelectYouth(ccm, "noble", "act_childhood_apprentice"));
+        yield return new NarrativeOption("dornish_youth_sand_rider_option", new TextObject("{=bab_dornish_youth_sand_rider_title}rode with the scouts of the desert and passes."), new TextObject("{=bab_dornish_youth_sand_rider_desc}You learned to spare your mount, find water, read distant dust, and strike quickly before a heavier enemy could close."), (args, u) => u.UpgradeScoutingRidingSkills(args, DefaultCharacterAttributes.Cunning), ccm => IsDornish(ccm) && (NarrativeChoiceState.ChildhoodWas("dornish_childhood_sand_steeds_option", "childhood_horse_option") || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Hunter), ccm => SelectYouth(ccm, "cavalry", "act_childhood_fox"));
+        yield return new NarrativeOption("dornish_youth_spear_option", new TextObject("{=bab_dornish_youth_spear_title}trained with spear and shield."), new TextObject("{=bab_dornish_youth_spear_desc}You drilled to defend wells, passes, and holdfasts, where discipline and knowledge of the ground mattered more than heavy armour."), (args, u) => u.UpgradePolearmOneHandedSkills(args, DefaultCharacterAttributes.Vigor), ccm => IsDornish(ccm) && (NarrativeChoiceState.ChildhoodWas("childhood_brawn_option", "dornish_childhood_water_gardens_option") || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Farmer), ccm => SelectYouth(ccm, "infantry", "act_childhood_fierce"));
+        yield return new NarrativeOption("dornish_youth_court_envoy_option", new TextObject("{=bab_dornish_youth_court_envoy_title}carried messages between Dornish courts."), new TextObject("{=bab_dornish_youth_court_envoy_desc}You learned the courtesies of prince, landed knight, merchant, and orphan alike while carrying private words between households."), (args, u) => u.UpgradeLeadershipCharmSkills(args, DefaultCharacterAttributes.Social), ccm => IsDornish(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Retainer || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.MerchantUrban || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.ArtisanUrban || NarrativeChoiceState.EducationWas("dornish_education_water_gardens_option")), ccm => SelectYouth(ccm, "noble", "act_childhood_manners"));
+        yield return new NarrativeOption("dornish_youth_water_steward_option", new TextObject("{=bab_dornish_youth_water_steward_title}helped govern wells and watercourses."), new TextObject("{=bab_dornish_youth_water_steward_desc}You settled small quarrels, organized repairs, and learned to measure need before pride turned a dispute over water into bloodshed."), (args, u) => u.UpgradeStewardTacticsSkills(args, DefaultCharacterAttributes.Intelligence), ccm => IsDornish(ccm) && (NarrativeChoiceState.ChildhoodWas("dornish_childhood_water_lesson_option") || NarrativeChoiceState.EducationWas("dornish_education_water_steward_option")), ccm => SelectYouth(ccm, "guard", "act_childhood_book"));
+        yield return new NarrativeOption("dornish_youth_smuggler_option", new TextObject("{=bab_dornish_youth_smuggler_title}rode with smugglers and desert guides."), new TextObject("{=bab_dornish_youth_smuggler_desc}You learned hidden springs, lonely tracks, and the ways by which forbidden goods and hunted people crossed Dorne unseen."), (args, u) => u.UpgradeRogueryCharmSkills(args, DefaultCharacterAttributes.Cunning), ccm => IsDornish(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.Hunter || NarrativeChoiceState.ChildhoodWas("childhood_detail_option")), ccm => SelectYouth(ccm, "bandit", "act_childhood_fox"));
     }
 
     public IEnumerable<NarrativeOption> GetAdulthoodOptions()
     {
-        yield return AdulthoodCultureOptions.DefeatedEnemy;
-        yield return AdulthoodCultureOptions.Manhunt;
-        yield return AdulthoodCultureOptions.CaravanLeader;
-        yield return AdulthoodCultureOptions.Workshop;
-        yield return AdulthoodCultureOptions.Investor;
-        yield return AdulthoodCultureOptions.Hunter;
-        yield return AdulthoodCultureOptions.SiegeSurvivor;
-        yield return AdulthoodCultureOptions.EscapadeHigh;
-        yield return AdulthoodCultureOptions.EscapadeLow;
-        yield return AdulthoodCultureOptions.NicePerson;
+        foreach (NarrativeOption option in WesterosiSharedPathOptions.AdulthoodOptions)
+            yield return option;
+
+        yield return new NarrativeOption("dornish_adulthood_perfume_trade_option", new TextObject("{=bab_dornish_adulthood_perfume_trade_title}you prospered in oils, spices, and perfumes."), new TextObject("{=bab_dornish_adulthood_perfume_trade_desc}You judged rare scents, guarded recipes, and negotiated with growers and sea traders until Dornish oils and perfumes carried your name beyond the passes."), (args, u) => { u.UpgradeTradeCharmSkills(args, DefaultCharacterAttributes.Intelligence); args.SetRenownToAdd(10); }, ccm => IsDornish(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.MerchantUrban || ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.ArtisanUrban || NarrativeChoiceState.YouthWas("westerosi_youth_family_workshop_option", "dornish_youth_court_envoy_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_childhood_decisive"));
+
+        yield return new NarrativeOption("dornish_adulthood_border_command_option", new TextObject("{=bab_dornish_adulthood_border_command_title}you led riders in a border clash."), new TextObject("{=bab_dornish_adulthood_border_command_desc}When raiders crossed a pass, you gathered riders, found their trail, and struck before they could escape with captives and livestock."), (args, u) => { u.UpgradeLeadershipTacticsSkills(args, DefaultCharacterAttributes.Cunning); args.SetRenownToAdd(20); }, ccm => IsDornish(ccm) && (NarrativeChoiceState.YouthWas("dornish_youth_heir_training_option", "dornish_youth_sand_rider_option", "dornish_youth_spear_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_drafted_to_war_pose"));
+        yield return new NarrativeOption("dornish_adulthood_water_peace_option", new TextObject("{=bab_dornish_adulthood_water_peace_title}you ended a feud over water."), new TextObject("{=bab_dornish_adulthood_water_peace_desc}Two communities stood ready to shed blood over a failing channel. You found a fair division, organized repairs, and made both sides accept it."), (args, u) => { u.UpgradeStewardCharmSkills(args, DefaultCharacterAttributes.Social); args.SetRenownToAdd(15); }, ccm => IsDornish(ccm) && (NarrativeChoiceState.YouthWas("dornish_youth_water_steward_option", "dornish_youth_court_envoy_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_childhood_manners"));
+        yield return new NarrativeOption("dornish_adulthood_desert_caravan_option", new TextObject("{=bab_dornish_adulthood_desert_caravan_title}you brought a caravan safely across Dorne."), new TextObject("{=bab_dornish_adulthood_desert_caravan_desc}Heat, distance, and uncertain wells threatened the journey, but your planning and knowledge delivered every wagon and traveller alive."), (args, u) => { u.UpgradeTradeLeadershipSkills(args, DefaultCharacterAttributes.Intelligence); args.SetRenownToAdd(10); }, ccm => IsDornish(ccm) && (ccm.CharacterCreationContent.SelectedParentOccupation == CharacterOccupations.MerchantUrban || NarrativeChoiceState.YouthWas("dornish_youth_sand_rider_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_childhood_decisive"));
+        yield return new NarrativeOption("dornish_adulthood_court_mission_option", new TextObject("{=bab_dornish_adulthood_court_mission_title}you resolved a delicate mission between courts."), new TextObject("{=bab_dornish_adulthood_court_mission_desc}You carried words that could not be trusted to parchment and returned with an agreement neither household could have reached openly."), (args, u) => { u.UpgradeLeadershipCharmSkills(args, DefaultCharacterAttributes.Social); args.SetRenownToAdd(15); }, ccm => IsDornish(ccm) && (NarrativeChoiceState.YouthWas("dornish_youth_court_envoy_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_childhood_manners"));
+        yield return new NarrativeOption("dornish_adulthood_outlaw_road_option", new TextObject("{=bab_dornish_adulthood_outlaw_road_title}you broke an outlaw ring along the desert roads."), new TextObject("{=bab_dornish_adulthood_outlaw_road_desc}You used hidden tracks against the smugglers and broken men who had taught them to you, freeing travellers and recovering stolen goods."), (args, u) => { u.UpgradeScoutingTacticsSkills(args, DefaultCharacterAttributes.Cunning); args.SetRenownToAdd(10); }, ccm => IsDornish(ccm) && (NarrativeChoiceState.YouthWas("dornish_youth_smuggler_option")), ccm => NarrativeEquipmentHelper.SetPlayerCharacterAnimation(ccm, "player_adulthood_character", "act_childhood_tough"));
     }
 
     private static bool IsDornish(CharacterCreationManager ccm) => ccm.CharacterCreationContent.SelectedCulture.StringId == "dornish";
@@ -70,12 +80,10 @@ public class DornishCulture : ICharacterCreationCulture
         });
     }
 
-    private static void SelectYouth(CharacterCreationManager ccm, string titleType, string animation)
+    private void SelectYouth(CharacterCreationManager ccm, string titleType, string animation)
     {
         ccm.CharacterCreationContent.SelectedTitleType = titleType;
-        string playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(ccm, titleType, CultureIdValue, Hero.MainHero.IsFemale);
+        string playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(ccm, titleType, CultureId, Hero.MainHero.IsFemale);
         NarrativeEquipmentHelper.SetPlayerEquipment(ccm, playerEquipmentId, animation);
     }
-
-    private const string CultureIdValue = "dornish";
 }

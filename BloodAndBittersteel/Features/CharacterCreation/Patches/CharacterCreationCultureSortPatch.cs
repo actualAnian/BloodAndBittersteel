@@ -1,9 +1,5 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaleWorlds.CampaignSystem.ViewModelCollection.CharacterCreation;
 using TaleWorlds.Library;
 
@@ -16,7 +12,7 @@ namespace BloodAndBittersteel.Features.CharacterCreation.Patches
         public static bool Prefix(MBBindingList<CharacterCreationCultureVM> listToWorkOn)
         {
             // Custom safe sort: only move cultures that exist
-            var desiredOrder = new[] { "vlan" };
+            var desiredOrder = new[] { "crown", "vale", "storm", "dorn", "reach", "wester", "river", "iron", "north" };
             int targetIndex = 0;
             foreach (var partialId in desiredOrder)
             {

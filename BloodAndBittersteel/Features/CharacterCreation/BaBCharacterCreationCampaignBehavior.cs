@@ -1,6 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using BloodAndBittersteel.Features.CharacterCreation.Cultures;
+using System.Collections.Generic;
+using System.Reflection;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CharacterCreationContent;
 using TaleWorlds.CampaignSystem.Extensions;
@@ -15,6 +15,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 {
     private readonly List<ICharacterCreationCulture> _cultures = new();
     private readonly HashSet<string> _registeredOptionIds = new();
+    private CharacterCreationManager? _manager;
 
     private readonly IReadOnlyDictionary<string, string> _occupationToEquipmentMapping = new Dictionary<string, string>
     {
@@ -37,9 +38,11 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         { CharacterOccupations.PhysicianUrban, "physician" },
         { CharacterOccupations.HealerUrban, "healer" },
         { CharacterOccupations.BardUrban, "bard" },
-        { "noble", "noble" },
-        { "cavalry", "cavalry" },
-        { "bandit", "bandit" }
+        { CharacterOccupations.Noble, "noble" },
+        { CharacterOccupations.Merchant, "merchant" },
+        { CharacterOccupations.Craftman, "artisan" },
+        { CharacterOccupations.Cavalry, "retainer" },
+        { CharacterOccupations.Bandit, "vagabond" }
     };
 
     public override void RegisterEvents()
@@ -57,6 +60,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     void ICharacterCreationContentHandler.InitializeContent(CharacterCreationManager characterCreationManager)
     {
+        NarrativeChoiceState.Reset();
         _registeredOptionIds.Clear();
         characterCreationManager.CharacterCreationContent.AddEquipmentToUseGetter(delegate(string occupationId, out string equipmentId)
         {
@@ -66,7 +70,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         InitializeCharacterCreationStages(characterCreationManager);
         InitializeCharacterCreationCultures(characterCreationManager);
         var upgrades = new NarrativeSkillUpgrades(characterCreationManager);
-        characterCreationManager.CharacterCreationContent.ChangeReviewPageDescription(new TextObject("{=W6pKpEoT}You prepare to set off for a grand adventure in Calradia! Here is your character. Continue if you are ready, or go back to make changes."));
+        characterCreationManager.CharacterCreationContent.ChangeReviewPageDescription(new TextObject("{=bab_review_page_description}You prepare to set out into the Seven Kingdoms. Here is your character. Continue if you are ready, or go back to make changes."));
         AddParentsMenu(characterCreationManager, upgrades);
         AddChildhoodMenu(characterCreationManager, upgrades);
         AddEducationMenu(characterCreationManager, upgrades);
@@ -75,12 +79,30 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         AddAgeSelectionMenu(characterCreationManager, upgrades);
     }
 
-    void ICharacterCreationContentHandler.AfterInitializeContent(CharacterCreationManager characterCreationManager) { }
+    void ICharacterCreationContentHandler.AfterInitializeContent(CharacterCreationManager characterCreationManager) { _manager = characterCreationManager; }
 
     void ICharacterCreationContentHandler.OnStageCompleted(CharacterCreationStageBase stage)
     {
         if (stage is CharacterCreationFaceGeneratorStage)
+        {
             FaceGenUpdated();
+            UpdateDescriptionText(_manager!);
+        }
+        if (stage is CharacterCreationNarrativeStage)
+        {
+            ApplyMainHeroEquipment(_manager!);
+        }
+    }
+    void UpdateDescriptionText(CharacterCreationManager characterCreationManager)
+    {
+        NarrativeMenu youthMenu = characterCreationManager.GetNarrativeMenuWithId("narrative_youth_menu");
+        var descriptionField = typeof(NarrativeMenu).GetField(
+        "Description",
+        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        var newDescription = CharacterObject.PlayerCharacter.IsFemale
+        ? new TextObject("{=bab_youth_menu_description_female}As a young woman in the Seven Kingdoms, though some customs worked against you, it was nothing an ambitious and determined person could not overcome. You...")
+        : new TextObject("{=bab_youth_menu_description_male}As a young man in the Seven Kingdoms, work, service, and war began to determine your place in the world. You...");
+        descriptionField.SetValue(youthMenu, newDescription);
     }
 
     void ICharacterCreationContentHandler.OnCharacterCreationFinalize(CharacterCreationManager characterCreationManager) { }
@@ -88,7 +110,6 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
     private void RegisterCultures()
     {
         _cultures.Clear();
-        _cultures.Add(new VlandianCulture());
         _cultures.Add(new CrownlanderCulture());
         _cultures.Add(new ValemanCulture());
         _cultures.Add(new StormlanderCulture());
@@ -124,10 +145,9 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             characterCreationManager.CharacterCreationContent.AddCharacterCreationCulture(culture, 1, 10);
         }
     }
-
     public void FaceGenUpdated()
     {
-        CharacterCreationManager characterCreationManager = (GameStateManager.Current.ActiveState as CharacterCreationState).CharacterCreationManager;
+        CharacterCreationManager characterCreationManager = (GameStateManager.Current.ActiveState as CharacterCreationState)!.CharacterCreationManager;
         BodyProperties motherBodyProperties;
         BodyProperties fatherBodyProperties;
         FaceGen.GenerateParentKey(fatherBodyProperties = (motherBodyProperties = CharacterObject.PlayerCharacter.GetBodyProperties(CharacterObject.PlayerCharacter.Equipment)), CharacterObject.PlayerCharacter.Race, ref motherBodyProperties, ref fatherBodyProperties);
@@ -149,7 +169,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     private void AddParentsMenu(CharacterCreationManager characterCreationManager, NarrativeSkillUpgrades upgrades)
     {
-        List<NarrativeMenuCharacter> list = new List<NarrativeMenuCharacter>();
+        var list = new List<NarrativeMenuCharacter>();
         BodyProperties motherBodyProperties;
         BodyProperties fatherBodyProperties;
         FaceGen.GenerateParentKey(fatherBodyProperties = (motherBodyProperties = CharacterObject.PlayerCharacter.GetBodyProperties(CharacterObject.PlayerCharacter.Equipment)), CharacterObject.PlayerCharacter.Race, ref motherBodyProperties, ref fatherBodyProperties);
@@ -165,7 +185,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             foreach (NarrativeOption option in culture.GetParentOptions())
             {
                 if (_registeredOptionIds.Add(option.OptionId))
-                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades, NarrativeChoiceStage.Parent));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -193,7 +213,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             foreach (NarrativeOption option in culture.GetChildhoodOptions())
             {
                 if (_registeredOptionIds.Add(option.OptionId))
-                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades, NarrativeChoiceStage.Childhood));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -221,7 +241,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             foreach (NarrativeOption option in culture.GetEducationOptions())
             {
                 if (_registeredOptionIds.Add(option.OptionId))
-                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades, NarrativeChoiceStage.Education));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -235,24 +255,43 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             new NarrativeMenuCharacterArgs("player_education_character", 12, playerEducationAgeEquipmentId, "act_childhood_schooled", "spawnpoint_player_1", "", "", null, isHuman: true, CharacterObject.PlayerCharacter.IsFemale)
         };
     }
+    private void AddHorseToEquipmentIfNecessary(MBEquipmentRoster eq)
+    {
+        var horse = eq.DefaultEquipment[EquipmentIndex.ArmorItemEndSlot].Item;
+        var harness = eq.DefaultEquipment[EquipmentIndex.HorseHarness].Item;
+        if (horse == null)
+        {
+            var defaultHorse = MBObjectManager.Instance.GetObject<ItemObject>("t3_vlandia_horse");
+            eq.DefaultEquipment[EquipmentIndex.ArmorItemEndSlot] = new(defaultHorse);
+            InformationManager.DisplayMessage(new($"ERROR, equipment with id {eq.StringId} does not have a horse item", new Color(1, 0, 0)));
+        }
+        if (harness == null)
+        {
+            var defaultHarness = MBObjectManager.Instance.GetObject<ItemObject>("steppe_fur_harness");
+            eq.DefaultEquipment[EquipmentIndex.HorseHarness] = new(defaultHarness);
+            InformationManager.DisplayMessage(new($"ERROR, equipment with id {eq.StringId} does not have a horse harness item", new Color(1, 0, 0)));
+        }
+    }
 
     private void AddYouthMenu(CharacterCreationManager characterCreationManager, NarrativeSkillUpgrades upgrades)
     {
-        TextObject description = (CharacterObject.PlayerCharacter.IsFemale ? new TextObject("{=5kbeAC7k}In wartorn Calradia, especially in frontier or tribal areas, some women as well as men learn to fight from an early age. You...") : new TextObject("{=F7OO5SAa}As a youngster growing up in Calradia, war was never too far away. You..."));
+        TextObject description = new TextObject("you should not see this text, it will be updated when moving from FaceGeneratorStage");
         BodyProperties originalBodyProperties = CharacterObject.PlayerCharacter.GetBodyProperties(CharacterObject.PlayerCharacter.Equipment);
         originalBodyProperties = FaceGen.GetBodyPropertiesWithAge(ref originalBodyProperties, 17f);
-        NarrativeMenuCharacter playerYouthCharacter = new NarrativeMenuCharacter("player_youth_character", originalBodyProperties, CharacterObject.PlayerCharacter.Race, CharacterObject.PlayerCharacter.IsFemale);
-        NarrativeMenuCharacter horseCharacter = new NarrativeMenuCharacter("narrative_character_horse");
-        List<NarrativeMenuCharacter> list = new List<NarrativeMenuCharacter>();
-        list.Add(playerYouthCharacter);
-        list.Add(horseCharacter);
+        var playerYouthCharacter = new NarrativeMenuCharacter("player_youth_character", originalBodyProperties, CharacterObject.PlayerCharacter.Race, CharacterObject.PlayerCharacter.IsFemale);
+        var horseCharacter = new NarrativeMenuCharacter("narrative_character_horse");
+        var list = new List<NarrativeMenuCharacter>
+        {
+            playerYouthCharacter,
+            horseCharacter
+        };
         NarrativeMenu narrativeMenu = new NarrativeMenu("narrative_youth_menu", "narrative_education_menu", "narrative_adulthood_menu", new TextObject("{=ok8lSW6M}Youth"), description, list, GetYouthMenuNarrativeMenuCharacterArgs);
         foreach (ICharacterCreationCulture culture in _cultures)
         {
             foreach (NarrativeOption option in culture.GetYouthOptions())
             {
                 if (_registeredOptionIds.Add(option.OptionId))
-                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades, NarrativeChoiceStage.Youth));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -266,6 +305,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         }
         string playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(characterCreationManager, characterCreationManager.CharacterCreationContent.SelectedTitleType, characterCreationManager.CharacterCreationContent.SelectedCulture.StringId, CharacterObject.PlayerCharacter.IsFemale);
         MBEquipmentRoster playerEquipment = NarrativeEquipmentHelper.LoadWithFallback(playerEquipmentId);
+        AddHorseToEquipmentIfNecessary(playerEquipment);
         return new List<NarrativeMenuCharacterArgs>
         {
             new NarrativeMenuCharacterArgs("player_youth_character", 17, playerEquipmentId, "act_childhood_schooled", "spawnpoint_player_1", "", "", null, isHuman: true, CharacterObject.PlayerCharacter.IsFemale),
@@ -289,7 +329,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
             foreach (NarrativeOption option in culture.GetAdulthoodOptions())
             {
                 if (_registeredOptionIds.Add(option.OptionId))
-                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades));
+                    narrativeMenu.AddNarrativeMenuOption(CreateVanillaOption(option, upgrades, NarrativeChoiceStage.Adulthood));
             }
         }
         characterCreationManager.AddNewMenu(narrativeMenu);
@@ -299,6 +339,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
     {
         string playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(characterCreationManager, characterCreationManager.CharacterCreationContent.SelectedTitleType, characterCreationManager.CharacterCreationContent.SelectedCulture.StringId, CharacterObject.PlayerCharacter.IsFemale);
         MBEquipmentRoster playerEquipment = NarrativeEquipmentHelper.LoadWithFallback(playerEquipmentId);
+        AddHorseToEquipmentIfNecessary(playerEquipment);
         return new List<NarrativeMenuCharacterArgs>
         {
             new NarrativeMenuCharacterArgs("player_adulthood_character", 20, playerEquipmentId, "act_childhood_schooled", "spawnpoint_player_1", "", "", null, isHuman: true, CharacterObject.PlayerCharacter.IsFemale),
@@ -329,6 +370,7 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
     {
         string playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(characterCreationManager, characterCreationManager.CharacterCreationContent.SelectedTitleType, characterCreationManager.CharacterCreationContent.SelectedCulture.StringId, CharacterObject.PlayerCharacter.IsFemale);
         MBEquipmentRoster playerEquipment = NarrativeEquipmentHelper.LoadWithFallback(playerEquipmentId);
+        AddHorseToEquipmentIfNecessary(playerEquipment);
         return new List<NarrativeMenuCharacterArgs>
         {
             new NarrativeMenuCharacterArgs("player_age_selection_character", characterCreationManager.CharacterCreationContent.StartingAge, playerEquipmentId, "act_childhood_schooled", "spawnpoint_player_1", "", "", null, isHuman: true, CharacterObject.PlayerCharacter.IsFemale),
@@ -367,18 +409,10 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
 
     private void ApplyMainHeroEquipment(CharacterCreationManager characterCreationManager)
     {
-        NarrativeMenu narrativeMenuWithId = characterCreationManager.GetNarrativeMenuWithId("narrative_age_selection_menu");
-        NarrativeMenuCharacter narrativeMenuCharacter = null;
-        foreach (NarrativeMenuCharacter character in narrativeMenuWithId.Characters)
-        {
-            if (character.StringId.Equals("player_age_selection_character"))
-            {
-                narrativeMenuCharacter = character;
-                break;
-            }
-        }
-        CharacterObject.PlayerCharacter.Equipment.FillFrom(narrativeMenuCharacter.Equipment.DefaultEquipment);
-        CharacterObject.PlayerCharacter.FirstCivilianEquipment.FillFrom(narrativeMenuCharacter.Equipment.GetRandomCivilianEquipment());
+        var playerEquipmentId = NarrativeEquipmentHelper.GetPlayerEquipmentId(characterCreationManager, characterCreationManager.CharacterCreationContent.SelectedTitleType, characterCreationManager.CharacterCreationContent.SelectedCulture.StringId, CharacterObject.PlayerCharacter.IsFemale);
+        var playerEquipment = NarrativeEquipmentHelper.LoadWithFallback(playerEquipmentId);
+        CharacterObject.PlayerCharacter.Equipment.FillFrom(playerEquipment.DefaultEquipment);
+        CharacterObject.PlayerCharacter.FirstCivilianEquipment.FillFrom(playerEquipment.GetRandomCivilianEquipment());
     }
 
     public void SetHeroAge(float age)
@@ -386,12 +420,16 @@ public class BaBCharacterCreationCampaignBehavior : CampaignBehaviorBase, IChara
         Hero.MainHero.SetBirthDay(CampaignTime.YearsFromNow(0f - age));
     }
 
-    private NarrativeMenuOption CreateVanillaOption(NarrativeOption option, NarrativeSkillUpgrades upgrades)
+    private NarrativeMenuOption CreateVanillaOption(NarrativeOption option, NarrativeSkillUpgrades upgrades, NarrativeChoiceStage stage)
     {
         return new NarrativeMenuOption(option.OptionId, option.Title, option.Description,
             args => option.SetArgs(args, upgrades),
             ccm => option.Condition(ccm),
-            ccm => option.OnSelect(ccm),
+            ccm =>
+            {
+                NarrativeChoiceState.Record(stage, option.OptionId);
+                option.OnSelect(ccm);
+            },
             null);
     }
 }
