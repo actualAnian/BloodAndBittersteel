@@ -39,6 +39,7 @@ namespace BloodAndBittersteel
                 campaignGameStarter.AddBehavior(new FemaleLordsCampaignBehavior());
                 campaignGameStarter.AddBehavior(new JoustingCampaignBehavior());
                 campaignGameStarter.AddBehavior(new AiJoustingBehavior());
+                campaignGameStarter.AddBehavior(new BaBCampaignStartBehavior());
                 // character creation
                 var vanillaCharCreation = campaignGameStarter.CampaignBehaviors.First(b => b is CharacterCreationCampaignBehavior);
                 campaignGameStarter.RemoveBehavior(vanillaCharCreation);
