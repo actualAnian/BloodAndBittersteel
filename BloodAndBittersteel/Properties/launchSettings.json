@@ -3,7 +3,7 @@
     "Bannerlord": {
       "commandName": "Executable",
       "executablePath": "$(GameFolder)\\bin\\Win64_Shipping_Client\\Bannerlord.exe",
-      "commandLineArgs": "/singleplayer _MODULES_*Bannerlord.Harmony*Bannerlord.ButterLib*Bannerlord.UIExtenderEx*Bannerlord.MBOptionScreen*Native*SandBoxCore*CustomBattle*Sandbox*StoryMode*AOIF_Map_Backup*CrownlanderCulture*BABArmory*Ben's Armory*Terra_Armarium_LegacyEdition*Terra_Armarium_LE_Royal_Attires*TestBABUI*BABEnvironments*$(ModuleName)*_MODULES_",
+      "commandLineArgs": "/singleplayer _MODULES_*Bannerlord.Harmony*Bannerlord.ButterLib*Bannerlord.UIExtenderEx*Bannerlord.MBOptionScreen*Native*SandBoxCore*CustomBattle*Sandbox*StoryMode*AOIF_Map_Backup*CrownlanderCulture*BaBWanderers*BABArmory*BensArmory*Terra_Armarium_LegacyEdition*Terra_Armarium_LE_Royal_Attires*TA_BloodAndBittersteel_Expansion*BABEnvironments*EquipmentXMLPrint*TestBABUI*$(ModuleName)*_MODULES_",
       "workingDirectory": "$(GameFolder)\\bin\\Win64_Shipping_Client"
     }
   }
