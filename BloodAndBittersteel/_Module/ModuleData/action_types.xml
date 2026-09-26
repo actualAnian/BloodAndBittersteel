@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <action_types>
-  <action name="act_visor_open" />
-  <action name="act_visor_close" />
+	<action name="act_visor_open" />
+	<action name="act_visor_close" />
+	<action name="act_visor_open_leftstance" />
+	<action name="act_visor_close_leftstance" />
 </action_types>

@@ -2,7 +2,9 @@
 <action_sets>
 	<action_set id="as_human_warrior" skeleton="human_skeleton" movement_system="bipedal">
 		<action type="act_visor_open" animation="visor_open" />
-        <action type="act_visor_close" animation="visor_close" />
+		<action type="act_visor_close" animation="visor_close" />
+		<action type="act_visor_open_leftstance" animation="visor_open_leftstance" />
+		<action type="act_visor_close_leftstance" animation="visor_close_leftstance" />
 	</action_set>
 </action_sets>
 
